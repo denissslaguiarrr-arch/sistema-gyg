@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Stock de Vehículos · Concesionaria</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div>
+        <h1 class="text-2xl font-bold text-slate-900">Stock de Vehículos</h1>
+        <p class="text-sm text-slate-500">Panel de administración — sistema local</p>
+      </div>
+      <button
+        id="btn-nuevo"
+        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition"
+      >
+        <span class="text-lg leading-none">+</span> Nuevo vehículo
+      </button>
+    </header>
+
+    <!-- Toolbar: búsqueda y filtros -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap gap-3 items-end">
+      <div class="flex-1 min-w-[220px]">
+        <label class="block text-xs font-medium text-slate-500 mb-1">Buscar</label>
+        <input
+          id="filtro-q"
+          type="text"
+          placeholder="Marca, modelo o patente..."
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      </div>
+      <div class="min-w-[160px]">
+        <label class="block text-xs font-medium text-slate-500 mb-1">Estado</label>
+        <select
+          id="filtro-estado"
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          <option value="">Todos</option>
+          <option value="Disponible">Disponible</option>
+          <option value="Reservado">Reservado</option>
+          <option value="Vendido">Vendido</option>
+        </select>
+      </div>
+      <div class="min-w-[160px]">
+        <label class="block text-xs font-medium text-slate-500 mb-1">Condición</label>
+        <select
+          id="filtro-km"
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          <option value="">Todos</option>
+          <option value="0km">Solo 0KM</option>
+          <option value="usado">Solo usados</option>
+        </select>
+      </div>
+      <button
+        id="btn-limpiar-filtros"
+        class="text-sm text-slate-500 hover:text-slate-700 underline px-2 py-2"
+      >
+        Limpiar filtros
+      </button>
+    </div>
+
+    <!-- Alertas -->
+    <div id="alerta" class="hidden mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+    <!-- Tabla de stock -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left">Vehículo</th>
+              <th class="px-4 py-3 text-left">Patente</th>
+              <th class="px-4 py-3 text-left">Año</th>
+              <th class="px-4 py-3 text-left">Kilometraje</th>
+              <th class="px-4 py-3 text-left">Precio</th>
+              <th class="px-4 py-3 text-left">Estado</th>
+              <th class="px-4 py-3 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body" class="divide-y divide-slate-100">
+            <!-- filas generadas por app.js -->
+          </tbody>
+        </table>
+      </div>
+      <div id="tabla-vacio" class="hidden py-12 text-center text-slate-400">
+        No hay vehículos que coincidan con la búsqueda.
+      </div>
+    </div>
+    <p id="contador" class="text-xs text-slate-400 mt-3"></p>
+  </div>
+
+  <!-- Modal de carga / edición -->
+  <div id="modal-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <form id="form-vehiculo">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+          <h2 id="modal-titulo" class="text-lg font-semibold text-slate-900">Nuevo vehículo</h2>
+          <button type="button" id="btn-cerrar-modal" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input type="hidden" id="f-id" />
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Marca *</label>
+            <input id="f-marca" required class="campo" placeholder="Toyota" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Modelo *</label>
+            <input id="f-modelo" required class="campo" placeholder="Hilux" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Año *</label>
+            <input id="f-anio" type="number" required class="campo" placeholder="2024" min="1900" max="2100" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Patente (dominio) *</label>
+            <input id="f-dominio" required class="campo uppercase" placeholder="AB123CD" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Kilometraje</label>
+            <input id="f-kilometraje" type="number" min="0" class="campo" placeholder="0" />
+            <p class="text-[11px] text-slate-400 mt-1">Dejar en 0 para marcar como 0KM.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Estado</label>
+            <select id="f-estado" class="campo">
+              <option value="Disponible">Disponible</option>
+              <option value="Reservado">Reservado</option>
+              <option value="Vendido">Vendido</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio *</label>
+            <input id="f-precio" type="number" step="0.01" min="0" required class="campo" placeholder="45000" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Moneda</label>
+            <select id="f-moneda" class="campo">
+              <option value="ARS">ARS (Pesos)</option>
+              <option value="USD">USD (Dólares)</option>
+            </select>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">URLs de imágenes</label>
+            <textarea id="f-imagenes" rows="2" class="campo" placeholder="https://foto1.jpg, https://foto2.jpg"></textarea>
+            <p class="text-[11px] text-slate-400 mt-1">Separadas por comas.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Notas</label>
+            <textarea id="f-notas" rows="3" class="campo" placeholder="Detalle en puerta derecha, único dueño, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+          <button type="button" id="btn-cancelar" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .campo {
+      width: 100%;
+      border: 1px solid rgb(203 213 225);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    .campo:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgb(165 180 252);
+      border-color: rgb(129 140 248);
+    }
+  </style>
+
+  <script src="app.js"></script>
+</body>
+</html>
