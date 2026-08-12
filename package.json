@@ -1,0 +1,17 @@
+{
+  "name": "sistema-gyg",
+  "version": "0.1.0",
+  "description": "Sistema de Control de Stock y Gestión para Concesionaria de Vehículos",
+  "main": "backend/server.js",
+  "scripts": {
+    "start": "node backend/server.js",
+    "dev": "node --watch backend/server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.10.0",
+    "express": "^4.21.2"
+  }
+}
