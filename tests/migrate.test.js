@@ -42,7 +42,9 @@ test("migrate agrega las columnas nuevas a una base vieja y permite guardar foto
     assert.ok(columnas.includes("eliminado"));
 
     const version = db.prepare("SELECT valor FROM Meta WHERE clave = 'schema_version'").get();
-    assert.equal(version.valor, "6");
+    assert.equal(version.valor, "7");
+    assert.ok(columnasDe(db, "ConfiguracionSitio").includes("instagram"));
+    assert.ok(columnasDe(db, "ConfiguracionSitio").includes("facebook"));
 
     const insertado = db
       .prepare(

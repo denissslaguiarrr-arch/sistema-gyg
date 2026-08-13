@@ -84,6 +84,10 @@ CREATE TABLE IF NOT EXISTS ConfiguracionSitio (
   nombre      TEXT NOT NULL DEFAULT '',
   tagline     TEXT NOT NULL DEFAULT '',
   whatsapp    TEXT NOT NULL DEFAULT '',
+  instagram   TEXT NOT NULL DEFAULT '',
+  facebook    TEXT NOT NULL DEFAULT '',
+  contacto_titulo TEXT NOT NULL DEFAULT 'Contactanos',
+  contacto_texto  TEXT NOT NULL DEFAULT '',
   footer_text TEXT NOT NULL DEFAULT '',
   hero_image  TEXT NOT NULL DEFAULT '',
   updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
@@ -98,5 +102,5 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '6'),
+  ('schema_version', '7'),
   ('last_sync_at', '');

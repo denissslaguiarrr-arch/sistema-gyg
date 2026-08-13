@@ -104,6 +104,24 @@ test("/ficha.html y /ficha.js son accesibles sin sesión", async () => {
   assert.match(script, /abrirLightbox/);
 });
 
+test("/catalogo.html y /catalogo.js son accesibles sin sesión", async () => {
+  const html = await fetch(`${baseUrl}/catalogo.html`);
+  assert.equal(html.status, 200);
+  const js = await fetch(`${baseUrl}/catalogo.js`);
+  assert.equal(js.status, 200);
+  assert.match(await js.text(), /Contactanos/);
+});
+
+test("GET /api/public/catalogo no requiere sesión y usa Contactanos", async () => {
+  const res = await fetch(`${baseUrl}/api/public/catalogo`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.ok(Array.isArray(body.vehicles));
+  assert.equal(body.site.contactoTitulo, "Contactanos");
+  const contacto = body.pages.find((p) => p.id === "contacto");
+  assert.equal(contacto.content.headline, "Contactanos");
+});
+
 test("/uploads/ es accesible sin sesión (fotos públicas de la ficha)", async () => {
   const res = await fetch(`${baseUrl}/uploads/archivo-inexistente.jpg`);
   // No debe ser 401 (bloqueado por el guard de sesión); un 404 de express.static es lo esperado.

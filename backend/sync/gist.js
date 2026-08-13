@@ -41,7 +41,7 @@ const DEFAULT_PAGES = [
     id: "contacto", slug: "contacto", title: "Contacto", navLabel: "Contacto", type: "content",
     visible: true, order: 4, filter: {},
     content: {
-      eyebrow: "Contacto", headline: "Hablemos",
+      eyebrow: "Contacto", headline: "Contactanos",
       subtitle: "Consultá disponibilidad, financiación o una visita al showroom.",
       showWhatsapp: true,
     },
@@ -90,8 +90,14 @@ function mapearVehiculo(v) {
   };
 }
 
+function tiene(obj, clave) {
+  return obj && Object.prototype.hasOwnProperty.call(obj, clave);
+}
+
 // Nuestros campos ganan solo si tienen contenido; si todavía no configuraste
 // "Configuración del sitio", no se pisa lo que ya hay publicado en el Gist.
+// Instagram/Facebook sí se pueden vaciar: si el panel manda el campo vacío,
+// la red deja de mostrarse en el catálogo.
 function mergeSiteConfig(gistSite, config) {
   const gs = gistSite && typeof gistSite === "object" ? gistSite : {};
   const cfg = config || {};
@@ -99,9 +105,32 @@ function mergeSiteConfig(gistSite, config) {
     name: cfg.nombre || gs.name || "",
     tagline: cfg.tagline || gs.tagline || "",
     whatsapp: cfg.whatsapp || gs.whatsapp || "",
+    instagram: tiene(cfg, "instagram") ? cfg.instagram || "" : gs.instagram || "",
+    facebook: tiene(cfg, "facebook") ? cfg.facebook || "" : gs.facebook || "",
+    contactoTitulo: cfg.contactoTitulo || gs.contactoTitulo || "Contactanos",
+    contactoTexto: cfg.contactoTexto || gs.contactoTexto || "",
     footerText: cfg.footerText || gs.footerText || "",
     heroImage: cfg.heroImage || gs.heroImage || "",
   };
+}
+
+function esPaginaContacto(page) {
+  return page && (page.id === "contacto" || page.slug === "contacto");
+}
+
+function mergePages(gistPages, site) {
+  const base =
+    Array.isArray(gistPages) && gistPages.length
+      ? gistPages
+      : DEFAULT_PAGES;
+  return base.map((page) => {
+    if (!esPaginaContacto(page)) return page;
+    const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
+    content.headline = (site && site.contactoTitulo) || "Contactanos";
+    if (site && site.contactoTexto) content.subtitle = site.contactoTexto;
+    content.showWhatsapp = true;
+    return { ...page, content };
+  });
 }
 
 async function obtenerGistActual({ gistId, token, fetchImpl = fetch }) {
@@ -144,7 +173,7 @@ function construirStockJson({ gistActual, vehiculos, siteConfig }) {
       updatedAt: new Date().toISOString(),
     },
     site,
-    pages: Array.isArray(actual.pages) && actual.pages.length ? actual.pages : DEFAULT_PAGES,
+    pages: mergePages(actual.pages, site),
     vehicles: vehiculos.map(mapearVehiculo),
   };
 }
@@ -213,6 +242,7 @@ module.exports = {
   mapearEstado,
   mapearVehiculo,
   mergeSiteConfig,
+  mergePages,
   construirStockJson,
   obtenerGistActual,
   publicarEnGist,

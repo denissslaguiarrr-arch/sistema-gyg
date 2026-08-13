@@ -26,6 +26,10 @@ function obtenerConfigSitio() {
     nombre: row.nombre,
     tagline: row.tagline,
     whatsapp: row.whatsapp,
+    instagram: row.instagram || "",
+    facebook: row.facebook || "",
+    contactoTitulo: row.contacto_titulo || "Contactanos",
+    contactoTexto: row.contacto_texto || "",
     footerText: row.footer_text,
     heroImage: row.hero_image,
   };

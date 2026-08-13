@@ -127,6 +127,10 @@ const el = {
   cNombre: document.getElementById("c-nombre"),
   cTagline: document.getElementById("c-tagline"),
   cWhatsapp: document.getElementById("c-whatsapp"),
+  cInstagram: document.getElementById("c-instagram"),
+  cFacebook: document.getElementById("c-facebook"),
+  cContactoTitulo: document.getElementById("c-contacto-titulo"),
+  cContactoTexto: document.getElementById("c-contacto-texto"),
   cFooter: document.getElementById("c-footer"),
   cHero: document.getElementById("c-hero"),
   btnCerrarConfig: document.getElementById("btn-cerrar-config"),
@@ -397,6 +401,10 @@ el.btnConfigSitio.addEventListener("click", async () => {
     el.cNombre.value = config.nombre || "";
     el.cTagline.value = config.tagline || "";
     el.cWhatsapp.value = config.whatsapp || "";
+    el.cInstagram.value = config.instagram || "";
+    el.cFacebook.value = config.facebook || "";
+    el.cContactoTitulo.value = config.contactoTitulo || "Contactanos";
+    el.cContactoTexto.value = config.contactoTexto || "";
     el.cFooter.value = config.footerText || "";
     el.cHero.value = config.heroImage || "";
     el.modalConfigOverlay.classList.remove("hidden");
@@ -418,6 +426,10 @@ el.formConfig.addEventListener("submit", async (evento) => {
         nombre: el.cNombre.value.trim(),
         tagline: el.cTagline.value.trim(),
         whatsapp: el.cWhatsapp.value.trim(),
+        instagram: el.cInstagram.value.trim(),
+        facebook: el.cFacebook.value.trim(),
+        contactoTitulo: el.cContactoTitulo.value.trim() || "Contactanos",
+        contactoTexto: el.cContactoTexto.value.trim(),
         footerText: el.cFooter.value.trim(),
         heroImage: el.cHero.value.trim(),
       }),

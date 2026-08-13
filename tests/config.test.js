@@ -56,6 +56,9 @@ test("GET /api/config/sitio devuelve valores vacíos por defecto", async () => {
   const body = await res.json();
   assert.equal(body.nombre, "");
   assert.equal(body.whatsapp, "");
+  assert.equal(body.instagram, "");
+  assert.equal(body.facebook, "");
+  assert.equal(body.contactoTitulo, "Contactanos");
 });
 
 test("GET /api/config/sitio requiere sesión, pero no rol admin", async () => {
@@ -81,6 +84,10 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
       nombre: "GyG",
       tagline: "Selección premium",
       whatsapp: "5491123456789",
+      instagram: "@gygautomotores",
+      facebook: "",
+      contactoTitulo: "Contactanos",
+      contactoTexto: "Escribinos por WhatsApp o Instagram.",
       footerText: "Concesionaria GyG",
       heroImage: "https://ejemplo.com/hero.jpg",
     }),
@@ -89,6 +96,9 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
   const body = await res.json();
   assert.equal(body.nombre, "GyG");
   assert.equal(body.whatsapp, "5491123456789");
+  assert.equal(body.instagram, "https://www.instagram.com/gygautomotores");
+  assert.equal(body.facebook, "");
+  assert.equal(body.contactoTitulo, "Contactanos");
 
   const relectura = await (
     await fetch(`${baseUrl}/api/config/sitio`, { headers: { Cookie: cookieAdmin } })

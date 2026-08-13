@@ -4,6 +4,7 @@ const {
   mapearEstado,
   mapearVehiculo,
   mergeSiteConfig,
+  mergePages,
   construirStockJson,
   obtenerGistActual,
   publicarEnGist,
@@ -94,9 +95,16 @@ test("mergeSiteConfig prioriza los valores locales, pero no pisa con vacíos", (
   assert.equal(conDatosLocales.footerText, "pie");
 
   const sinConfigLocal = mergeSiteConfig(gistSite, {});
-  assert.deepEqual(sinConfigLocal, {
-    name: "GyG viejo", tagline: "Tagline viejo", whatsapp: "111", footerText: "pie", heroImage: "img.jpg",
-  });
+  assert.equal(sinConfigLocal.name, "GyG viejo");
+  assert.equal(sinConfigLocal.instagram, "");
+  assert.equal(sinConfigLocal.contactoTitulo, "Contactanos");
+});
+
+test("mergeSiteConfig puede vaciar Instagram/Facebook si el panel manda el campo vacío", () => {
+  const gistSite = { instagram: "https://instagram.com/viejo", facebook: "https://facebook.com/viejo" };
+  const limpio = mergeSiteConfig(gistSite, { instagram: "", facebook: "" });
+  assert.equal(limpio.instagram, "");
+  assert.equal(limpio.facebook, "");
 });
 
 test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si no hay ninguna", () => {
@@ -112,6 +120,19 @@ test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si
   assert.equal(sinGistPrevio.site.name, "GyG");
   assert.equal(sinGistPrevio.meta.concesionaria, "GyG");
   assert.ok(sinGistPrevio.meta.updatedAt);
+});
+
+test("mergePages pone Contactanos en la página de contacto y deja las demás igual", () => {
+  const pages = mergePages(
+    [
+      { id: "custom", slug: "custom", content: { headline: "X" } },
+      { id: "contacto", slug: "contacto", content: { headline: "Hablemos" } },
+    ],
+    { contactoTitulo: "Contactanos", contactoTexto: "Escribinos." }
+  );
+  assert.equal(pages[0].content.headline, "X");
+  assert.equal(pages[1].content.headline, "Contactanos");
+  assert.equal(pages[1].content.subtitle, "Escribinos.");
 });
 
 function fetchFalso(respuestas) {

@@ -108,9 +108,74 @@ async function iniciar() {
       overlay = document.createElement("div");
       overlay.id = "lightbox";
       overlay.className =
-        "hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out no-imprimir";
-      overlay.innerHTML = `<img class="max-w-full max-h-full object-contain" alt="Foto ampliada" />`;
-      overlay.addEventListener("click", () => overlay.classList.add("hidden"));
+        "hidden fixed inset-0 z-50 bg-black/90 flex flex-col cursor-zoom-out no-imprimir";
+      overlay.innerHTML = `
+        <div class="flex justify-between items-center px-4 py-3 text-white">
+          <div class="flex gap-2">
+            <button type="button" data-z="out" class="bg-slate-800 rounded-lg px-3 py-1">−</button>
+            <button type="button" data-z="in" class="bg-slate-800 rounded-lg px-3 py-1">+</button>
+          </div>
+          <button type="button" data-z="close" class="bg-slate-800 rounded-lg px-3 py-1">Cerrar</button>
+        </div>
+        <div class="flex-1 flex items-center justify-center p-4 overflow-auto" data-stage="1">
+          <img class="max-w-full max-h-[80vh] object-contain" alt="Foto ampliada" />
+        </div>`;
+      overlay.dataset.zoom = "1";
+      const img = () => overlay.querySelector("img");
+      const aplicar = () => {
+        img().style.transform = `scale(${overlay.dataset.zoom})`;
+      };
+      overlay.addEventListener("click", (evento) => {
+        const btn = evento.target.closest("button[data-z]");
+        if (!btn) {
+          if (evento.target === overlay || evento.target.dataset.stage) overlay.classList.add("hidden");
+          return;
+        }
+        evento.stopPropagation();
+        const z = btn.dataset.z;
+        const actual = Number(overlay.dataset.zoom) || 1;
+        if (z === "close") overlay.classList.add("hidden");
+        if (z === "in") overlay.dataset.zoom = String(Math.min(4, actual + 0.4));
+        if (z === "out") overlay.dataset.zoom = String(Math.max(1, actual - 0.4));
+        aplicar();
+      });
+      overlay.addEventListener(
+        "touchmove",
+        (evento) => {
+          if (evento.touches.length === 2) evento.preventDefault();
+        },
+        { passive: false }
+      );
+      let startDist = 0;
+      let startZoom = 1;
+      overlay.addEventListener(
+        "touchstart",
+        (evento) => {
+          if (evento.touches.length === 2) {
+            const a = evento.touches[0];
+            const b = evento.touches[1];
+            const dx = a.clientX - b.clientX;
+            const dy = a.clientY - b.clientY;
+            startDist = Math.sqrt(dx * dx + dy * dy);
+            startZoom = Number(overlay.dataset.zoom) || 1;
+          }
+        },
+        { passive: true }
+      );
+      overlay.addEventListener(
+        "touchmove",
+        (evento) => {
+          if (evento.touches.length !== 2 || !startDist) return;
+          const a = evento.touches[0];
+          const b = evento.touches[1];
+          const dx = a.clientX - b.clientX;
+          const dy = a.clientY - b.clientY;
+          const dist = Math.sqrt(dx * dx + dy * dy);
+          overlay.dataset.zoom = String(Math.min(4, Math.max(1, startZoom * (dist / startDist))));
+          aplicar();
+        },
+        { passive: false }
+      );
       document.addEventListener("keydown", (evento) => {
         if (evento.key === "Escape") overlay.classList.add("hidden");
       });
@@ -120,7 +185,10 @@ async function iniciar() {
 
     function abrirLightbox(url) {
       const overlay = asegurarLightbox();
-      overlay.querySelector("img").src = url;
+      overlay.dataset.zoom = "1";
+      const foto = overlay.querySelector("img");
+      foto.src = url;
+      foto.style.transform = "scale(1)";
       overlay.classList.remove("hidden");
     }
 

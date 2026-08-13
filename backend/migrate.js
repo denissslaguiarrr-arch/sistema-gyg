@@ -54,8 +54,32 @@ function migrate(db) {
 
   db.exec("CREATE INDEX IF NOT EXISTS idx_vehiculos_eliminado ON Vehiculos (eliminado)");
 
-  if (schemaVersion(db) < 6) {
-    db.prepare("INSERT OR REPLACE INTO Meta (clave, valor) VALUES ('schema_version', '6')").run();
+  if (!tablasDe(db).includes("ConfiguracionSitio")) {
+    db.exec(`
+      CREATE TABLE ConfiguracionSitio (
+        id          INTEGER PRIMARY KEY CHECK (id = 1),
+        nombre      TEXT NOT NULL DEFAULT '',
+        tagline     TEXT NOT NULL DEFAULT '',
+        whatsapp    TEXT NOT NULL DEFAULT '',
+        instagram   TEXT NOT NULL DEFAULT '',
+        facebook    TEXT NOT NULL DEFAULT '',
+        contacto_titulo TEXT NOT NULL DEFAULT 'Contactanos',
+        contacto_texto  TEXT NOT NULL DEFAULT '',
+        footer_text TEXT NOT NULL DEFAULT '',
+        hero_image  TEXT NOT NULL DEFAULT '',
+        updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+      );
+      INSERT OR IGNORE INTO ConfiguracionSitio (id) VALUES (1);
+    `);
+  }
+
+  ensureColumn(db, "ConfiguracionSitio", "instagram", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "ConfiguracionSitio", "facebook", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "ConfiguracionSitio", "contacto_titulo", "TEXT NOT NULL DEFAULT 'Contactanos'");
+  ensureColumn(db, "ConfiguracionSitio", "contacto_texto", "TEXT NOT NULL DEFAULT ''");
+
+  if (schemaVersion(db) < 7) {
+    db.prepare("INSERT OR REPLACE INTO Meta (clave, valor) VALUES ('schema_version', '7')").run();
   }
 }
 

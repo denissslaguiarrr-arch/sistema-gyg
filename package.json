@@ -7,7 +7,8 @@
     "start": "node backend/server.js",
     "dev": "node --watch backend/server.js",
     "test": "node --test",
-    "backup": "node backend/scripts/backup.js"
+    "backup": "node backend/scripts/backup.js",
+    "blogger": "node scripts/build-blogger-tema.js"
   },
   "engines": {
     "node": ">=20"

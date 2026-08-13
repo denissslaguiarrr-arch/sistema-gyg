@@ -18,7 +18,14 @@ const app = express();
 const PUBLIC_DIR = path.join(__dirname, "..", "public");
 // La ficha de un vehículo está pensada para compartirse con compradores
 // que no tienen (ni deben tener) acceso al panel de administración.
-const RUTAS_PUBLICAS = new Set(["/login.html", "/login.js", "/ficha.html", "/ficha.js"]);
+const RUTAS_PUBLICAS = new Set([
+  "/login.html",
+  "/login.js",
+  "/ficha.html",
+  "/ficha.js",
+  "/catalogo.html",
+  "/catalogo.js",
+]);
 
 app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());

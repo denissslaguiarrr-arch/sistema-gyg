@@ -24,7 +24,7 @@ backend/
     vehiculos.js          CRUD, papelera, historial, resumen KPI, export/import CSV, paginación
     uploads.js            Subida de fotos (local + Imgur, solo admin)
     public.js              API pública de solo lectura para la ficha compartible
-    config.js              Configuración del catálogo público (nombre, WhatsApp, etc.)
+    config.js              Configuración del catálogo público (nombre, WhatsApp, redes, etc.)
     sync.js                 Endpoint que publica el stock en el Gist (fase 2)
   sync/
     gist.js                 Mapeo de datos y publicación en el Gist (GitHub API)
@@ -44,7 +44,10 @@ public/
   index.html             Panel de administración (Tailwind CDN)
   app.js                 Lógica del panel en Vanilla JS
   ficha.html / ficha.js   Ficha pública de un vehículo (compartible, sin login)
+  catalogo.html / .js     Catálogo público (mobile, zoom, contacto y redes)
   uploads/               Fotos subidas desde el panel (generado en runtime)
+blogger/
+  tema.xml               Tema de Blogger (XML) con el catálogo incrustado
 tests/
   validators.test.js     Casos unitarios de reglas de negocio
   auth.test.js            Login, logout, cambio de contraseña
@@ -340,30 +343,32 @@ pero la variable de entorno es más cómoda: no se pisa con `git pull`.
 Las fotos viejas en `/uploads/...` **solo se ven en el panel local**. Al
 publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
-### Fotos recortadas en Blogger (camioneta “cortada”)
+### Fotos recortadas, celular y Contacto (Blogger)
 
-La foto **no está mal subida**: el recuadro de la ficha es apaisado y
-recorta arriba/abajo las fotos altas o casi cuadradas (`object-fit: cover`).
-No hace falta volver a cargar la Hilux.
+La foto **no está mal subida**: el recuadro viejo recortaba las camionetas.
+El catálogo nuevo (`public/catalogo.js`) muestra la foto completa, permite
+**zoom** (tocar la foto, pellizcar o usar +/−) y deja margen abajo en el
+celular para que Contacto no se corte.
 
-El tema de Blogger es **XML**. Si al guardar aparece
-`The element type "body" must be terminated by the matching end-tag "</body>"`,
-Blogger **no llegó a guardar**: cancelá, no borres `</body>` y usá el parche
-nuevo (va envuelto en `CDATA` para que el `<` del JavaScript no rompa el XML).
+En **Configuración del sitio** cargá Instagram y/o Facebook (link o
+`@usuario`). Si un campo queda vacío, esa red **no aparece**. El título de
+Contacto por defecto es **Contactanos**.
 
-1. **Tema** → **Personalizar** → **Editar HTML** (o **Tema** → **Editar HTML**).
-2. Si el editor sigue en rojo por el intento anterior: **Revertir** / copiá
-   de nuevo el HTML desde una copia de seguridad del tema.
-3. Buscá la línea `</body>` (Ctrl+F). Poné el cursor **justo antes**, en
-   una línea nueva. **No borres** `</body>`.
-4. Pegá **todo** el archivo `blogger/parche-galeria.html`.
-5. Guardá y recargá https://gyg-automotores.blogspot.com/#/auto/gyg-008
+Para que esto se vea en https://gyg-automotores.blogspot.com/ hay que
+reemplazar el HTML del tema **una vez** (hacé una copia de seguridad antes):
 
-La foto grande se ve entera (con un fondo oscuro a los costados si hace
-falta). Las miniaturas pueden seguir recortadas: es normal.
+1. Blogger → **Tema** → **Copia de seguridad** → descargar.
+2. **Tema** → **Editar HTML**.
+3. Seleccioná todo, pegá el contenido de `blogger/tema.xml` (está en XML
+   con `CDATA`; no borres nada a mano).
+4. Guardá.
+5. En el panel: completá WhatsApp / Instagram / Facebook y **Publicar en la web**.
+6. Recargá el blog en el celular.
 
-La ficha local (`/ficha.html`) ya muestra la foto completa; clic para
-ampliarla.
+Si Blogger rechaza el XML, restaurá la copia de seguridad del paso 1.
+
+La ficha local (`/ficha.html`) y la vista previa (`/catalogo.html`) ya
+traen zoom y foto completa.
 
 ### Configuración del sitio
 
