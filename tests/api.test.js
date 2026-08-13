@@ -1,46 +1,66 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
-const fs = require("node:fs");
-const os = require("node:os");
-const path = require("node:path");
+const { tmpDbPath, limpiarArchivosDb, extraerCookie } = require("./helpers");
 
 // Base de datos aislada por ejecución: no toca db/concesionaria.db de desarrollo.
-const tmpDb = path.join(
-  os.tmpdir(),
-  `gyg-test-${Date.now()}-${Math.random().toString(16).slice(2)}.db`
-);
-process.env.GYG_DB_PATH = tmpDb;
+const dbPath = tmpDbPath("api");
+process.env.GYG_DB_PATH = dbPath;
+process.env.GYG_ADMIN_USER = "admin";
+process.env.GYG_ADMIN_PASSWORD = "test-password-123";
 
 const app = require("../backend/app");
+const { ensureDefaultAdmin } = require("../backend/auth");
 
 let server;
 let baseUrl;
+let cookie;
 
 test.before(async () => {
+  ensureDefaultAdmin();
+
   await new Promise((resolve) => {
     server = app.listen(0, "127.0.0.1", () => {
       baseUrl = `http://127.0.0.1:${server.address().port}`;
       resolve();
     });
   });
+
+  const loginRes = await fetch(`${baseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "admin", password: "test-password-123" }),
+  });
+  assert.equal(loginRes.status, 200);
+  cookie = extraerCookie(loginRes);
+  assert.ok(cookie, "debería recibir una cookie de sesión");
 });
 
 test.after(async () => {
   await new Promise((resolve) => server.close(resolve));
-  for (const suffix of ["", "-shm", "-wal"]) {
-    fs.rmSync(tmpDb + suffix, { force: true });
-  }
+  limpiarArchivosDb(dbPath);
 });
 
-async function post(path_, body) {
-  return fetch(`${baseUrl}${path_}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body),
-  });
+function headers() {
+  return { "Content-Type": "application/json", Cookie: cookie };
 }
 
-test("GET /api/health responde ok con la base vacía", async () => {
+async function post(path_, body) {
+  return fetch(`${baseUrl}${path_}`, { method: "POST", headers: headers(), body: JSON.stringify(body) });
+}
+async function put(path_, body) {
+  return fetch(`${baseUrl}${path_}`, { method: "PUT", headers: headers(), body: JSON.stringify(body) });
+}
+async function patch(path_, body) {
+  return fetch(`${baseUrl}${path_}`, { method: "PATCH", headers: headers(), body: JSON.stringify(body) });
+}
+async function del(path_) {
+  return fetch(`${baseUrl}${path_}`, { method: "DELETE", headers: headers() });
+}
+async function get(path_) {
+  return fetch(`${baseUrl}${path_}`, { headers: headers() });
+}
+
+test("GET /api/health responde ok con la base vacía (sin requerir sesión)", async () => {
   const res = await fetch(`${baseUrl}/api/health`);
   const body = await res.json();
   assert.equal(res.status, 200);
@@ -63,7 +83,7 @@ test("POST /api/vehiculos crea un vehículo y aparece en el listado", async () =
   assert.equal(creado.estado, "Disponible");
   assert.equal(creado.es_0km, true);
 
-  const lista = await (await fetch(`${baseUrl}/api/vehiculos`)).json();
+  const lista = await (await get("/api/vehiculos")).json();
   assert.equal(lista.length, 1);
   assert.equal(lista[0].dominio, "AB123CD");
 });
@@ -100,57 +120,62 @@ test("GET /api/vehiculos filtra por texto, estado y km", async () => {
     estado: "Reservado",
   });
 
-  const porTexto = await (await fetch(`${baseUrl}/api/vehiculos?q=focus`)).json();
+  const porTexto = await (await get("/api/vehiculos?q=focus")).json();
   assert.equal(porTexto.length, 1);
   assert.equal(porTexto[0].modelo, "Focus");
 
-  const porEstado = await (
-    await fetch(`${baseUrl}/api/vehiculos?estado=Reservado`)
-  ).json();
+  const porEstado = await (await get("/api/vehiculos?estado=Reservado")).json();
   assert.equal(porEstado.length, 1);
 
-  const soloUsados = await (await fetch(`${baseUrl}/api/vehiculos?km=usado`)).json();
+  const soloUsados = await (await get("/api/vehiculos?km=usado")).json();
   assert.equal(soloUsados.length, 1);
   assert.equal(soloUsados[0].dominio, "XYZ789");
 
-  const solo0km = await (await fetch(`${baseUrl}/api/vehiculos?km=0km`)).json();
+  const solo0km = await (await get("/api/vehiculos?km=0km")).json();
   assert.equal(solo0km.length, 1);
   assert.equal(solo0km[0].dominio, "AB123CD");
 });
 
-test("PUT /api/vehiculos/:id actualiza el vehículo", async () => {
-  const lista = await (await fetch(`${baseUrl}/api/vehiculos?q=AB123CD`)).json();
+test("GET /api/vehiculos/resumen calcula KPIs sobre los vehículos activos", async () => {
+  const resumen = await (await get("/api/vehiculos/resumen")).json();
+  assert.equal(resumen.total, 2);
+  assert.equal(resumen.disponibles, 1);
+  assert.equal(resumen.reservados, 1);
+  assert.equal(resumen.vendidos, 0);
+  assert.equal(resumen.valor_stock_usd, 45000);
+  assert.equal(resumen.valor_stock_ars, 8000000);
+});
+
+test("PUT /api/vehiculos/:id actualiza el vehículo y registra el cambio de estado", async () => {
+  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
   const id = lista[0].id;
 
-  const res = await fetch(`${baseUrl}/api/vehiculos/${id}`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      marca: "Toyota",
-      modelo: "Hilux SRX",
-      anio: 2024,
-      dominio: "AB123CD",
-      kilometraje: 10,
-      precio: 47000,
-      moneda: "USD",
-      estado: "Disponible",
-    }),
+  const res = await put(`/api/vehiculos/${id}`, {
+    marca: "Toyota",
+    modelo: "Hilux SRX",
+    anio: 2024,
+    dominio: "AB123CD",
+    kilometraje: 10,
+    precio: 47000,
+    moneda: "USD",
+    estado: "Reservado",
   });
   assert.equal(res.status, 200);
   const actualizado = await res.json();
   assert.equal(actualizado.modelo, "Hilux SRX");
   assert.equal(actualizado.es_0km, false);
+
+  const historial = await (await get(`/api/vehiculos/${id}/historial`)).json();
+  assert.ok(historial.length >= 2); // alta + cambio de estado
+  assert.equal(historial[0].estado_nuevo, "Reservado");
+  assert.equal(historial[0].username, "admin");
 });
 
 test("PATCH /api/vehiculos/:id/estado cambia solo el estado", async () => {
-  const lista = await (await fetch(`${baseUrl}/api/vehiculos?q=AB123CD`)).json();
+  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
   const id = lista[0].id;
 
-  const res = await fetch(`${baseUrl}/api/vehiculos/${id}/estado`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ estado: "Vendido" }),
-  });
+  const res = await patch(`/api/vehiculos/${id}/estado`, { estado: "Vendido" });
   assert.equal(res.status, 200);
   const body = await res.json();
   assert.equal(body.estado, "Vendido");
@@ -158,48 +183,102 @@ test("PATCH /api/vehiculos/:id/estado cambia solo el estado", async () => {
 });
 
 test("PATCH con estado inválido devuelve 400", async () => {
-  const lista = await (await fetch(`${baseUrl}/api/vehiculos?q=AB123CD`)).json();
+  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
   const id = lista[0].id;
 
-  const res = await fetch(`${baseUrl}/api/vehiculos/${id}/estado`, {
-    method: "PATCH",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ estado: "Perdido" }),
-  });
+  const res = await patch(`/api/vehiculos/${id}/estado`, { estado: "Perdido" });
   assert.equal(res.status, 400);
 });
 
 test("operaciones sobre un id inexistente devuelven 404", async () => {
-  const getRes = await fetch(`${baseUrl}/api/vehiculos/999999`);
-  assert.equal(getRes.status, 404);
-
-  const putRes = await fetch(`${baseUrl}/api/vehiculos/999999`, {
-    method: "PUT",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      marca: "A",
-      modelo: "B",
-      anio: 2020,
-      dominio: "ZZZ999",
-      precio: 1,
-      moneda: "ARS",
-    }),
-  });
-  assert.equal(putRes.status, 404);
-
-  const deleteRes = await fetch(`${baseUrl}/api/vehiculos/999999`, {
-    method: "DELETE",
-  });
-  assert.equal(deleteRes.status, 404);
+  assert.equal((await get("/api/vehiculos/999999")).status, 404);
+  assert.equal(
+    (
+      await put("/api/vehiculos/999999", {
+        marca: "A",
+        modelo: "B",
+        anio: 2020,
+        dominio: "ZZZ999",
+        precio: 1,
+        moneda: "ARS",
+      })
+    ).status,
+    404
+  );
+  assert.equal((await del("/api/vehiculos/999999")).status, 404);
 });
 
-test("DELETE /api/vehiculos/:id elimina el vehículo", async () => {
-  const lista = await (await fetch(`${baseUrl}/api/vehiculos?q=AB123CD`)).json();
+test("DELETE /api/vehiculos/:id es un borrado lógico: pasa a la papelera y se puede restaurar", async () => {
+  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
   const id = lista[0].id;
 
-  const res = await fetch(`${baseUrl}/api/vehiculos/${id}`, { method: "DELETE" });
+  const res = await del(`/api/vehiculos/${id}`);
   assert.equal(res.status, 204);
 
-  const getRes = await fetch(`${baseUrl}/api/vehiculos/${id}`);
-  assert.equal(getRes.status, 404);
+  // Ya no aparece en el listado normal ni se puede obtener por id.
+  assert.equal((await get(`/api/vehiculos/${id}`)).status, 404);
+  const listaActiva = await (await get("/api/vehiculos?q=AB123CD")).json();
+  assert.equal(listaActiva.length, 0);
+
+  // Pero sí aparece en la papelera.
+  const papelera = await (await get("/api/vehiculos?papelera=1")).json();
+  assert.equal(papelera.length, 1);
+  assert.equal(papelera[0].id, id);
+  assert.equal(papelera[0].eliminado, true);
+
+  // La patente vuelve a estar disponible para un vehículo nuevo mientras esté en la papelera.
+  const nuevoConMismaPatente = await post("/api/vehiculos", {
+    marca: "Chevrolet",
+    modelo: "Onix",
+    anio: 2023,
+    dominio: "AB123CD",
+    precio: 20000,
+    moneda: "USD",
+  });
+  assert.equal(nuevoConMismaPatente.status, 201);
+
+  // Restaurar el original ahora sí choca con la patente duplicada porque el nuevo ya la usa.
+  const restaurarConflicto = await patch(`/api/vehiculos/${id}/restaurar`, {});
+  assert.equal(restaurarConflicto.status, 409);
+
+  // Se libera la patente borrando (lógicamente) el vehículo nuevo, para poder
+  // restaurar el original en el siguiente test.
+  const nuevoCreado = await nuevoConMismaPatente.json();
+  await del(`/api/vehiculos/${nuevoCreado.id}`);
+});
+
+test("PATCH /api/vehiculos/:id/restaurar devuelve el vehículo a la lista activa", async () => {
+  const papelera = await (await get("/api/vehiculos?papelera=1")).json();
+  const id = papelera[0].id;
+
+  const res = await patch(`/api/vehiculos/${id}/restaurar`, {});
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.eliminado, false);
+
+  const listaActiva = await (await get("/api/vehiculos?q=AB123CD")).json();
+  assert.equal(listaActiva.length, 1);
+});
+
+test("DELETE /api/vehiculos/:id/permanente borra definitivamente solo desde la papelera", async () => {
+  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const id = lista[0].id;
+
+  // Todavía está activo: no se puede purgar directamente.
+  assert.equal((await del(`/api/vehiculos/${id}/permanente`)).status, 404);
+
+  await del(`/api/vehiculos/${id}`);
+  const purgar = await del(`/api/vehiculos/${id}/permanente`);
+  assert.equal(purgar.status, 204);
+
+  const papelera = await (await get("/api/vehiculos?papelera=1")).json();
+  assert.equal(papelera.find((v) => v.id === id), undefined);
+});
+
+test("GET /api/vehiculos/export.csv devuelve un CSV con encabezados", async () => {
+  const res = await get("/api/vehiculos/export.csv");
+  assert.equal(res.status, 200);
+  assert.match(res.headers.get("content-type") || "", /text\/csv/);
+  const texto = await res.text();
+  assert.match(texto.split("\n")[0], /^id,marca,modelo,anio,dominio/);
 });
