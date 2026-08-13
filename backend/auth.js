@@ -4,6 +4,7 @@ const { db } = require("./db");
 const SESSION_COOKIE = "gyg_session";
 const SESSION_TTL_MS = 1000 * 60 * 60 * 24 * 7; // 7 días
 const SCRYPT_KEYLEN = 64;
+const ROLES = ["admin", "vendedor"];
 
 function hashPassword(password) {
   const salt = crypto.randomBytes(16).toString("hex");
@@ -30,7 +31,7 @@ function ensureDefaultAdmin() {
   const passwordDefinidaPorEnv = Boolean(process.env.GYG_ADMIN_PASSWORD);
   const password = process.env.GYG_ADMIN_PASSWORD || "admin123";
 
-  db.prepare("INSERT INTO Usuarios (username, password_hash) VALUES (?, ?)").run(
+  db.prepare("INSERT INTO Usuarios (username, password_hash, rol) VALUES (?, ?, 'admin')").run(
     username,
     hashPassword(password)
   );
@@ -54,7 +55,8 @@ function obtenerSesion(token) {
 
   const sesion = db
     .prepare(
-      `SELECT Sesiones.token, Sesiones.expira_en, Usuarios.id AS usuario_id, Usuarios.username
+      `SELECT Sesiones.token, Sesiones.expira_en,
+              Usuarios.id AS usuario_id, Usuarios.username, Usuarios.rol
        FROM Sesiones
        JOIN Usuarios ON Usuarios.id = Sesiones.usuario_id
        WHERE Sesiones.token = ?`
@@ -83,6 +85,7 @@ function limpiarSesionesExpiradas() {
 module.exports = {
   SESSION_COOKIE,
   SESSION_TTL_MS,
+  ROLES,
   hashPassword,
   verifyPassword,
   ensureDefaultAdmin,

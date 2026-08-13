@@ -8,7 +8,7 @@ function requireAuth(req, res, next) {
     return res.status(401).json({ error: "No autenticado" });
   }
 
-  req.usuario = { id: sesion.usuario_id, username: sesion.username };
+  req.usuario = { id: sesion.usuario_id, username: sesion.username, rol: sesion.rol };
   next();
 }
 

@@ -34,7 +34,7 @@ router.post("/login", (req, res) => {
 
   const { token } = crearSesion(usuario.id);
   res.cookie(SESSION_COOKIE, token, COOKIE_OPTS);
-  res.json({ ok: true, usuario: { id: usuario.id, username: usuario.username } });
+  res.json({ ok: true, usuario: { id: usuario.id, username: usuario.username, rol: usuario.rol } });
 });
 
 router.post("/logout", (req, res) => {

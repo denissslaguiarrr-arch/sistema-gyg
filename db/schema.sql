@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS Usuarios (
   id            INTEGER PRIMARY KEY AUTOINCREMENT,
   username      TEXT    NOT NULL UNIQUE COLLATE NOCASE,
   password_hash TEXT    NOT NULL,
+  rol           TEXT    NOT NULL DEFAULT 'vendedor' CHECK (rol IN ('admin', 'vendedor')),
   created_at    TEXT    NOT NULL DEFAULT (datetime('now'))
 );
 
@@ -70,5 +71,5 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '2'),
+  ('schema_version', '3'),
   ('last_sync_at', '');
