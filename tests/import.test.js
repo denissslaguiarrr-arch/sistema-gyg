@@ -47,7 +47,8 @@ test("GET /api/vehiculos/plantilla.csv devuelve encabezados y una fila de ejempl
   const texto = await res.text();
   const lineas = texto.trim().split("\n");
   assert.equal(lineas.length, 2);
-  assert.match(lineas[0], /^marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,notas,imagenes_url$/);
+  assert.match(lineas[0], /^marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,notas,imagenes_url/);
+  assert.match(lineas[0], /version,combustible,transmision,traccion,puertas,color,motor,potencia,carroceria,destacado,equipamiento$/);
 });
 
 test("POST /api/vehiculos/import crea y actualiza vehículos, reportando errores por fila", async () => {
