@@ -10,10 +10,10 @@
     "backup": "node backend/scripts/backup.js"
   },
   "engines": {
-    "node": ">=18"
+    "node": ">=20"
   },
   "dependencies": {
-    "better-sqlite3": "^11.10.0",
+    "better-sqlite3": "^12.4.1",
     "cookie-parser": "^1.4.7",
     "express": "^4.21.2",
     "multer": "^2.2.0"

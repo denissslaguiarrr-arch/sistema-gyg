@@ -94,7 +94,8 @@ El stock **no viaja con Git**: `db/concesionaria.db` queda en cada máquina.
 Si querés mostrar los mismos autos, copiá ese archivo desde la PC original
 a `db\concesionaria.db` en esta (con el servidor parado).
 
-1. Instalá [Git](https://git-scm.com/download/win) y [Node.js LTS](https://nodejs.org).
+1. Instalá [Git](https://git-scm.com/download/win) y **[Node.js 22 LTS](https://nodejs.org)**
+   (botón verde **LTS**, no Current/24).
 2. **Cerrá y volvé a abrir** PowerShell.
 3. Andá al Escritorio (no uses `C:\Windows\system32`):
 
@@ -127,6 +128,29 @@ powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
 7. Para el cliente: cargá 1 o 2 autos con fotos (arrastrar a la dropzone),
    **Configuración del sitio** (WhatsApp real), **Publicar en la web**, y
    abrí https://gyg-automotores.blogspot.com/
+
+### Si `npm install` falla (better-sqlite3 / Visual Studio / express)
+
+Eso pasa sobre todo con **Node 24** (Current): `better-sqlite3` 11 no trae
+binarios listos y Windows intenta compilar C++ sin Visual Studio. El script
+igual seguía a `npm start` y terminaba en `Cannot find module 'express'`.
+
+En la PC de la demo:
+
+```powershell
+cd $env:USERPROFILE\Desktop\sistema-gyg
+git pull
+Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
+powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
+```
+
+Si sigue fallando, instalá Node **22 LTS** (desinstalá el 24 o dejá el 22
+primero en el PATH), cerrá PowerShell, borra `node_modules` y repetí el
+script. No hace falta instalar Visual Studio.
+
+Si ves `EPERM` en `tar-fs` (OneDrive), cerrá el Explorador sobre esa carpeta
+y borra `node_modules` de nuevo. Si persiste, copiá el proyecto fuera de
+OneDrive (por ejemplo `C:\sistema-gyg`).
 
 ## Autenticación y roles
 
