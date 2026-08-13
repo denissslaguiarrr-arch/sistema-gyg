@@ -64,8 +64,15 @@ tests/
 
 ```bash
 npm install
-npm test    # 63 tests automatizados
+npm test
 npm start   # http://localhost:3000
+```
+
+En Windows, para una demo en otra PC, lo más simple es copiar `env.example`
+a `.env`, completar tokens y correr:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
 ```
 
 Al arrancar por primera vez se crea un usuario administrador y se imprime la
@@ -80,6 +87,46 @@ GYG_ADMIN_USER=admin GYG_ADMIN_PASSWORD=una-clave-segura npm start
 
 `GET /api/health` (sin autenticación) confirma que Express y SQLite están
 operativos.
+
+## Preparar el sistema en otra PC (Windows)
+
+El stock **no viaja con Git**: `db/concesionaria.db` queda en cada máquina.
+Si querés mostrar los mismos autos, copiá ese archivo desde la PC original
+a `db\concesionaria.db` en esta (con el servidor parado).
+
+1. Instalá [Git](https://git-scm.com/download/win) y [Node.js LTS](https://nodejs.org).
+2. **Cerrá y volvé a abrir** PowerShell.
+3. Andá al Escritorio (no uses `C:\Windows\system32`):
+
+```powershell
+cd $env:USERPROFILE\Desktop
+git clone https://github.com/denissslaguiarrr-arch/sistema-gyg.git
+cd sistema-gyg
+git checkout cursor/paso-1-schema-servidor-9f90
+```
+
+4. Completá las claves una sola vez:
+
+```powershell
+copy env.example .env
+notepad .env
+```
+
+Pegá `GYG_GITHUB_TOKEN` (permiso `gist`) y `GYG_IMGUR_CLIENT_ID`. El
+`GYG_GIST_ID` ya viene cargado. Guardá y cerrá el Bloc de notas.
+
+5. Arranque:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
+```
+
+6. En el navegador: http://localhost:3000  
+   Usuario `admin` / contraseña `admin123`.
+
+7. Para el cliente: cargá 1 o 2 autos con fotos (arrastrar a la dropzone),
+   **Configuración del sitio** (WhatsApp real), **Publicar en la web**, y
+   abrí https://gyg-automotores.blogspot.com/
 
 ## Autenticación y roles
 

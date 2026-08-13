@@ -1,3 +1,5 @@
+require("./loadEnv").loadEnv();
+
 const app = require("./app");
 const { DB_PATH } = require("./db");
 const { ensureDefaultAdmin, limpiarSesionesExpiradas } = require("./auth");
