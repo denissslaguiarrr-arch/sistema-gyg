@@ -16,6 +16,7 @@ const state = {
   totalPaginas: 1,
   total: 0,
   formImagenes: [],
+  gestionId: null,
 };
 
 const el = {
@@ -69,6 +70,9 @@ const el = {
   fPrecio: document.getElementById("f-precio"),
   fPrecioOferta: document.getElementById("f-precio-oferta"),
   fMoneda: document.getElementById("f-moneda"),
+  fOrigen: document.getElementById("f-origen"),
+  fPrecioCompra: document.getElementById("f-precio-compra"),
+  fFechaIngreso: document.getElementById("f-fecha-ingreso"),
   fNotas: document.getElementById("f-notas"),
   fVersion: document.getElementById("f-version"),
   fCarroceria: document.getElementById("f-carroceria"),
@@ -94,6 +98,26 @@ const el = {
   historialTitulo: document.getElementById("historial-titulo"),
   historialLista: document.getElementById("historial-lista"),
   btnCerrarHistorial: document.getElementById("btn-cerrar-historial"),
+
+  modalGestionOverlay: document.getElementById("modal-gestion-overlay"),
+  modalGestion: document.getElementById("modal-gestion"),
+  gestionTitulo: document.getElementById("gestion-titulo"),
+  gestionSubtitulo: document.getElementById("gestion-subtitulo"),
+  gestionCuerpo: document.getElementById("gestion-cuerpo"),
+  btnCerrarGestion: document.getElementById("btn-cerrar-gestion"),
+
+  modalVentaOverlay: document.getElementById("modal-venta-overlay"),
+  modalVenta: document.getElementById("modal-venta"),
+  formVenta: document.getElementById("form-venta"),
+  ventaVehiculo: document.getElementById("venta-vehiculo"),
+  vId: document.getElementById("v-id"),
+  vCliente: document.getElementById("v-cliente"),
+  vTelefono: document.getElementById("v-telefono"),
+  vPrecio: document.getElementById("v-precio"),
+  vFecha: document.getElementById("v-fecha"),
+  vGarantia: document.getElementById("v-garantia"),
+  btnCerrarVenta: document.getElementById("btn-cerrar-venta"),
+  btnCancelarVenta: document.getElementById("btn-cancelar-venta"),
 
   modalPasswordOverlay: document.getElementById("modal-password-overlay"),
   modalPassword: document.getElementById("modal-password"),
@@ -182,6 +206,40 @@ function formatoFecha(fechaIso) {
   const fecha = new Date(fechaIso.replace(" ", "T") + "Z");
   if (Number.isNaN(fecha.getTime())) return fechaIso;
   return fecha.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
+}
+
+function hoyIso() {
+  const d = new Date();
+  const m = String(d.getMonth() + 1).padStart(2, "0");
+  const day = String(d.getDate()).padStart(2, "0");
+  return `${d.getFullYear()}-${m}-${day}`;
+}
+
+function masMeses(iso, meses) {
+  const partes = String(iso || "").split("-").map(Number);
+  if (partes.length < 3 || partes.some((n) => !Number.isFinite(n))) return "";
+  const dt = new Date(Date.UTC(partes[0], partes[1] - 1, partes[2]));
+  dt.setUTCMonth(dt.getUTCMonth() + meses);
+  return dt.toISOString().slice(0, 10);
+}
+
+function fechaVencida(iso) {
+  if (!iso) return false;
+  return String(iso).slice(0, 10) < hoyIso();
+}
+
+function badgeDias(dias) {
+  if (dias == null || !Number.isFinite(Number(dias))) {
+    return `<span class="text-xs text-slate-400">—</span>`;
+  }
+  const n = Number(dias);
+  const clase =
+    n > 60
+      ? "bg-red-100 text-red-700 ring-red-600/20"
+      : n > 30
+        ? "bg-amber-100 text-amber-800 ring-amber-600/20"
+        : "bg-slate-100 text-slate-600 ring-slate-400/30";
+  return `<span class="inline-flex items-center px-2 py-0.5 rounded-md text-xs font-semibold ring-1 ring-inset ${clase}">${n} días</span>`;
 }
 
 function badgeEstado(estado) {
@@ -632,6 +690,10 @@ el.btnPaginaSiguiente.addEventListener("click", () => {
 function accionesRapidas(vehiculo) {
   const botones = [];
 
+  botones.unshift(
+    `<button data-accion="gestion" data-id="${vehiculo.id}" class="text-xs font-medium text-slate-700 hover:text-slate-900 hover:underline">Gestión</button>`
+  );
+
   if (vehiculo.estado !== "Reservado") {
     botones.push(
       `<button data-accion="estado" data-id="${vehiculo.id}" data-estado="Reservado" class="text-xs font-medium text-yellow-700 hover:text-yellow-900 hover:underline">Reservar</button>`
@@ -639,7 +701,7 @@ function accionesRapidas(vehiculo) {
   }
   if (vehiculo.estado !== "Vendido") {
     botones.push(
-      `<button data-accion="estado" data-id="${vehiculo.id}" data-estado="Vendido" class="text-xs font-medium text-gray-600 hover:text-gray-900 hover:underline">Vender</button>`
+      `<button data-accion="venta" data-id="${vehiculo.id}" class="text-xs font-medium text-orange-700 hover:text-orange-900 hover:underline">Vender</button>`
     );
   }
   if (vehiculo.estado !== "Disponible") {
@@ -707,15 +769,18 @@ function renderTabla() {
       <tr class="hover:bg-slate-50">
         <td class="px-4 py-3">${miniatura(v)}</td>
         <td class="px-4 py-3">
-          <div class="font-medium text-slate-900">
-            ${v.destacado ? '<span title="Destacado" class="text-amber-500">★</span> ' : ""}${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}
-          </div>
+          <button data-accion="gestion" data-id="${v.id}" class="text-left">
+            <div class="font-medium text-slate-900 hover:text-indigo-700">
+              ${v.destacado ? '<span title="Destacado" class="text-amber-500">★</span> ' : ""}${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}
+            </div>
+          </button>
           ${v.notas ? `<div class="text-xs text-slate-400 mt-0.5 max-w-xs truncate" title="${escapeHtml(v.notas)}">${escapeHtml(v.notas)}</div>` : ""}
         </td>
         <td class="px-4 py-3 font-mono text-slate-600">${escapeHtml(v.dominio)}</td>
         <td class="px-4 py-3">${v.anio}</td>
         <td class="px-4 py-3">${formatoKilometraje(v.kilometraje)}</td>
         <td class="px-4 py-3">${htmlPrecio(v)}</td>
+        <td class="px-4 py-3">${badgeDias(v.dias_en_stock)}</td>
         <td class="px-4 py-3">${badgeEstado(v.estado)}</td>
         <td class="px-4 py-3 text-right">${state.vista === "papelera" ? accionesPapelera(v) : accionesRapidas(v)}</td>
       </tr>`
@@ -931,6 +996,9 @@ function abrirModal(vehiculo = null) {
     el.fPrecio.value = vehiculo.precio;
     if (el.fPrecioOferta) el.fPrecioOferta.value = vehiculo.precio_oferta ?? "";
     el.fMoneda.value = vehiculo.moneda;
+    if (el.fOrigen) el.fOrigen.value = vehiculo.origen || "Compra";
+    if (el.fPrecioCompra) el.fPrecioCompra.value = vehiculo.precio_compra ?? "";
+    if (el.fFechaIngreso) el.fFechaIngreso.value = (vehiculo.fecha_ingreso || "").slice(0, 10);
     el.fNotas.value = vehiculo.notas || "";
     el.fVersion.value = vehiculo.version || "";
     el.fCarroceria.value = vehiculo.carroceria || "";
@@ -950,6 +1018,9 @@ function abrirModal(vehiculo = null) {
     el.fMoneda.value = "ARS";
     el.fKilometraje.value = 0;
     el.fDestacado.checked = false;
+    if (el.fOrigen) el.fOrigen.value = "Compra";
+    if (el.fPrecioCompra) el.fPrecioCompra.value = "";
+    if (el.fFechaIngreso) el.fFechaIngreso.value = hoyIso();
   }
 
   el.modalOverlay.classList.remove("hidden");
@@ -973,6 +1044,9 @@ function leerFormulario() {
     precio: Number(el.fPrecio.value),
     precio_oferta: el.fPrecioOferta && el.fPrecioOferta.value !== "" ? Number(el.fPrecioOferta.value) : null,
     moneda: el.fMoneda.value,
+    origen: el.fOrigen ? el.fOrigen.value : "Compra",
+    precio_compra: el.fPrecioCompra && el.fPrecioCompra.value !== "" ? Number(el.fPrecioCompra.value) : null,
+    fecha_ingreso: el.fFechaIngreso && el.fFechaIngreso.value ? el.fFechaIngreso.value : hoyIso(),
     imagenes_url: state.formImagenes,
     notas: el.fNotas.value.trim(),
     version: el.fVersion.value.trim(),
@@ -1098,6 +1172,234 @@ function cerrarHistorial() {
   el.modalHistorial.classList.add("hidden");
 }
 
+async function abrirGestion(id) {
+  state.gestionId = Number(id);
+  try {
+    const data = await apiRequest(`${API_BASE}/${id}/gestion`);
+    renderGestion(data);
+    el.modalGestionOverlay.classList.remove("hidden");
+    el.modalGestion.classList.remove("hidden");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+function cerrarGestion() {
+  el.modalGestionOverlay.classList.add("hidden");
+  el.modalGestion.classList.add("hidden");
+  state.gestionId = null;
+}
+
+function renderGestion(data) {
+  const v = data.vehiculo;
+  const r = data.rentabilidad;
+  const docs = data.documentacion || {};
+  const venta = data.venta;
+  el.gestionTitulo.textContent = `${v.marca} ${v.modelo}`;
+  el.gestionSubtitulo.textContent = `${v.dominio} · ${v.anio} · ${v.origen || "Compra"}`;
+
+  const margenClase = r.margen >= 0 ? "text-emerald-700" : "text-red-700";
+  const alertaVtv = fechaVencida(docs.vtv_vencimiento)
+    ? `<p class="text-xs font-medium text-red-600 mt-1">VTV vencida el ${escapeHtml(docs.vtv_vencimiento)}</p>`
+    : "";
+  const alertaPolicial = fechaVencida(docs.verificacion_policial_vto)
+    ? `<p class="text-xs font-medium text-red-600 mt-1">Verificación policial vencida el ${escapeHtml(docs.verificacion_policial_vto)}</p>`
+    : "";
+
+  const gastosHtml =
+    (data.gastos || []).length === 0
+      ? `<p class="text-xs text-slate-400">Todavía no hay gastos cargados.</p>`
+      : `<ul class="divide-y divide-slate-100">${data.gastos
+          .map(
+            (g) => `
+        <li class="flex items-center justify-between gap-3 py-2">
+          <div>
+            <p class="font-medium text-slate-800">${escapeHtml(g.concepto)}</p>
+            <p class="text-xs text-slate-400">${escapeHtml(g.fecha || "")}</p>
+          </div>
+          <div class="flex items-center gap-3">
+            <span class="font-medium">${formatoMoneda(g.monto, v.moneda)}</span>
+            ${
+              esAdmin()
+                ? `<button type="button" data-gestion="borrar-gasto" data-id="${g.id}" class="text-xs text-red-500 hover:underline">Quitar</button>`
+                : ""
+            }
+          </div>
+        </li>`
+          )
+          .join("")}</ul>`;
+
+  el.gestionCuerpo.innerHTML = `
+    <div class="flex flex-wrap items-center gap-2">
+      ${badgeEstado(v.estado)}
+      ${badgeDias(data.dias_en_stock)}
+      ${esAdmin() ? `<button type="button" data-gestion="editar" class="text-xs font-medium text-indigo-600 hover:underline">Editar datos</button>` : ""}
+      ${v.estado !== "Vendido" ? `<button type="button" data-gestion="vender" class="text-xs font-medium text-orange-700 hover:underline">Vender</button>` : ""}
+    </div>
+    <div class="grid sm:grid-cols-2 gap-3">
+      <div class="rounded-xl border border-slate-200 p-4 bg-slate-50">
+        <p class="text-xs uppercase tracking-wide text-slate-400 font-semibold">Rentabilidad</p>
+        <dl class="mt-2 space-y-1">
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">Precio de venta estimado</dt><dd>${formatoMoneda(r.precio_venta_estimado, v.moneda)}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">Precio de costo</dt><dd>${r.precio_compra == null ? '<span class="text-amber-700">Sin cargar</span>' : formatoMoneda(r.precio_compra, v.moneda)}</dd></div>
+          <div class="flex justify-between gap-2"><dt class="text-slate-500">Gastos</dt><dd>${formatoMoneda(r.total_gastos, v.moneda)}</dd></div>
+          <div class="flex justify-between gap-2 pt-1 border-t border-slate-200 font-semibold ${margenClase}"><dt>Margen</dt><dd>${formatoMoneda(r.margen, v.moneda)}</dd></div>
+        </dl>
+        ${r.costo_completo ? "" : `<p class="text-xs text-amber-700 mt-2">Cargá el precio de costo en Editar para ver el margen real.</p>`}
+      </div>
+      <div class="rounded-xl border border-slate-200 p-4">
+        <p class="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-2">Papeles</p>
+        <label class="flex items-center gap-2 py-1"><input type="checkbox" id="doc-08" ${docs.tiene_08 ? "checked" : ""} /> Formulario 08</label>
+        <label class="flex items-center gap-2 py-1"><input type="checkbox" id="doc-titulo" ${docs.tiene_titulo ? "checked" : ""} /> Título</label>
+        <label class="block text-xs text-slate-600 mt-2 mb-1">Vencimiento VTV</label>
+        <input type="date" id="doc-vtv" value="${escapeHtml(docs.vtv_vencimiento || "")}" class="campo" />
+        ${alertaVtv}
+        <label class="block text-xs text-slate-600 mt-2 mb-1">Verificación policial</label>
+        <input type="date" id="doc-policial" value="${escapeHtml(docs.verificacion_policial_vto || "")}" class="campo" />
+        ${alertaPolicial}
+        <button type="button" data-gestion="guardar-docs" class="mt-3 px-3 py-1.5 rounded-lg text-xs font-medium bg-slate-800 text-white hover:bg-slate-900">Guardar papeles</button>
+      </div>
+    </div>
+    <div class="rounded-xl border border-slate-200 p-4">
+      <p class="text-xs uppercase tracking-wide text-slate-400 font-semibold mb-2">Gastos de reacondicionamiento</p>
+      ${gastosHtml}
+      ${
+        esAdmin()
+          ? `<form id="form-gasto" class="mt-3 grid sm:grid-cols-4 gap-2 items-end">
+              <div class="sm:col-span-2">
+                <label class="block text-xs text-slate-600 mb-1">Concepto</label>
+                <input id="g-concepto" class="campo" placeholder="Cambio de correa, gestoría..." required />
+              </div>
+              <div>
+                <label class="block text-xs text-slate-600 mb-1">Monto</label>
+                <input id="g-monto" type="number" min="0" step="0.01" class="campo" required />
+              </div>
+              <div>
+                <button type="submit" class="w-full px-3 py-2 rounded-lg text-xs font-medium bg-indigo-600 text-white hover:bg-indigo-700">Agregar</button>
+              </div>
+            </form>`
+          : ""
+      }
+    </div>
+    ${
+      venta
+        ? `<div class="rounded-xl border border-emerald-200 bg-emerald-50 p-4">
+            <p class="text-xs uppercase tracking-wide text-emerald-700 font-semibold">Venta</p>
+            <p class="mt-1">${escapeHtml(venta.cliente_nombre)} · ${escapeHtml(venta.cliente_telefono || "sin teléfono")}</p>
+            <p class="text-slate-600">Cerrada a ${formatoMoneda(venta.precio_venta_final, v.moneda)} el ${escapeHtml(venta.fecha_venta || "")}</p>
+            <p class="text-xs text-slate-500">Garantía hasta ${escapeHtml(venta.fin_garantia || "—")}</p>
+          </div>`
+        : ""
+    }
+  `;
+
+  const formGasto = document.getElementById("form-gasto");
+  if (formGasto) formGasto.addEventListener("submit", manejarAltaGasto);
+}
+
+async function manejarAltaGasto(evento) {
+  evento.preventDefault();
+  if (!state.gestionId) return;
+  const concepto = document.getElementById("g-concepto").value.trim();
+  const monto = Number(document.getElementById("g-monto").value);
+  try {
+    await apiRequest(`${API_BASE}/${state.gestionId}/gastos`, {
+      method: "POST",
+      body: JSON.stringify({ concepto, monto, fecha: hoyIso() }),
+    });
+    await abrirGestion(state.gestionId);
+    mostrarAlerta("Gasto agregado.", "ok");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+async function guardarDocumentacion() {
+  if (!state.gestionId) return;
+  try {
+    await apiRequest(`${API_BASE}/${state.gestionId}/documentacion`, {
+      method: "PUT",
+      body: JSON.stringify({
+        tiene_08: document.getElementById("doc-08").checked,
+        tiene_titulo: document.getElementById("doc-titulo").checked,
+        vtv_vencimiento: document.getElementById("doc-vtv").value || null,
+        verificacion_policial_vto: document.getElementById("doc-policial").value || null,
+      }),
+    });
+    await abrirGestion(state.gestionId);
+    mostrarAlerta("Documentación actualizada.", "ok");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+function abrirVenta(id) {
+  const vehiculo = state.vehiculos.find((item) => item.id === Number(id));
+  el.formVenta.reset();
+  el.vId.value = id;
+  el.ventaVehiculo.textContent = vehiculo
+    ? `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.dominio})`
+    : "Vehículo";
+  el.vPrecio.value = vehiculo ? vehiculo.precio_oferta ?? vehiculo.precio : "";
+  el.vFecha.value = hoyIso();
+  el.vGarantia.value = masMeses(el.vFecha.value, 3);
+  el.modalVentaOverlay.classList.remove("hidden");
+  el.modalVenta.classList.remove("hidden");
+  el.vCliente.focus();
+}
+
+function cerrarVenta() {
+  el.modalVentaOverlay.classList.add("hidden");
+  el.modalVenta.classList.add("hidden");
+}
+
+async function manejarSubmitVenta(evento) {
+  evento.preventDefault();
+  const id = el.vId.value;
+  try {
+    await apiRequest(`${API_BASE}/${id}/venta`, {
+      method: "POST",
+      body: JSON.stringify({
+        cliente_nombre: el.vCliente.value.trim(),
+        cliente_telefono: el.vTelefono.value.trim(),
+        precio_venta_final: Number(el.vPrecio.value),
+        fecha_venta: el.vFecha.value || hoyIso(),
+        fin_garantia: el.vGarantia.value || masMeses(el.vFecha.value || hoyIso(), 3),
+      }),
+    });
+    cerrarVenta();
+    if (state.gestionId) await abrirGestion(state.gestionId);
+    mostrarAlerta("Venta registrada. El vehículo pasó a Vendido.", "ok");
+    await Promise.all([cargarVehiculos(), cargarResumen()]);
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+el.gestionCuerpo.addEventListener("click", async (evento) => {
+  const boton = evento.target.closest("[data-gestion]");
+  if (!boton) return;
+  const accion = boton.dataset.gestion;
+  if (accion === "editar") {
+    const vehiculo = state.vehiculos.find((item) => item.id === state.gestionId);
+    if (vehiculo) {
+      cerrarGestion();
+      abrirModal(vehiculo);
+    }
+  } else if (accion === "vender") {
+    abrirVenta(state.gestionId);
+  } else if (accion === "guardar-docs") {
+    await guardarDocumentacion();
+  } else if (accion === "borrar-gasto") {
+    try {
+      await apiRequest(`${API_BASE}/${state.gestionId}/gastos/${boton.dataset.id}`, { method: "DELETE" });
+      await abrirGestion(state.gestionId);
+    } catch (err) {
+      mostrarAlerta(err.message);
+    }
+  }
+});
+
 function manejarClickTabla(evento) {
   const boton = evento.target.closest("button[data-accion]");
   if (!boton) return;
@@ -1117,6 +1419,10 @@ function manejarClickTabla(evento) {
     restaurarVehiculo(id);
   } else if (accion === "eliminar-permanente") {
     eliminarPermanente(id);
+  } else if (accion === "gestion") {
+    abrirGestion(id);
+  } else if (accion === "venta") {
+    abrirVenta(id);
   }
 }
 
@@ -1176,11 +1482,22 @@ el.form.addEventListener("submit", manejarSubmit);
 el.tablaBody.addEventListener("click", manejarClickTabla);
 el.btnCerrarHistorial.addEventListener("click", cerrarHistorial);
 el.modalHistorialOverlay.addEventListener("click", cerrarHistorial);
+el.btnCerrarGestion.addEventListener("click", cerrarGestion);
+el.modalGestionOverlay.addEventListener("click", cerrarGestion);
+el.btnCerrarVenta.addEventListener("click", cerrarVenta);
+el.btnCancelarVenta.addEventListener("click", cerrarVenta);
+el.modalVentaOverlay.addEventListener("click", cerrarVenta);
+el.formVenta.addEventListener("submit", manejarSubmitVenta);
+el.vFecha.addEventListener("change", () => {
+  el.vGarantia.value = masMeses(el.vFecha.value || hoyIso(), 3);
+});
 
 document.addEventListener("keydown", (evento) => {
   if (evento.key !== "Escape") return;
   if (!el.modal.classList.contains("hidden")) cerrarModal();
   if (!el.modalHistorial.classList.contains("hidden")) cerrarHistorial();
+  if (!el.modalGestion.classList.contains("hidden")) cerrarGestion();
+  if (!el.modalVenta.classList.contains("hidden")) cerrarVenta();
   if (!el.modalPassword.classList.contains("hidden")) cerrarModalPassword();
   if (!el.modalUsuarios.classList.contains("hidden")) cerrarModalUsuarios();
   if (!el.modalImportar.classList.contains("hidden")) cerrarModalImportar();
