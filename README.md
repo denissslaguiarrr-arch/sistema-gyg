@@ -19,11 +19,13 @@ backend/
   routes/
     auth.js               Login, logout, usuario actual, cambio de contraseña
     usuarios.js            Gestión de usuarios y roles (solo admin)
-    vehiculos.js          CRUD, papelera, historial, resumen KPI, export CSV, paginación
+    vehiculos.js          CRUD, papelera, historial, resumen KPI, export/import CSV, paginación
     uploads.js            Subida de fotos (multer, solo admin)
     public.js              API pública de solo lectura para la ficha compartible
   scripts/
     backup.js             Backup manual/programado de la base SQLite
+  utils/
+    csv.js                 Parser CSV (RFC 4180) reutilizado por export/import
 db/
   schema.sql            Definición de tablas (Vehiculos, Usuarios, Sesiones, HistorialEstados, Meta)
   concesionaria.db       Archivo SQLite (generado en runtime, no versionado)
@@ -39,6 +41,8 @@ tests/
   auth.test.js            Login, logout, cambio de contraseña
   roles.test.js           Permisos admin vs. vendedor, gestión de usuarios
   public.test.js          Ficha pública sin sesión
+  csv.test.js             Parser CSV (comillas, comas, BOM, acentos)
+  import.test.js          Importación masiva de vehículos por CSV
   api.test.js             CRUD, papelera, historial, filtros, paginación, export CSV
 ```
 
@@ -46,7 +50,7 @@ tests/
 
 ```bash
 npm install
-npm test    # 37 tests automatizados
+npm test    # 46 tests automatizados
 npm start   # http://localhost:3000
 ```
 
@@ -96,6 +100,8 @@ Hay dos roles:
 | GET    | `/api/vehiculos`                  | Lista paginada. Filtros: `q`, `estado`, `km` (`0km`/`usado`), `papelera=1`. Orden: `orden` (`marca`/`anio`/`kilometraje`/`precio`/`created_at`), `direccion` (`asc`/`desc`). Paginación: `pagina`, `porPagina` (máx. 100) | admin, vendedor |
 | GET    | `/api/vehiculos/resumen`          | KPIs: totales por estado y valor de stock activo (ARS/USD) | admin, vendedor |
 | GET    | `/api/vehiculos/export.csv`       | Exporta a CSV el listado filtrado (sin paginar)         | admin, vendedor |
+| GET    | `/api/vehiculos/plantilla.csv`    | Descarga una plantilla CSV de ejemplo para importar     | admin, vendedor |
+| POST   | `/api/vehiculos/import`           | Importa vehículos desde un CSV (`multipart/form-data`, campo `archivo`) | admin |
 | GET    | `/api/vehiculos/:id`              | Obtiene un vehículo                                    | admin, vendedor |
 | GET    | `/api/vehiculos/:id/historial`    | Historial de cambios de estado                         | admin, vendedor |
 | POST   | `/api/vehiculos`                  | Crea un vehículo                                       | admin |
@@ -112,6 +118,27 @@ La patente (`dominio`) es única entre los vehículos activos; intentar
 duplicarla devuelve `409`. Los datos inválidos devuelven `400` con el
 detalle de los errores. Toda la API de vehículos y de subida de fotos
 requiere sesión (401 si no la hay, 403 si el rol no alcanza).
+
+## Importar vehículos desde CSV
+
+Desde el panel, el botón "Importar CSV" (solo admin) abre un modal donde se
+puede descargar una plantilla de ejemplo y subir un archivo `.csv` con las
+columnas `marca, modelo, anio, dominio, kilometraje, precio, moneda, estado,
+notas, imagenes_url`. También acepta los alias `patente` (en vez de
+`dominio`) y `km` (en vez de `kilometraje`), pensados para planillas armadas
+a mano en Excel/Google Sheets.
+
+Reglas de importación:
+
+- Si la **patente ya existe** entre los vehículos activos, se **actualiza**
+  ese vehículo (sin duplicar).
+- Si no existe, se **crea** uno nuevo.
+- El archivo se procesa fila por fila: una fila con datos inválidos **no
+  aborta el resto de la importación**; se reporta en la respuesta junto con
+  el número de fila y el motivo (por ejemplo, "Fila 5 (CSV004): marca es
+  obligatoria").
+- Cada alta o cambio de estado producido por la importación queda registrado
+  en el historial del vehículo, igual que si se hiciera manualmente.
 
 ## Ficha pública (compartible)
 
