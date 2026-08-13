@@ -59,6 +59,13 @@ async function del(path_) {
 async function get(path_) {
   return fetch(`${baseUrl}${path_}`, { headers: headers() });
 }
+// GET /api/vehiculos devuelve { items, total, pagina, porPagina, totalPaginas }.
+async function listar(path_) {
+  return (await get(path_)).json();
+}
+async function listarItems(path_) {
+  return (await listar(path_)).items;
+}
 
 test("GET /api/health responde ok con la base vacía (sin requerir sesión)", async () => {
   const res = await fetch(`${baseUrl}/api/health`);
@@ -83,9 +90,10 @@ test("POST /api/vehiculos crea un vehículo y aparece en el listado", async () =
   assert.equal(creado.estado, "Disponible");
   assert.equal(creado.es_0km, true);
 
-  const lista = await (await get("/api/vehiculos")).json();
-  assert.equal(lista.length, 1);
-  assert.equal(lista[0].dominio, "AB123CD");
+  const lista = await listar("/api/vehiculos");
+  assert.equal(lista.total, 1);
+  assert.equal(lista.items.length, 1);
+  assert.equal(lista.items[0].dominio, "AB123CD");
 });
 
 test("POST con dominio duplicado (sin distinguir mayúsculas) devuelve 409", async () => {
@@ -120,20 +128,37 @@ test("GET /api/vehiculos filtra por texto, estado y km", async () => {
     estado: "Reservado",
   });
 
-  const porTexto = await (await get("/api/vehiculos?q=focus")).json();
+  const porTexto = await listarItems("/api/vehiculos?q=focus");
   assert.equal(porTexto.length, 1);
   assert.equal(porTexto[0].modelo, "Focus");
 
-  const porEstado = await (await get("/api/vehiculos?estado=Reservado")).json();
+  const porEstado = await listarItems("/api/vehiculos?estado=Reservado");
   assert.equal(porEstado.length, 1);
 
-  const soloUsados = await (await get("/api/vehiculos?km=usado")).json();
+  const soloUsados = await listarItems("/api/vehiculos?km=usado");
   assert.equal(soloUsados.length, 1);
   assert.equal(soloUsados[0].dominio, "XYZ789");
 
-  const solo0km = await (await get("/api/vehiculos?km=0km")).json();
+  const solo0km = await listarItems("/api/vehiculos?km=0km");
   assert.equal(solo0km.length, 1);
   assert.equal(solo0km[0].dominio, "AB123CD");
+});
+
+test("GET /api/vehiculos ordena server-side y pagina los resultados", async () => {
+  const porPrecioAsc = await listarItems("/api/vehiculos?orden=precio&direccion=asc");
+  assert.equal(porPrecioAsc[0].dominio, "AB123CD"); // 45000 < 8000000
+
+  const porPrecioDesc = await listarItems("/api/vehiculos?orden=precio&direccion=desc");
+  assert.equal(porPrecioDesc[0].dominio, "XYZ789");
+
+  const paginaUno = await listar("/api/vehiculos?porPagina=1&pagina=1");
+  assert.equal(paginaUno.items.length, 1);
+  assert.equal(paginaUno.total, 2);
+  assert.equal(paginaUno.totalPaginas, 2);
+
+  const paginaDos = await listar("/api/vehiculos?porPagina=1&pagina=2");
+  assert.equal(paginaDos.items.length, 1);
+  assert.notEqual(paginaDos.items[0].id, paginaUno.items[0].id);
 });
 
 test("GET /api/vehiculos/resumen calcula KPIs sobre los vehículos activos", async () => {
@@ -147,7 +172,7 @@ test("GET /api/vehiculos/resumen calcula KPIs sobre los vehículos activos", asy
 });
 
 test("PUT /api/vehiculos/:id actualiza el vehículo y registra el cambio de estado", async () => {
-  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const lista = await listarItems("/api/vehiculos?q=AB123CD");
   const id = lista[0].id;
 
   const res = await put(`/api/vehiculos/${id}`, {
@@ -172,7 +197,7 @@ test("PUT /api/vehiculos/:id actualiza el vehículo y registra el cambio de esta
 });
 
 test("PATCH /api/vehiculos/:id/estado cambia solo el estado", async () => {
-  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const lista = await listarItems("/api/vehiculos?q=AB123CD");
   const id = lista[0].id;
 
   const res = await patch(`/api/vehiculos/${id}/estado`, { estado: "Vendido" });
@@ -183,7 +208,7 @@ test("PATCH /api/vehiculos/:id/estado cambia solo el estado", async () => {
 });
 
 test("PATCH con estado inválido devuelve 400", async () => {
-  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const lista = await listarItems("/api/vehiculos?q=AB123CD");
   const id = lista[0].id;
 
   const res = await patch(`/api/vehiculos/${id}/estado`, { estado: "Perdido" });
@@ -209,7 +234,7 @@ test("operaciones sobre un id inexistente devuelven 404", async () => {
 });
 
 test("DELETE /api/vehiculos/:id es un borrado lógico: pasa a la papelera y se puede restaurar", async () => {
-  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const lista = await listarItems("/api/vehiculos?q=AB123CD");
   const id = lista[0].id;
 
   const res = await del(`/api/vehiculos/${id}`);
@@ -217,11 +242,11 @@ test("DELETE /api/vehiculos/:id es un borrado lógico: pasa a la papelera y se p
 
   // Ya no aparece en el listado normal ni se puede obtener por id.
   assert.equal((await get(`/api/vehiculos/${id}`)).status, 404);
-  const listaActiva = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const listaActiva = await listarItems("/api/vehiculos?q=AB123CD");
   assert.equal(listaActiva.length, 0);
 
   // Pero sí aparece en la papelera.
-  const papelera = await (await get("/api/vehiculos?papelera=1")).json();
+  const papelera = await listarItems("/api/vehiculos?papelera=1");
   assert.equal(papelera.length, 1);
   assert.equal(papelera[0].id, id);
   assert.equal(papelera[0].eliminado, true);
@@ -248,7 +273,7 @@ test("DELETE /api/vehiculos/:id es un borrado lógico: pasa a la papelera y se p
 });
 
 test("PATCH /api/vehiculos/:id/restaurar devuelve el vehículo a la lista activa", async () => {
-  const papelera = await (await get("/api/vehiculos?papelera=1")).json();
+  const papelera = await listarItems("/api/vehiculos?papelera=1");
   const id = papelera[0].id;
 
   const res = await patch(`/api/vehiculos/${id}/restaurar`, {});
@@ -256,12 +281,12 @@ test("PATCH /api/vehiculos/:id/restaurar devuelve el vehículo a la lista activa
   const body = await res.json();
   assert.equal(body.eliminado, false);
 
-  const listaActiva = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const listaActiva = await listarItems("/api/vehiculos?q=AB123CD");
   assert.equal(listaActiva.length, 1);
 });
 
 test("DELETE /api/vehiculos/:id/permanente borra definitivamente solo desde la papelera", async () => {
-  const lista = await (await get("/api/vehiculos?q=AB123CD")).json();
+  const lista = await listarItems("/api/vehiculos?q=AB123CD");
   const id = lista[0].id;
 
   // Todavía está activo: no se puede purgar directamente.
@@ -271,7 +296,7 @@ test("DELETE /api/vehiculos/:id/permanente borra definitivamente solo desde la p
   const purgar = await del(`/api/vehiculos/${id}/permanente`);
   assert.equal(purgar.status, 204);
 
-  const papelera = await (await get("/api/vehiculos?papelera=1")).json();
+  const papelera = await listarItems("/api/vehiculos?papelera=1");
   assert.equal(papelera.find((v) => v.id === id), undefined);
 });
 
