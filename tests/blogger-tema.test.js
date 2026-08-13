@@ -27,3 +27,12 @@ test("el tema incluye zoom, Contactanos y redes opcionales", () => {
   assert.match(tema, /G&amp;G Automotores/);
   assert.doesNotMatch(tema, /G<span>y<\/span>G/);
 });
+
+test("el nombre G&G está disponible en las dos partes del script de Blogger", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  const partes = js.split("})(window);");
+  assert.equal(partes.length, 2);
+  assert.match(partes[0], /displayBrandName,/);
+  assert.match(partes[1], /function brandMarkup/);
+  assert.match(partes[1], /GyGStock\.displayBrandName/);
+});
