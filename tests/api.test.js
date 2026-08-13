@@ -188,6 +188,7 @@ test("POST /api/vehiculos guarda y limpia un precio_oferta", async () => {
   assert.equal(creado.precio, 20000);
   assert.equal(creado.precio_oferta, 17500);
 
+  const detalle = await (await get(`/api/vehiculos/${creado.id}`)).json();
   assert.equal(detalle.precio_oferta, 17500);
 
   const resumenConOferta = await (await get("/api/vehiculos/resumen")).json();
@@ -207,6 +208,7 @@ test("POST /api/vehiculos guarda y limpia un precio_oferta", async () => {
   assert.equal((await sinOferta.json()).precio_oferta, null);
 
   await del(`/api/vehiculos/${creado.id}`);
+  await del(`/api/vehiculos/${creado.id}/permanente`);
 });
 
 test("PUT /api/vehiculos/:id actualiza el vehículo y registra el cambio de estado", async () => {
