@@ -15,6 +15,14 @@ const CAMPOS_ORDEN = new Set(["marca", "anio", "kilometraje", "precio", "created
 const PAGINA_TAMANIO_DEFAULT = 24;
 const PAGINA_TAMANIO_MAX = 100;
 
+// Columnas que se cargan/editan a través del formulario. Se centralizan acá
+// para armar los INSERT/UPDATE sin repetir la lista en cada ruta.
+const COLUMNAS_VEHICULO = [
+  "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "moneda", "estado",
+  "imagenes_url", "notas", "version", "combustible", "transmision", "traccion",
+  "puertas", "color", "motor", "potencia", "carroceria", "destacado", "equipamiento",
+];
+
 // Encabezados aceptados por columna, ya normalizados (minúsculas, sin acentos).
 // Permite que el CSV venga de una planilla armada por alguien que use "patente"
 // en vez de "dominio", "km" en vez de "kilometraje", etc.
@@ -27,13 +35,25 @@ const ALIAS_COLUMNAS = {
   precio: ["precio"],
   moneda: ["moneda"],
   estado: ["estado"],
-  notas: ["notas", "detalle", "detalles"],
+  notas: ["notas", "detalle", "detalles", "descripcion"],
   imagenes_url: ["imagenes_url", "imagenes", "fotos", "imagen"],
+  version: ["version"],
+  combustible: ["combustible"],
+  transmision: ["transmision"],
+  traccion: ["traccion"],
+  puertas: ["puertas"],
+  color: ["color"],
+  motor: ["motor"],
+  potencia: ["potencia"],
+  carroceria: ["carroceria", "carrocería"],
+  destacado: ["destacado"],
+  equipamiento: ["equipamiento", "equipo", "extras"],
 };
 
 const COLUMNAS_PLANTILLA = [
-  "marca", "modelo", "anio", "dominio", "kilometraje",
-  "precio", "moneda", "estado", "notas", "imagenes_url",
+  "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "moneda", "estado", "notas",
+  "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color",
+  "motor", "potencia", "carroceria", "destacado", "equipamiento",
 ];
 
 function serialize(row) {
@@ -43,9 +63,17 @@ function serialize(row) {
   } catch (_err) {
     imagenes = [];
   }
+  let equipamiento = [];
+  try {
+    equipamiento = JSON.parse(row.equipamiento || "[]");
+  } catch (_err) {
+    equipamiento = [];
+  }
   return {
     ...row,
     imagenes_url: imagenes,
+    equipamiento,
+    destacado: !!row.destacado,
     es_0km: row.kilometraje === 0,
     eliminado: !!row.eliminado,
   };
@@ -133,8 +161,9 @@ router.get("/export.csv", (req, res) => {
   const rows = db.prepare(`SELECT * FROM Vehiculos ${where} ${orden}`).all(params);
 
   const columnas = [
-    "id", "marca", "modelo", "anio", "dominio", "kilometraje",
-    "precio", "moneda", "estado", "notas", "created_at", "updated_at",
+    "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "moneda", "estado",
+    "notas", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
+    "potencia", "carroceria", "destacado", "created_at", "updated_at",
   ];
   const escaparCsv = (valor) => {
     const texto = String(valor ?? "");
@@ -152,11 +181,16 @@ router.get("/export.csv", (req, res) => {
 });
 
 router.get("/plantilla.csv", (_req, res) => {
+  const escaparCsv = (valor) => {
+    const texto = String(valor ?? "");
+    return /[",\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
+  };
   const ejemplo = [
-    "Toyota", "Hilux", "2024", "AB123CD", "0",
-    "45000", "USD", "Disponible", "Único dueño", "https://ejemplo.com/foto1.jpg",
+    "Toyota", "Hilux", "2024", "AB123CD", "0", "45000", "USD", "Disponible", "Único dueño",
+    "https://ejemplo.com/foto1.jpg", "SRX 4x4", "Diesel", "Automática", "4x4", 4, "Blanco",
+    "2.8L", "204cv", "Pickup", "1", "Aire acondicionado, Bluetooth, Cámara de retroceso",
   ];
-  const csv = [COLUMNAS_PLANTILLA.join(","), ejemplo.join(",")].join("\n");
+  const csv = [COLUMNAS_PLANTILLA.join(","), ejemplo.map(escaparCsv).join(",")].join("\n");
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", 'attachment; filename="plantilla-vehiculos.csv"');
   res.send(csv);
@@ -202,6 +236,17 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
         estado: obtener("estado"),
         notas: obtener("notas"),
         imagenes_url: obtener("imagenes_url"),
+        version: obtener("version"),
+        combustible: obtener("combustible"),
+        transmision: obtener("transmision"),
+        traccion: obtener("traccion"),
+        puertas: obtener("puertas"),
+        color: obtener("color"),
+        motor: obtener("motor"),
+        potencia: obtener("potencia"),
+        carroceria: obtener("carroceria"),
+        destacado: obtener("destacado"),
+        equipamiento: obtener("equipamiento"),
       });
 
       const existente = db
@@ -211,9 +256,7 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
       if (existente) {
         db.prepare(
           `UPDATE Vehiculos SET
-             marca = @marca, modelo = @modelo, anio = @anio, dominio = @dominio,
-             kilometraje = @kilometraje, precio = @precio, moneda = @moneda,
-             estado = @estado, imagenes_url = @imagenes_url, notas = @notas,
+             ${COLUMNAS_VEHICULO.map((c) => `${c} = @${c}`).join(", ")},
              updated_at = datetime('now')
            WHERE id = @id`
         ).run({ ...data, id: existente.id });
@@ -228,10 +271,8 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
       } else {
         const insertado = db
           .prepare(
-            `INSERT INTO Vehiculos
-               (marca, modelo, anio, dominio, kilometraje, precio, moneda, estado, imagenes_url, notas)
-             VALUES
-               (@marca, @modelo, @anio, @dominio, @kilometraje, @precio, @moneda, @estado, @imagenes_url, @notas)`
+            `INSERT INTO Vehiculos (${COLUMNAS_VEHICULO.join(", ")})
+             VALUES (${COLUMNAS_VEHICULO.map((c) => `@${c}`).join(", ")})`
           )
           .run(data);
 
@@ -305,10 +346,8 @@ router.post("/", requireRole("admin"), (req, res, next) => {
     const data = validateVehiculo(req.body);
     const result = db
       .prepare(
-        `INSERT INTO Vehiculos
-           (marca, modelo, anio, dominio, kilometraje, precio, moneda, estado, imagenes_url, notas)
-         VALUES
-           (@marca, @modelo, @anio, @dominio, @kilometraje, @precio, @moneda, @estado, @imagenes_url, @notas)`
+        `INSERT INTO Vehiculos (${COLUMNAS_VEHICULO.join(", ")})
+         VALUES (${COLUMNAS_VEHICULO.map((c) => `@${c}`).join(", ")})`
       )
       .run(data);
 
@@ -333,9 +372,7 @@ router.put("/:id", requireRole("admin"), (req, res, next) => {
     const data = validateVehiculo(req.body);
     db.prepare(
       `UPDATE Vehiculos SET
-         marca = @marca, modelo = @modelo, anio = @anio, dominio = @dominio,
-         kilometraje = @kilometraje, precio = @precio, moneda = @moneda,
-         estado = @estado, imagenes_url = @imagenes_url, notas = @notas,
+         ${COLUMNAS_VEHICULO.map((c) => `${c} = @${c}`).join(", ")},
          updated_at = datetime('now')
        WHERE id = @id`
     ).run({ ...data, id: req.params.id });

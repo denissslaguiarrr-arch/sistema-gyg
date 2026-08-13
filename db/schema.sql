@@ -35,6 +35,18 @@ CREATE TABLE IF NOT EXISTS Vehiculos (
                   CHECK (estado IN ('Disponible', 'Reservado', 'Vendido')),
   imagenes_url  TEXT    NOT NULL DEFAULT '[]',
   notas         TEXT    NOT NULL DEFAULT '',
+  -- Campos opcionales usados por la ficha pública / catálogo web (fase 2).
+  version       TEXT    NOT NULL DEFAULT '',
+  combustible   TEXT    NOT NULL DEFAULT '',
+  transmision   TEXT    NOT NULL DEFAULT '',
+  traccion      TEXT    NOT NULL DEFAULT '',
+  puertas       INTEGER,
+  color         TEXT    NOT NULL DEFAULT '',
+  motor         TEXT    NOT NULL DEFAULT '',
+  potencia      TEXT    NOT NULL DEFAULT '',
+  carroceria    TEXT    NOT NULL DEFAULT '',
+  destacado     INTEGER NOT NULL DEFAULT 0 CHECK (destacado IN (0, 1)),
+  equipamiento  TEXT    NOT NULL DEFAULT '[]',
   eliminado     INTEGER NOT NULL DEFAULT 0 CHECK (eliminado IN (0, 1)),
   eliminado_en  TEXT,
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
@@ -64,6 +76,20 @@ CREATE TABLE IF NOT EXISTS HistorialEstados (
 
 CREATE INDEX IF NOT EXISTS idx_historial_vehiculo ON HistorialEstados (vehiculo_id);
 
+-- Configuración del catálogo público (nombre, frase, WhatsApp, etc.),
+-- publicada junto con los vehículos al sincronizar con el sitio web.
+CREATE TABLE IF NOT EXISTS ConfiguracionSitio (
+  id          INTEGER PRIMARY KEY CHECK (id = 1),
+  nombre      TEXT NOT NULL DEFAULT '',
+  tagline     TEXT NOT NULL DEFAULT '',
+  whatsapp    TEXT NOT NULL DEFAULT '',
+  footer_text TEXT NOT NULL DEFAULT '',
+  hero_image  TEXT NOT NULL DEFAULT '',
+  updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+INSERT OR IGNORE INTO ConfiguracionSitio (id) VALUES (1);
+
 -- Clave/valor para configuración local y futura sync (gist_id, last_sync_at, etc.)
 CREATE TABLE IF NOT EXISTS Meta (
   clave TEXT PRIMARY KEY,
@@ -71,5 +97,5 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '3'),
+  ('schema_version', '4'),
   ('last_sync_at', '');
