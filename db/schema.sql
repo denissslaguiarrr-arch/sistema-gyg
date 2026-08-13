@@ -1,7 +1,7 @@
--- Sistema GYG — Esquema local (SQLite)
--- Fase 1: stock de vehículos + autenticación básica del panel.
--- Columnas created_at / updated_at y tabla Meta quedan listas para
--- sincronización JSON/Gist en una fase posterior.
+-- Sistema G&G — Esquema local (SQLite)
+-- Fase 1: stock + panel. Fase 2: sync Gist. schema_version 8: ERP
+-- (origen/compra, gastos, documentación, ventas).
+-- Fechas en TEXT ISO (YYYY-MM-DD o datetime('now')). Booleanos INTEGER 0/1.
 
 PRAGMA foreign_keys = ON;
 
@@ -48,6 +48,11 @@ CREATE TABLE IF NOT EXISTS Vehiculos (
   carroceria    TEXT    NOT NULL DEFAULT '',
   destacado     INTEGER NOT NULL DEFAULT 0 CHECK (destacado IN (0, 1)),
   equipamiento  TEXT    NOT NULL DEFAULT '[]',
+  -- Origen y costo de ingreso (ERP: compra / consignación / permuta).
+  origen        TEXT    NOT NULL DEFAULT 'Compra'
+                  CHECK (origen IN ('Compra', 'Consignación', 'Permuta')),
+  precio_compra REAL    CHECK (precio_compra IS NULL OR precio_compra >= 0),
+  fecha_ingreso TEXT    NOT NULL DEFAULT (date('now')),
   eliminado     INTEGER NOT NULL DEFAULT 0 CHECK (eliminado IN (0, 1)),
   eliminado_en  TEXT,
   created_at    TEXT    NOT NULL DEFAULT (datetime('now')),
@@ -64,6 +69,7 @@ CREATE INDEX IF NOT EXISTS idx_vehiculos_estado    ON Vehiculos (estado);
 CREATE INDEX IF NOT EXISTS idx_vehiculos_marca     ON Vehiculos (marca);
 CREATE INDEX IF NOT EXISTS idx_vehiculos_modelo    ON Vehiculos (modelo);
 CREATE INDEX IF NOT EXISTS idx_vehiculos_eliminado ON Vehiculos (eliminado);
+CREATE INDEX IF NOT EXISTS idx_vehiculos_origen    ON Vehiculos (origen);
 
 -- Auditoría de cambios de estado (Disponible/Reservado/Vendido) por vehículo.
 CREATE TABLE IF NOT EXISTS HistorialEstados (
@@ -102,5 +108,53 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '7'),
+  ('schema_version', '8'),
   ('last_sync_at', '');
+
+-- Reacondicionamiento y gestoría por unidad (ERP).
+CREATE TABLE IF NOT EXISTS Gastos (
+  id           INTEGER PRIMARY KEY AUTOINCREMENT,
+  vehiculo_id  INTEGER NOT NULL REFERENCES Vehiculos(id) ON DELETE CASCADE,
+  concepto     TEXT    NOT NULL,
+  monto        REAL    NOT NULL CHECK (monto >= 0),
+  fecha        TEXT    NOT NULL DEFAULT (date('now')),
+  created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_gastos_vehiculo ON Gastos (vehiculo_id);
+
+-- Checklist de papeles y vencimientos (1 fila por vehículo).
+CREATE TABLE IF NOT EXISTS Documentacion (
+  id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+  vehiculo_id              INTEGER NOT NULL UNIQUE REFERENCES Vehiculos(id) ON DELETE CASCADE,
+  tiene_08                 INTEGER NOT NULL DEFAULT 0 CHECK (tiene_08 IN (0, 1)),
+  tiene_titulo             INTEGER NOT NULL DEFAULT 0 CHECK (tiene_titulo IN (0, 1)),
+  verificacion_policial_vto TEXT,
+  vtv_vencimiento          TEXT,
+  updated_at               TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Cierre de venta: el estado del vehículo pasa a Vendido desde la API.
+CREATE TABLE IF NOT EXISTS Ventas (
+  id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+  vehiculo_id        INTEGER NOT NULL REFERENCES Vehiculos(id) ON DELETE CASCADE,
+  cliente_nombre     TEXT    NOT NULL,
+  cliente_telefono   TEXT    NOT NULL DEFAULT '',
+  precio_venta_final REAL    NOT NULL CHECK (precio_venta_final >= 0),
+  fecha_venta        TEXT    NOT NULL DEFAULT (date('now')),
+  fin_garantia       TEXT,
+  created_at         TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_ventas_vehiculo ON Ventas (vehiculo_id);
+CREATE INDEX IF NOT EXISTS idx_ventas_fecha ON Ventas (fecha_venta);
+
+-- En bases migradas fecha_ingreso no tiene DEFAULT (SQLite no permite
+-- date('now') en ALTER ADD COLUMN). Este trigger cubre INSERT del API actual.
+CREATE TRIGGER IF NOT EXISTS trg_vehiculos_fecha_ingreso
+AFTER INSERT ON Vehiculos
+FOR EACH ROW
+WHEN NEW.fecha_ingreso IS NULL OR NEW.fecha_ingreso = ''
+BEGIN
+  UPDATE Vehiculos SET fecha_ingreso = date('now') WHERE id = NEW.id;
+END;

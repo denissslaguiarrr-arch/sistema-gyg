@@ -35,4 +35,13 @@ test("el nombre G&G está disponible en las dos partes del script de Blogger", (
   assert.match(partes[0], /displayBrandName,/);
   assert.match(partes[1], /function brandMarkup/);
   assert.match(partes[1], /GyGStock\.displayBrandName/);
+  assert.match(partes[1], /brand-amp/);
+});
+
+test("el & del hero usa serif clásico, no el glifo de Syne", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  assert.match(css, /\.brand-amp/);
+  assert.match(css, /Georgia/);
+  assert.match(tema, /brand-amp/);
+  assert.match(tema, /Georgia/);
 });

@@ -81,6 +81,8 @@ test("GET /api/public/vehiculos/:id no requiere sesión y expone los datos del v
   assert.deepEqual(body.imagenes_url, ["https://example.com/foto1.jpg"]);
   assert.equal(body.eliminado, undefined); // no debe filtrar campos internos de auditoría
   assert.equal(body.dominio, undefined); // no expone la patente públicamente
+  assert.equal(body.precio_compra, undefined); // costo interno, no va al catálogo
+  assert.equal(body.origen, undefined);
 });
 
 test("GET /api/public/vehiculos/:id devuelve 404 para un vehículo eliminado o inexistente", async () => {

@@ -44,6 +44,9 @@ const COLUMNAS_VEHICULOS = [
   ["equipamiento", "TEXT NOT NULL DEFAULT '[]'"],
   ["eliminado", "INTEGER NOT NULL DEFAULT 0"],
   ["eliminado_en", "TEXT"],
+  ["origen", "TEXT NOT NULL DEFAULT 'Compra'"],
+  ["precio_compra", "REAL"],
+  ["fecha_ingreso", "TEXT"],
 ];
 
 function migrate(db) {
@@ -78,8 +81,70 @@ function migrate(db) {
   ensureColumn(db, "ConfiguracionSitio", "contacto_titulo", "TEXT NOT NULL DEFAULT 'Contactanos'");
   ensureColumn(db, "ConfiguracionSitio", "contacto_texto", "TEXT NOT NULL DEFAULT ''");
 
-  if (schemaVersion(db) < 7) {
-    db.prepare("INSERT OR REPLACE INTO Meta (clave, valor) VALUES ('schema_version', '7')").run();
+  if (!tablasDe(db).includes("Gastos")) {
+    db.exec(`
+      CREATE TABLE Gastos (
+        id           INTEGER PRIMARY KEY AUTOINCREMENT,
+        vehiculo_id  INTEGER NOT NULL REFERENCES Vehiculos(id) ON DELETE CASCADE,
+        concepto     TEXT    NOT NULL,
+        monto        REAL    NOT NULL CHECK (monto >= 0),
+        fecha        TEXT    NOT NULL DEFAULT (date('now')),
+        created_at   TEXT    NOT NULL DEFAULT (datetime('now'))
+      );
+      CREATE INDEX IF NOT EXISTS idx_gastos_vehiculo ON Gastos (vehiculo_id);
+    `);
+  }
+
+  if (!tablasDe(db).includes("Documentacion")) {
+    db.exec(`
+      CREATE TABLE Documentacion (
+        id                       INTEGER PRIMARY KEY AUTOINCREMENT,
+        vehiculo_id              INTEGER NOT NULL UNIQUE REFERENCES Vehiculos(id) ON DELETE CASCADE,
+        tiene_08                 INTEGER NOT NULL DEFAULT 0 CHECK (tiene_08 IN (0, 1)),
+        tiene_titulo             INTEGER NOT NULL DEFAULT 0 CHECK (tiene_titulo IN (0, 1)),
+        verificacion_policial_vto TEXT,
+        vtv_vencimiento          TEXT,
+        updated_at               TEXT    NOT NULL DEFAULT (datetime('now'))
+      );
+    `);
+  }
+
+  if (!tablasDe(db).includes("Ventas")) {
+    db.exec(`
+      CREATE TABLE Ventas (
+        id                 INTEGER PRIMARY KEY AUTOINCREMENT,
+        vehiculo_id        INTEGER NOT NULL REFERENCES Vehiculos(id) ON DELETE CASCADE,
+        cliente_nombre     TEXT    NOT NULL,
+        cliente_telefono   TEXT    NOT NULL DEFAULT '',
+        precio_venta_final REAL    NOT NULL CHECK (precio_venta_final >= 0),
+        fecha_venta        TEXT    NOT NULL DEFAULT (date('now')),
+        fin_garantia       TEXT,
+        created_at         TEXT    NOT NULL DEFAULT (datetime('now'))
+      );
+      CREATE INDEX IF NOT EXISTS idx_ventas_vehiculo ON Ventas (vehiculo_id);
+      CREATE INDEX IF NOT EXISTS idx_ventas_fecha ON Ventas (fecha_venta);
+    `);
+  }
+
+  db.exec("CREATE INDEX IF NOT EXISTS idx_vehiculos_origen ON Vehiculos (origen)");
+
+  db.exec(`
+    CREATE TRIGGER IF NOT EXISTS trg_vehiculos_fecha_ingreso
+    AFTER INSERT ON Vehiculos
+    FOR EACH ROW
+    WHEN NEW.fecha_ingreso IS NULL OR NEW.fecha_ingreso = ''
+    BEGIN
+      UPDATE Vehiculos SET fecha_ingreso = date('now') WHERE id = NEW.id;
+    END;
+  `);
+
+  if (schemaVersion(db) < 8) {
+    db.exec(`
+      UPDATE Vehiculos
+         SET fecha_ingreso = date(created_at)
+       WHERE fecha_ingreso IS NULL OR fecha_ingreso = ''
+    `);
+    db.prepare("INSERT OR REPLACE INTO Meta (clave, valor) VALUES ('schema_version', '8')").run();
   }
 }
 

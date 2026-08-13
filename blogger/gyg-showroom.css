@@ -135,8 +135,23 @@ textarea {
 }
 
 .brand__name span,
-.home-hero__brand span {
+.home-hero__brand span,
+.brand-amp {
   color: var(--orange);
+}
+
+/* Syne dibuja un & industrial ilegible a tamaño hero; usamos serif clásico. */
+.home-hero__brand .brand-amp,
+.brand__name .brand-amp {
+  font-family: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 0.72em;
+  letter-spacing: 0;
+  line-height: 1;
+  display: inline-block;
+  padding: 0 0.04em 0 0.08em;
+  transform: translateY(-0.08em);
 }
 
 @media (max-width: 640px) {

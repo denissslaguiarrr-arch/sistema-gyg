@@ -512,7 +512,10 @@ window.GYG_CONFIG = {
   }
 
   function brandMarkup(value) {
-    return escapeHtml(displayBrandName(value)).replace(/G\u0026amp;G/g, "G<span>\u0026amp;</span>G");
+    return escapeHtml(displayBrandName(value)).replace(
+      /G\u0026amp;G/g,
+      "G<span class=\"brand-amp\">\u0026amp;</span>G"
+    );
   }
 
   function escapeAttr(str) {
