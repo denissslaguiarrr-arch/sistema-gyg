@@ -1,8 +1,13 @@
 const express = require("express");
 const { db } = require("../db");
 const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
+const requireRole = require("../middleware/requireRole");
 
 const router = express.Router();
+
+const CAMPOS_ORDEN = new Set(["marca", "anio", "kilometraje", "precio", "created_at"]);
+const PAGINA_TAMANIO_DEFAULT = 24;
+const PAGINA_TAMANIO_MAX = 100;
 
 function serialize(row) {
   let imagenes = [];
@@ -56,6 +61,19 @@ function construirFiltro(req) {
   return { where: `WHERE ${clauses.join(" AND ")}`, params };
 }
 
+function construirPaginacion(req) {
+  const pagina = Math.max(1, Number.parseInt(req.query.pagina, 10) || 1);
+  const porPaginaSolicitado = Number.parseInt(req.query.porPagina, 10) || PAGINA_TAMANIO_DEFAULT;
+  const porPagina = Math.min(Math.max(1, porPaginaSolicitado), PAGINA_TAMANIO_MAX);
+  return { pagina, porPagina, offset: (pagina - 1) * porPagina };
+}
+
+function construirOrden(req) {
+  const campo = CAMPOS_ORDEN.has(req.query.orden) ? req.query.orden : "created_at";
+  const direccion = req.query.direccion === "asc" ? "ASC" : "DESC";
+  return `ORDER BY ${campo} ${direccion}, id ${direccion}`;
+}
+
 // Debe declararse antes de "/:id" para no ser interpretado como un id.
 router.get("/resumen", (_req, res) => {
   const row = db
@@ -84,9 +102,8 @@ router.get("/resumen", (_req, res) => {
 
 router.get("/export.csv", (req, res) => {
   const { where, params } = construirFiltro(req);
-  const rows = db
-    .prepare(`SELECT * FROM Vehiculos ${where} ORDER BY created_at DESC, id DESC`)
-    .all(params);
+  const orden = construirOrden(req);
+  const rows = db.prepare(`SELECT * FROM Vehiculos ${where} ${orden}`).all(params);
 
   const columnas = [
     "id", "marca", "modelo", "anio", "dominio", "kilometraje",
@@ -109,10 +126,21 @@ router.get("/export.csv", (req, res) => {
 
 router.get("/", (req, res) => {
   const { where, params } = construirFiltro(req);
+  const orden = construirOrden(req);
+  const { pagina, porPagina, offset } = construirPaginacion(req);
+
+  const { total } = db.prepare(`SELECT COUNT(*) AS total FROM Vehiculos ${where}`).get(params);
   const rows = db
-    .prepare(`SELECT * FROM Vehiculos ${where} ORDER BY created_at DESC, id DESC`)
-    .all(params);
-  res.json(rows.map(serialize));
+    .prepare(`SELECT * FROM Vehiculos ${where} ${orden} LIMIT @limite OFFSET @offset`)
+    .all({ ...params, limite: porPagina, offset });
+
+  res.json({
+    items: rows.map(serialize),
+    total,
+    pagina,
+    porPagina,
+    totalPaginas: Math.max(1, Math.ceil(total / porPagina)),
+  });
 });
 
 router.get("/:id/historial", (req, res) => {
@@ -140,7 +168,7 @@ router.get("/:id", (req, res) => {
   res.json(serialize(row));
 });
 
-router.post("/", (req, res, next) => {
+router.post("/", requireRole("admin"), (req, res, next) => {
   try {
     const data = validateVehiculo(req.body);
     const result = db
@@ -165,7 +193,7 @@ router.post("/", (req, res, next) => {
   }
 });
 
-router.put("/:id", (req, res, next) => {
+router.put("/:id", requireRole("admin"), (req, res, next) => {
   try {
     const existente = findById(req.params.id);
     if (!existente) return res.status(404).json({ error: "Vehículo no encontrado" });
@@ -194,6 +222,7 @@ router.put("/:id", (req, res, next) => {
 });
 
 // Acción rápida: cambiar únicamente el estado sin pasar por el formulario completo.
+// Disponible para admin y vendedor: es la tarea diaria más común del vendedor.
 router.patch("/:id/estado", (req, res, next) => {
   try {
     const existente = findById(req.params.id);
@@ -217,21 +246,25 @@ router.patch("/:id/estado", (req, res, next) => {
   }
 });
 
-router.patch("/:id/restaurar", (req, res) => {
-  const row = db.prepare("SELECT * FROM Vehiculos WHERE id = ?").get(req.params.id);
-  if (!row || !row.eliminado) {
-    return res.status(404).json({ error: "Vehículo no encontrado en la papelera" });
+router.patch("/:id/restaurar", requireRole("admin"), (req, res, next) => {
+  try {
+    const row = db.prepare("SELECT * FROM Vehiculos WHERE id = ?").get(req.params.id);
+    if (!row || !row.eliminado) {
+      return res.status(404).json({ error: "Vehículo no encontrado en la papelera" });
+    }
+
+    db.prepare(
+      "UPDATE Vehiculos SET eliminado = 0, eliminado_en = NULL, updated_at = datetime('now') WHERE id = ?"
+    ).run(req.params.id);
+
+    res.json(serialize(findById(req.params.id)));
+  } catch (err) {
+    next(err);
   }
-
-  db.prepare(
-    "UPDATE Vehiculos SET eliminado = 0, eliminado_en = NULL, updated_at = datetime('now') WHERE id = ?"
-  ).run(req.params.id);
-
-  res.json(serialize(findById(req.params.id)));
 });
 
 // Elimina definitivamente un vehículo que ya estaba en la papelera.
-router.delete("/:id/permanente", (req, res) => {
+router.delete("/:id/permanente", requireRole("admin"), (req, res) => {
   const result = db
     .prepare("DELETE FROM Vehiculos WHERE id = ? AND eliminado = 1")
     .run(req.params.id);
@@ -243,7 +276,7 @@ router.delete("/:id/permanente", (req, res) => {
 });
 
 // Borrado lógico: el vehículo pasa a la papelera y puede restaurarse.
-router.delete("/:id", (req, res) => {
+router.delete("/:id", requireRole("admin"), (req, res) => {
   const row = findById(req.params.id);
   if (!row) return res.status(404).json({ error: "Vehículo no encontrado" });
 
