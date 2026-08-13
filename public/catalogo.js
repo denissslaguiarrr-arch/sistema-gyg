@@ -1,4 +1,4 @@
-/* Catálogo público GyG. Se usa en /catalogo.html y se incrusta en Blogger. */
+/* Catálogo público G&G. Se usa en /catalogo.html (el sitio de Blogger usa blogger/tema.xml). */
 (function () {
   var GIST_ID = window.GYG_GIST_ID || "74837d1c1f0a9a3a67e6dc5cc4fa5b6f";
   var root = document.getElementById("gyg-root") || document.body;
@@ -10,9 +10,9 @@
       ":root{--bg:#0f172a;--card:#fff;--muted:#64748b;--line:#e2e8f0;--ok:#16a34a;--pad:calc(28px + env(safe-area-inset-bottom,0px))}",
       "html,body{margin:0;padding:0;background:#f1f5f9;color:#0f172a;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}",
       "#gyg-root{min-height:100vh;display:flex;flex-direction:column}",
-      ".gyg-top{background:var(--bg);color:#fff;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 12px}",
-      ".gyg-brand{font-weight:800;letter-spacing:.04em;font-size:13px;opacity:.85;text-transform:uppercase}",
-      ".gyg-title{margin:4px 0 0;font-size:22px;line-height:1.2}",
+      ".gyg-top{background:#f7f8fa;color:#111;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid #e8ecf1}",
+      ".gyg-brand img{height:40px;width:auto;display:block;max-width:min(280px,82vw);object-fit:contain}",
+      ".gyg-title{margin:6px 0 0;font-size:12px;line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#5c6573;font-weight:600}",
       ".gyg-tag{margin:6px 0 0;color:#cbd5e1;font-size:14px}",
       ".gyg-nav{display:flex;gap:8px;overflow:auto;padding:10px 16px 12px;background:var(--bg);-webkit-overflow-scrolling:touch}",
       ".gyg-nav a{flex:0 0 auto;color:#e2e8f0;text-decoration:none;font-size:14px;padding:8px 12px;border-radius:999px}",
@@ -127,11 +127,9 @@
   function headerHtml() {
     var s = site();
     return (
-      '<header class="gyg-top"><div class="gyg-brand">' +
-      esc(s.name || "GyG") +
-      '</div><h1 class="gyg-title">' +
-      esc((s.tagline || "Selección premium de vehículos").toUpperCase()) +
-      "</h1></header>"
+      '<header class="gyg-top"><a href="#/" class="gyg-brand"><img src="/brand/logo-gg-automotores.png" alt="G&amp;G Automotores"></a><div class="gyg-title">' +
+      esc(s.tagline || "Selección premium de vehículos") +
+      "</div></header>"
     );
   }
 

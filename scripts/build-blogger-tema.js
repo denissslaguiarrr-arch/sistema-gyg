@@ -3,8 +3,18 @@ const fs = require("fs");
 const path = require("path");
 
 const dir = path.join(__dirname, "..", "blogger");
+const publicDir = path.join(__dirname, "..", "public");
 const css = fs.readFileSync(path.join(dir, "gyg-showroom.css"), "utf8");
 const js = fs.readFileSync(path.join(dir, "gyg-showroom.js"), "utf8");
+
+function dataUri(filePath, mime) {
+  const buf = fs.readFileSync(filePath);
+  return `data:${mime};base64,${buf.toString("base64")}`;
+}
+
+const logoSrc = dataUri(path.join(publicDir, "brand", "logo-gg-automotores.png"), "image/png");
+const favSrc = dataUri(path.join(publicDir, "favicon.png"), "image/png");
+const appleSrc = dataUri(path.join(publicDir, "apple-touch-icon.png"), "image/png");
 
 const xml = `<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
@@ -13,21 +23,23 @@ const xml = `<?xml version="1.0" encoding="UTF-8" ?>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1, viewport-fit=cover' name='viewport'/>
     <title><data:blog.pageTitle/></title>
+    <link href='${favSrc}' rel='icon' type='image/png'/>
+    <link href='${appleSrc}' rel='apple-touch-icon'/>
     <b:include data='blog' name='all-head-content'/>
     <b:skin version='1.0.0'><![CDATA[
 ${css}
 ]]></b:skin>
   </head>
   <body>
-    <b:section id='gyg-required-section' maxwidgets='0' name='GyG' showaddelement='no'/>
+    <b:section id='gyg-required-section' maxwidgets='0' name='G&amp;G' showaddelement='no'/>
 
     <div id='gyg-blogger-root'>
       <div aria-hidden='true' class='atmosphere'/>
       <div class='app-shell'>
         <header class='site-header'>
           <div class='site-header__inner'>
-            <a aria-label='GyG inicio' class='brand' href='#/'>
-              <div class='brand__name'>G<span>y</span>G</div>
+            <a aria-label='G&amp;G Automotores inicio' class='brand' href='#/'>
+              <img alt='G&amp;G Automotores' class='brand__logo' src='${logoSrc}'/>
               <div class='brand__tag' id='brandTag'>Selección premium</div>
             </a>
             <nav aria-label='Secciones' class='nav-links' id='navLinks'/>
@@ -37,7 +49,7 @@ ${css}
           <div class='loading-state' style='margin:2rem 1.25rem'>Cargando sitio&#8230;</div>
         </main>
         <footer class='site-footer'>
-          <div>GyG Concesionaria <span id='year'/></div>
+          <div>G&amp;G Automotores <span id='year'/></div>
           <div id='footerUpdated'>Stock en vivo</div>
         </footer>
       </div>

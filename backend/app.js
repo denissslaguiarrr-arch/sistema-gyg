@@ -25,7 +25,17 @@ const RUTAS_PUBLICAS = new Set([
   "/ficha.js",
   "/catalogo.html",
   "/catalogo.js",
+  "/favicon.ico",
+  "/favicon.png",
+  "/apple-touch-icon.png",
 ]);
+
+function esRutaPublica(pathname) {
+  if (RUTAS_PUBLICAS.has(pathname)) return true;
+  if (pathname.startsWith("/uploads/")) return true;
+  if (pathname.startsWith("/brand/")) return true;
+  return false;
+}
 
 app.use(express.json({ limit: "2mb" }));
 app.use(cookieParser());
@@ -54,7 +64,7 @@ app.use("/api/sync", requireAuth, requireRole("admin"), syncRouter);
 app.use((req, res, next) => {
   // Las fotos de los vehículos también son públicas: se muestran en la ficha
   // compartible, que no requiere sesión.
-  if (RUTAS_PUBLICAS.has(req.path) || req.path.startsWith("/uploads/")) return next();
+  if (esRutaPublica(req.path)) return next();
 
   const token = req.cookies ? req.cookies[SESSION_COOKIE] : undefined;
   const sesion = obtenerSesion(token);

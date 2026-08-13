@@ -1,7 +1,7 @@
 html, body { margin: 0 !important; padding: 0 !important; background: #f7f8fa; }
 #b-navbar, .navbar, #header, .header, .footer, #footer, .blog-pager, .sidebar { display: none !important; }
 #gyg-blogger-root, .app-shell { min-height: 100vh; }
-/* GyG Showroom — crisp white, silver, matte black, deep blue */
+/* G&G Showroom — black, orange del cartel, white/silver */
 :root {
   --white: #f7f8fa;
   --white-pure: #ffffff;
@@ -12,6 +12,9 @@ html, body { margin: 0 !important; padding: 0 !important; background: #f7f8fa; }
   --blue: #0b3d6e;
   --blue-deep: #072a4d;
   --blue-glow: rgba(11, 61, 110, 0.14);
+  --orange: #e85d23;
+  --orange-deep: #c44a18;
+  --orange-glow: rgba(232, 93, 35, 0.16);
   --text: #141820;
   --muted: #5c6573;
   --line: rgba(14, 17, 22, 0.08);
@@ -43,7 +46,7 @@ body {
   font-family: var(--font-body);
   color: var(--text);
   background:
-    radial-gradient(1200px 600px at 12% -10%, var(--blue-glow), transparent 55%),
+    radial-gradient(1200px 600px at 12% -10%, var(--orange-glow), transparent 55%),
     radial-gradient(900px 500px at 100% 0%, rgba(197, 204, 214, 0.45), transparent 50%),
     linear-gradient(180deg, #eef1f5 0%, var(--white) 38%, #f3f5f8 100%);
   background-attachment: fixed;
@@ -108,7 +111,18 @@ textarea {
 .brand {
   display: flex;
   flex-direction: column;
-  gap: 0.1rem;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.brand__logo {
+  display: block;
+  height: 44px;
+  width: auto;
+  max-width: min(300px, 62vw);
+  object-fit: contain;
+  object-position: left center;
 }
 
 .brand__name {
@@ -120,8 +134,15 @@ textarea {
   color: var(--black);
 }
 
-.brand__name span {
-  color: var(--blue);
+.brand__name span,
+.home-hero__brand span {
+  color: var(--orange);
+}
+
+@media (max-width: 640px) {
+  .brand__logo {
+    height: 36px;
+  }
 }
 
 .brand__tag {
@@ -152,7 +173,7 @@ textarea {
 
 .nav-links a:hover,
 .nav-links a.is-active {
-  color: var(--blue);
+  color: var(--orange);
 }
 
 .nav-links a.is-active {
@@ -177,7 +198,7 @@ textarea {
   position: absolute;
   inset: 0;
   background:
-    radial-gradient(ellipse at 20% 80%, rgba(11, 61, 110, 0.35), transparent 50%),
+    radial-gradient(ellipse at 20% 80%, rgba(232, 93, 35, 0.28), transparent 50%),
     linear-gradient(180deg, transparent 40%, rgba(14, 17, 22, 0.55) 100%);
   pointer-events: none;
 }
@@ -254,7 +275,7 @@ textarea {
 }
 
 .home-link:hover {
-  color: var(--blue);
+  color: var(--orange);
   transform: translateY(-2px);
 }
 
@@ -485,12 +506,12 @@ textarea {
 }
 
 .btn--primary {
-  background: var(--blue);
+  background: var(--orange);
   color: #fff;
 }
 
 .btn--primary:hover {
-  background: var(--blue-deep);
+  background: var(--orange-deep);
 }
 
 .btn--dark {
@@ -681,7 +702,7 @@ textarea {
   font-family: var(--font-display);
   font-weight: 800;
   font-size: 1.2rem;
-  color: var(--blue);
+  color: var(--orange);
 }
 
 .empty-state,
@@ -788,7 +809,7 @@ textarea {
   font-family: var(--font-display);
   font-size: 1.8rem;
   font-weight: 800;
-  color: var(--blue);
+  color: var(--orange);
 }
 
 .detail__status {

@@ -9,7 +9,7 @@ window.GYG_CONFIG = {
   GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f",
   GIST_FILENAME: "stock.json",
   WHATSAPP_NUMBER: "+54 9 3735 46-2914",
-  DEALERSHIP_NAME: "GyG",
+  DEALERSHIP_NAME: "G&G",
   TAGLINE: "Selección premium de vehículos",
   LOCAL_SAMPLE_PATH: "",
 };
@@ -20,6 +20,16 @@ window.GYG_CONFIG = {
 
   function cfg() {
     return global.GYG_CONFIG || {};
+  }
+
+  function displayBrandName(value) {
+    const n = String(value == null ? "" : value).trim();
+    if (!n) return "G&G";
+    return n.replace(/\bg\s*y\s*g\b/gi, "G&G");
+  }
+
+  function brandMarkup(value) {
+    return escapeHtml(displayBrandName(value)).replace(/G&amp;G/g, "G<span>&amp;</span>G");
   }
 
   function getToken() {
@@ -60,14 +70,14 @@ window.GYG_CONFIG = {
 
   function defaultSite() {
     return {
-      name: cfg().DEALERSHIP_NAME || "GyG",
+      name: cfg().DEALERSHIP_NAME || "G&G",
       tagline: cfg().TAGLINE || "Selección premium de vehículos",
       whatsapp: cfg().WHATSAPP_NUMBER || "",
       instagram: "",
       facebook: "",
       contactoTitulo: "Contactanos",
       contactoTexto: "",
-      footerText: "Concesionaria GyG",
+      footerText: "G&G Automotores",
       heroImage: "",
     };
   }
@@ -84,7 +94,7 @@ window.GYG_CONFIG = {
         order: 0,
         content: {
           eyebrow: "Concesionaria",
-          headline: "GyG",
+          headline: "G&G",
           subtitle: "Stock 0km y usados.",
           ctaPrimary: { label: "Ver 0km", href: "#/0km" },
           ctaSecondary: { label: "Ver usados", href: "#/usados" },
@@ -203,7 +213,7 @@ window.GYG_CONFIG = {
       ...normalized,
       meta: {
         ...(normalized.meta || {}),
-        concesionaria: normalized.site.name || cfg().DEALERSHIP_NAME || "GyG",
+        concesionaria: normalized.site.name || cfg().DEALERSHIP_NAME || "G&G",
         updatedAt: new Date().toISOString(),
       },
     };
@@ -248,7 +258,7 @@ window.GYG_CONFIG = {
         "X-GitHub-Api-Version": "2022-11-28",
       },
       body: JSON.stringify({
-        description: "GyG concesionaria — sitio + stock",
+        description: "G&G Automotores — sitio + stock",
         public: true,
         files: { [filename]: { content: JSON.stringify(payload, null, 2) } },
       }),
@@ -357,7 +367,9 @@ window.GYG_CONFIG = {
 
   function whatsappUrl(data, vehicle) {
     const phone = whatsappPhone(data);
-    const nameBrand = (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "GyG";
+    const nameBrand = displayBrandName(
+      (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "G&G"
+    );
     if (vehicle) {
       const name = `${vehicle.marca} ${vehicle.modelo} ${vehicle.version || ""} ${vehicle.anio}`.trim();
       const text = encodeURIComponent(
@@ -548,7 +560,7 @@ window.GYG_CONFIG = {
       }
       footer.textContent = bits.join(" · ") || "Stock en vivo";
     }
-    document.title = `${site.name || "GyG"} — ${site.tagline || "Stock"}`;
+    document.title = `${displayBrandName(site.name)} — ${site.tagline || "Stock"}`;
     renderNav();
   }
 
@@ -580,7 +592,7 @@ window.GYG_CONFIG = {
         </linearGradient></defs>
         <rect width="100%" height="100%" fill="url(#g)"/>
         <text x="50%" y="50%" fill="#c5ccd6" font-family="Arial" font-size="42"
-          text-anchor="middle" dominant-baseline="middle">GyG</text>
+          text-anchor="middle" dominant-baseline="middle">G&amp;G</text>
       </svg>`
       )
     );
@@ -599,7 +611,7 @@ window.GYG_CONFIG = {
         <div class="home-hero__veil"></div>
         <div class="home-hero__content">
           <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
-          <h1 class="home-hero__brand">${escapeHtml(c.headline || site.name || "GyG")}</h1>
+          <h1 class="home-hero__brand">${brandMarkup(c.headline || site.name || "G&G")}</h1>
           <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
           <div class="home-hero__cta">
             <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>

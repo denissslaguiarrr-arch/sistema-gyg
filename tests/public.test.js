@@ -112,6 +112,15 @@ test("/catalogo.html y /catalogo.js son accesibles sin sesión", async () => {
   assert.match(await js.text(), /Contactanos/);
 });
 
+test("logo, favicon y marca son públicos (login, ficha y catálogo)", async () => {
+  const fav = await fetch(`${baseUrl}/favicon.png`);
+  assert.equal(fav.status, 200);
+  const logo = await fetch(`${baseUrl}/brand/logo-gg-automotores.png`);
+  assert.equal(logo.status, 200);
+  const marca = await fetch(`${baseUrl}/brand/marca-gg.png`);
+  assert.equal(marca.status, 200);
+});
+
 test("GET /api/public/catalogo no requiere sesión y usa Contactanos", async () => {
   const res = await fetch(`${baseUrl}/api/public/catalogo`);
   assert.equal(res.status, 200);

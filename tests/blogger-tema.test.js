@@ -5,11 +5,14 @@ const path = require("path");
 
 const tema = fs.readFileSync(path.join(__dirname, "../blogger/tema.xml"), "utf8");
 
-test("el tema de Blogger conserva el diseño GyG y no es el catálogo corto", () => {
-  assert.match(tema, /GyG Showroom/);
+test("el tema de Blogger conserva el showroom G&G y no es el catálogo corto", () => {
+  assert.match(tema, /G&G Showroom/);
   assert.match(tema, /site-header/);
   assert.match(tema, /home-hero/);
   assert.match(tema, /font-display: "Syne"/);
+  assert.match(tema, /brand__logo/);
+  assert.match(tema, /rel='icon'/);
+  assert.match(tema, /#e85d23/i);
   assert.doesNotMatch(tema, /id='gyg-root'/);
 });
 
@@ -21,4 +24,6 @@ test("el tema incluye zoom, Contactanos y redes opcionales", () => {
   assert.match(tema, /btn--instagram/);
   assert.match(tema, /safe-area-inset-bottom/);
   assert.match(tema, /CDATA/);
+  assert.match(tema, /G&amp;G Automotores/);
+  assert.doesNotMatch(tema, /G<span>y<\/span>G/);
 });

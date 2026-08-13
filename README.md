@@ -1,6 +1,6 @@
-# Sistema GYG
+# Sistema G&G
 
-Sistema de Control de Stock y Gestión para una concesionaria de vehículos.
+Sistema de Control de Stock y Gestión para **G&G Automotores**.
 
 - **Fase 1**: panel de administración y backend locales (Node.js + Express + SQLite).
 - **Fase 2**: publicación del stock a un catálogo web público (ej. un sitio de
@@ -45,9 +45,13 @@ public/
   app.js                 Lógica del panel en Vanilla JS
   ficha.html / ficha.js   Ficha pública de un vehículo (compartible, sin login)
   catalogo.html / .js     Catálogo público (mobile, zoom, contacto y redes)
+  brand/                 Logo G&G y marca para header / favicon
+  favicon.png            Favicon del panel y del catálogo local
   uploads/               Fotos subidas desde el panel (generado en runtime)
 blogger/
-  tema.xml               Tema de Blogger (XML) con el catálogo incrustado
+  tema.xml               Tema de Blogger (diseño G&G + zoom, contacto y redes)
+  gyg-showroom.css       Estilos del showroom (fuente del tema)
+  gyg-showroom.js        Lógica del showroom (fuente del tema)
 tests/
   validators.test.js     Casos unitarios de reglas de negocio
   auth.test.js            Login, logout, cambio de contraseña
@@ -57,7 +61,7 @@ tests/
   import.test.js          Importación masiva de vehículos por CSV
   config.test.js          Configuración del catálogo público
   gist.test.js            Mapeo de datos y publicación en el Gist (fetch mockeado)
-  blogger-tema.test.js    El tema de Blogger conserva el diseño GyG y el zoom
+  blogger-tema.test.js    El tema de Blogger conserva el diseño G&G y el zoom
   fotos.test.js           URLs públicas vs locales para Blogger
   imgur.test.js           Subida a Imgur (fetch mockeado)
   sync.test.js            Endpoint /api/sync/publicar (fetch mockeado)
@@ -346,8 +350,9 @@ publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
 ### Fotos recortadas, celular y Contacto (Blogger)
 
-Los cambios van **sobre el tema GyG que ya tenían** (Syne/Manrope, vitrina,
-hero), no sobre el catálogo corto de 477 líneas.
+Los cambios van **sobre el tema que ya tenían** (Syne/Manrope, vitrina,
+hero), no sobre el catálogo corto de 477 líneas. El nombre visible es
+**G&G** (logo del cartel en el header y favicon naranja).
 
 - La foto grande usa `object-fit: contain` y se puede ampliar (tocar, pellizcar o +/−).
 - En el celular hay margen inferior para que Contacto no se corte.
