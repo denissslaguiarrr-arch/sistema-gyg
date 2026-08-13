@@ -243,6 +243,12 @@ explicando cuál falta configurar; el resto del sistema funciona igual.
 - Actualiza únicamente el archivo `stock.json` del Gist indicado; no toca
   nada más del sitio.
 
+Las fotos subidas desde la PC (`/uploads/...`) **solo se ven en el panel
+local**. El sitio de Blogger no puede abrir archivos de tu computadora. Para
+que se vean en la web, cada foto tiene que ser un link público `https://`
+(por ejemplo Google Drive compartido, Postimages o Imgur). Al publicar, las
+rutas locales se omiten y el panel avisa cuántas quedaron afuera.
+
 ### Configuración del sitio
 
 Desde el botón **"Configuración del sitio"** (solo admin) se edita el

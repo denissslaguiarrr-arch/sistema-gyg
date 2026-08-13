@@ -52,6 +52,7 @@ router.post("/publicar", async (_req, res) => {
     res.json({
       ok: true,
       vehiculosPublicados: resultado.vehiculosPublicados,
+      fotosLocalesOmitidas: resultado.fotosLocalesOmitidas || 0,
       url: resultado.htmlUrl,
       publicadoEn: new Date().toISOString(),
     });

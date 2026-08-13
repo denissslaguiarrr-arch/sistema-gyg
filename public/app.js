@@ -439,9 +439,12 @@ el.btnPublicar.addEventListener("click", async () => {
 
   try {
     const resultado = await apiRequest("/api/sync/publicar", { method: "POST" });
+    const omitidas = resultado.fotosLocalesOmitidas || 0;
     mostrarAlerta(
-      `Se publicaron ${resultado.vehiculosPublicados} vehículo(s) en el sitio web.`,
-      "ok"
+      omitidas
+        ? `Se publicaron ${resultado.vehiculosPublicados} vehículo(s). ${omitidas} foto(s) subida(s) desde la PC no se ven en el sitio: pegá un link https:// y volvé a publicar.`
+        : `Se publicaron ${resultado.vehiculosPublicados} vehículo(s) en el sitio web.`,
+      omitidas ? "error" : "ok"
     );
   } catch (err) {
     mostrarAlerta(err.message);
@@ -703,18 +706,37 @@ function renderTabla() {
 
 // ---------- Galería de imágenes del formulario ----------
 
+function esFotoLocal(url) {
+  const texto = String(url || "").trim();
+  return texto.startsWith("/uploads/") || /localhost|127\.0\.0\.1/i.test(texto);
+}
+
+function normalizarUrlFotoCliente(url) {
+  const texto = String(url || "").trim();
+  const drive = texto.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || texto.match(/[?&]id=([a-zA-Z0-9_-]+)/);
+  if (/drive\.google\.com/i.test(texto) && drive) {
+    return `https://drive.google.com/thumbnail?id=${drive[1]}&sz=w2000`;
+  }
+  return texto;
+}
+
 function renderGaleria() {
   if (state.formImagenes.length === 0) {
     el.galeriaImagenes.innerHTML = "";
     el.imagenesEstado.textContent = "Todavía no agregaste fotos.";
     return;
   }
-  el.imagenesEstado.textContent = `${state.formImagenes.length} foto(s) cargada(s).`;
+  const locales = state.formImagenes.filter(esFotoLocal).length;
+  el.imagenesEstado.textContent =
+    locales > 0
+      ? `${state.formImagenes.length} foto(s). ${locales} solo se ve(n) en este panel; para Blogger pegá un link https://.`
+      : `${state.formImagenes.length} foto(s) cargada(s).`;
   el.galeriaImagenes.innerHTML = state.formImagenes
     .map(
       (url, i) => `
       <div class="relative w-16 h-16">
         <img src="${escapeHtml(url)}" class="w-16 h-16 rounded-lg object-cover border border-slate-200" onerror="this.style.opacity=0.3" />
+        ${esFotoLocal(url) ? '<span class="absolute bottom-0 left-0 right-0 bg-amber-500/90 text-white text-[9px] leading-tight text-center px-0.5">solo panel</span>' : ""}
         <button type="button" data-quitar-imagen="${i}" class="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 text-xs leading-none flex items-center justify-center shadow">×</button>
       </div>`
     )
@@ -730,7 +752,7 @@ el.galeriaImagenes.addEventListener("click", (evento) => {
 });
 
 function agregarImagenUrl() {
-  const url = el.fImagenUrl.value.trim();
+  const url = normalizarUrlFotoCliente(el.fImagenUrl.value.trim());
   if (!url) return;
   state.formImagenes.push(url);
   el.fImagenUrl.value = "";

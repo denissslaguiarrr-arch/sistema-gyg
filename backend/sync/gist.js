@@ -3,6 +3,8 @@
 // y fusiona "site"; conserva "pages" tal cual estén en el Gist, ya que acá
 // no hay una pantalla para editar la estructura de páginas.
 
+const { fotosParaCatalogo } = require("../utils/fotos");
+
 const ESTADO_A_STATUS = {
   Disponible: "disponible",
   Reservado: "reservado",
@@ -82,7 +84,7 @@ function mapearVehiculo(v) {
     destacado: !!v.destacado,
     descripcion: v.notas || "",
     equipamiento: Array.isArray(v.equipamiento) ? v.equipamiento : [],
-    fotos: Array.isArray(v.imagenes_url) ? v.imagenes_url : [],
+    fotos: fotosParaCatalogo(v.imagenes_url).fotos,
     ingreso,
     updatedAt: updatedAtIso,
   };
@@ -193,10 +195,15 @@ async function publicarEnGist({ gistId, token, vehiculos, siteConfig, fetchImpl 
   }
 
   const data = await res.json();
+  const fotosLocalesOmitidas = vehiculos.reduce(
+    (total, v) => total + fotosParaCatalogo(v.imagenes_url).omitidasLocales,
+    0
+  );
   return {
     payload,
     htmlUrl: data.html_url,
     vehiculosPublicados: payload.vehicles.length,
+    fotosLocalesOmitidas,
   };
 }
 

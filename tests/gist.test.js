@@ -70,6 +70,20 @@ test("mapearVehiculo marca categoria 'usado' cuando el kilometraje es mayor a 0"
   assert.equal(vehiculo.precio_oferta, null);
 });
 
+test("mapearVehiculo no publica fotos locales /uploads, solo links https públicos", () => {
+  const vehiculo = mapearVehiculo({
+    id: 1, marca: "Ford", modelo: "Focus", anio: 2018, kilometraje: 1,
+    precio: 8000, moneda: "USD", dominio: "X", estado: "Disponible",
+    equipamiento: [], created_at: "2026-01-01", updated_at: "2026-01-01",
+    imagenes_url: [
+      "/uploads/foto-local.jpg",
+      "https://ejemplo.com/hilux.jpg",
+      "http://localhost:3000/uploads/otra.jpg",
+    ],
+  });
+  assert.deepEqual(vehiculo.fotos, ["https://ejemplo.com/hilux.jpg"]);
+});
+
 test("mergeSiteConfig prioriza los valores locales, pero no pisa con vacíos", () => {
   const gistSite = { name: "GyG viejo", tagline: "Tagline viejo", whatsapp: "111", footerText: "pie", heroImage: "img.jpg" };
 
@@ -165,6 +179,7 @@ test("publicarEnGist arma y envía el payload, devolviendo la cantidad publicada
   assert.equal(resultado.vehiculosPublicados, 1);
   assert.equal(resultado.htmlUrl, "https://gist.github.com/x/abc");
   assert.equal(resultado.payload.vehicles[0].patente, "AB123CD");
+  assert.equal(resultado.fotosLocalesOmitidas, 0);
 });
 
 test("publicarEnGist traduce un 401/403 de GitHub en un mensaje claro", async () => {
