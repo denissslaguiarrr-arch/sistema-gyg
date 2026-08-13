@@ -1,0 +1,39 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const { parseCsv, normalizarEncabezado } = require("../backend/utils/csv");
+
+test("parseCsv separa filas y columnas simples", () => {
+  const filas = parseCsv("marca,modelo\nToyota,Hilux\nFord,Focus\n");
+  assert.deepEqual(filas, [
+    ["marca", "modelo"],
+    ["Toyota", "Hilux"],
+    ["Ford", "Focus"],
+  ]);
+});
+
+test("parseCsv respeta campos entre comillas con comas y comillas escapadas", () => {
+  const filas = parseCsv('marca,notas\nToyota,"Detalle, con coma y ""comillas"""\n');
+  assert.deepEqual(filas, [
+    ["marca", "notas"],
+    ["Toyota", 'Detalle, con coma y "comillas"'],
+  ]);
+});
+
+test("parseCsv soporta saltos de línea CRLF y quita el BOM inicial", () => {
+  const filas = parseCsv("\uFEFFmarca,modelo\r\nToyota,Hilux\r\n");
+  assert.deepEqual(filas, [
+    ["marca", "modelo"],
+    ["Toyota", "Hilux"],
+  ]);
+});
+
+test("parseCsv ignora la última línea vacía", () => {
+  const filas = parseCsv("marca\nToyota\n\n");
+  assert.equal(filas.length, 2);
+});
+
+test("normalizarEncabezado quita acentos, mayúsculas y espacios", () => {
+  assert.equal(normalizarEncabezado("  Año  "), "ano");
+  assert.equal(normalizarEncabezado("Patente"), "patente");
+  assert.equal(normalizarEncabezado("KILOMETRAJE"), "kilometraje");
+});
