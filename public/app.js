@@ -23,6 +23,8 @@ const el = {
   btnLogout: document.getElementById("btn-logout"),
   btnCambiarPassword: document.getElementById("btn-cambiar-password"),
   btnUsuarios: document.getElementById("btn-usuarios"),
+  btnConfigSitio: document.getElementById("btn-config-sitio"),
+  btnPublicar: document.getElementById("btn-publicar"),
 
   kpiTotal: document.getElementById("kpi-total"),
   kpiDisponibles: document.getElementById("kpi-disponibles"),
@@ -62,6 +64,17 @@ const el = {
   fPrecio: document.getElementById("f-precio"),
   fMoneda: document.getElementById("f-moneda"),
   fNotas: document.getElementById("f-notas"),
+  fVersion: document.getElementById("f-version"),
+  fCarroceria: document.getElementById("f-carroceria"),
+  fCombustible: document.getElementById("f-combustible"),
+  fTransmision: document.getElementById("f-transmision"),
+  fTraccion: document.getElementById("f-traccion"),
+  fPuertas: document.getElementById("f-puertas"),
+  fColor: document.getElementById("f-color"),
+  fMotor: document.getElementById("f-motor"),
+  fPotencia: document.getElementById("f-potencia"),
+  fDestacado: document.getElementById("f-destacado"),
+  fEquipamiento: document.getElementById("f-equipamiento"),
   galeriaImagenes: document.getElementById("galeria-imagenes"),
   fImagenArchivo: document.getElementById("f-imagen-archivo"),
   fImagenUrl: document.getElementById("f-imagen-url"),
@@ -98,6 +111,17 @@ const el = {
   btnCerrarImportar: document.getElementById("btn-cerrar-importar"),
   btnCancelarImportar: document.getElementById("btn-cancelar-importar"),
   btnConfirmarImportar: document.getElementById("btn-confirmar-importar"),
+
+  modalConfigOverlay: document.getElementById("modal-config-overlay"),
+  modalConfig: document.getElementById("modal-config"),
+  formConfig: document.getElementById("form-config"),
+  cNombre: document.getElementById("c-nombre"),
+  cTagline: document.getElementById("c-tagline"),
+  cWhatsapp: document.getElementById("c-whatsapp"),
+  cFooter: document.getElementById("c-footer"),
+  cHero: document.getElementById("c-hero"),
+  btnCerrarConfig: document.getElementById("btn-cerrar-config"),
+  btnCancelarConfig: document.getElementById("btn-cancelar-config"),
 };
 
 const ESTADO_BADGE = {
@@ -196,6 +220,8 @@ async function cargarUsuario() {
     el.btnPapelera.classList.toggle("hidden", !admin);
     el.btnUsuarios.classList.toggle("hidden", !admin);
     el.btnImportar.classList.toggle("hidden", !admin);
+    el.btnConfigSitio.classList.toggle("hidden", !admin);
+    el.btnPublicar.classList.toggle("hidden", !admin);
   } catch (_err) {
     // apiRequest ya redirige a /login.html si la sesión no es válida.
   }
@@ -328,6 +354,80 @@ el.listaUsuarios.addEventListener("click", async (evento) => {
     await cargarUsuarios();
   } catch (err) {
     mostrarAlerta(err.message);
+  }
+});
+
+// ---------- Configuración del sitio público (solo admin) ----------
+
+function cerrarModalConfig() {
+  el.modalConfigOverlay.classList.add("hidden");
+  el.modalConfig.classList.add("hidden");
+}
+
+el.btnConfigSitio.addEventListener("click", async () => {
+  try {
+    const config = await apiRequest("/api/config/sitio");
+    el.cNombre.value = config.nombre || "";
+    el.cTagline.value = config.tagline || "";
+    el.cWhatsapp.value = config.whatsapp || "";
+    el.cFooter.value = config.footerText || "";
+    el.cHero.value = config.heroImage || "";
+    el.modalConfigOverlay.classList.remove("hidden");
+    el.modalConfig.classList.remove("hidden");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+el.btnCerrarConfig.addEventListener("click", cerrarModalConfig);
+el.btnCancelarConfig.addEventListener("click", cerrarModalConfig);
+el.modalConfigOverlay.addEventListener("click", cerrarModalConfig);
+
+el.formConfig.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  try {
+    await apiRequest("/api/config/sitio", {
+      method: "PUT",
+      body: JSON.stringify({
+        nombre: el.cNombre.value.trim(),
+        tagline: el.cTagline.value.trim(),
+        whatsapp: el.cWhatsapp.value.trim(),
+        footerText: el.cFooter.value.trim(),
+        heroImage: el.cHero.value.trim(),
+      }),
+    });
+    mostrarAlerta("Configuración del sitio guardada.", "ok");
+    cerrarModalConfig();
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
+// ---------- Publicar en la web (solo admin) ----------
+
+el.btnPublicar.addEventListener("click", async () => {
+  if (
+    !window.confirm(
+      "¿Publicar el stock actual en el sitio web? Esto actualiza el catálogo que ven tus clientes."
+    )
+  ) {
+    return;
+  }
+
+  el.btnPublicar.disabled = true;
+  const textoOriginal = el.btnPublicar.textContent;
+  el.btnPublicar.textContent = "Publicando...";
+
+  try {
+    const resultado = await apiRequest("/api/sync/publicar", { method: "POST" });
+    mostrarAlerta(
+      `Se publicaron ${resultado.vehiculosPublicados} vehículo(s) en el sitio web.`,
+      "ok"
+    );
+  } catch (err) {
+    mostrarAlerta(err.message);
+  } finally {
+    el.btnPublicar.disabled = false;
+    el.btnPublicar.textContent = textoOriginal;
   }
 });
 
@@ -565,7 +665,9 @@ function renderTabla() {
       <tr class="hover:bg-slate-50">
         <td class="px-4 py-3">${miniatura(v)}</td>
         <td class="px-4 py-3">
-          <div class="font-medium text-slate-900">${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</div>
+          <div class="font-medium text-slate-900">
+            ${v.destacado ? '<span title="Destacado" class="text-amber-500">★</span> ' : ""}${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}
+          </div>
           ${v.notas ? `<div class="text-xs text-slate-400 mt-0.5 max-w-xs truncate" title="${escapeHtml(v.notas)}">${escapeHtml(v.notas)}</div>` : ""}
         </td>
         <td class="px-4 py-3 font-mono text-slate-600">${escapeHtml(v.dominio)}</td>
@@ -664,12 +766,24 @@ function abrirModal(vehiculo = null) {
     el.fPrecio.value = vehiculo.precio;
     el.fMoneda.value = vehiculo.moneda;
     el.fNotas.value = vehiculo.notas || "";
+    el.fVersion.value = vehiculo.version || "";
+    el.fCarroceria.value = vehiculo.carroceria || "";
+    el.fCombustible.value = vehiculo.combustible || "";
+    el.fTransmision.value = vehiculo.transmision || "";
+    el.fTraccion.value = vehiculo.traccion || "";
+    el.fPuertas.value = vehiculo.puertas ?? "";
+    el.fColor.value = vehiculo.color || "";
+    el.fMotor.value = vehiculo.motor || "";
+    el.fPotencia.value = vehiculo.potencia || "";
+    el.fDestacado.checked = !!vehiculo.destacado;
+    el.fEquipamiento.value = (vehiculo.equipamiento || []).join(", ");
   } else {
     el.modalTitulo.textContent = "Nuevo vehículo";
     el.fId.value = "";
     el.fEstado.value = "Disponible";
     el.fMoneda.value = "ARS";
     el.fKilometraje.value = 0;
+    el.fDestacado.checked = false;
   }
 
   el.modalOverlay.classList.remove("hidden");
@@ -694,6 +808,17 @@ function leerFormulario() {
     moneda: el.fMoneda.value,
     imagenes_url: state.formImagenes,
     notas: el.fNotas.value.trim(),
+    version: el.fVersion.value.trim(),
+    carroceria: el.fCarroceria.value,
+    combustible: el.fCombustible.value,
+    transmision: el.fTransmision.value,
+    traccion: el.fTraccion.value,
+    puertas: el.fPuertas.value === "" ? "" : Number(el.fPuertas.value),
+    color: el.fColor.value.trim(),
+    motor: el.fMotor.value.trim(),
+    potencia: el.fPotencia.value.trim(),
+    destacado: el.fDestacado.checked,
+    equipamiento: el.fEquipamiento.value,
   };
 }
 
@@ -892,6 +1017,7 @@ document.addEventListener("keydown", (evento) => {
   if (!el.modalPassword.classList.contains("hidden")) cerrarModalPassword();
   if (!el.modalUsuarios.classList.contains("hidden")) cerrarModalUsuarios();
   if (!el.modalImportar.classList.contains("hidden")) cerrarModalImportar();
+  if (!el.modalConfig.classList.contains("hidden")) cerrarModalConfig();
 });
 
 (async function iniciar() {

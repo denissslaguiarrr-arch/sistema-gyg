@@ -37,6 +37,40 @@ async function iniciar() {
     document.getElementById("dato-anio").textContent = v.anio;
     document.getElementById("dato-km").textContent = v.es_0km ? "0KM" : `${Number(v.kilometraje).toLocaleString("es-AR")} km`;
 
+    const specsExtra = [
+      ["Versión", v.version],
+      ["Combustible", v.combustible],
+      ["Transmisión", v.transmision],
+      ["Tracción", v.traccion],
+      ["Puertas", v.puertas],
+      ["Color", v.color],
+      ["Motor", v.motor],
+      ["Potencia", v.potencia],
+      ["Carrocería", v.carroceria],
+    ].filter(([, valor]) => valor !== "" && valor !== null && valor !== undefined);
+
+    const gridSpecs = document.getElementById("grid-specs");
+    for (const [etiqueta, valor] of specsExtra) {
+      const celda = document.createElement("div");
+      celda.className = "bg-slate-50 rounded-lg px-3 py-2";
+      celda.innerHTML = `<p class="text-xs text-slate-400">${etiqueta}</p><p class="font-semibold"></p>`;
+      celda.querySelector("p.font-semibold").textContent = valor;
+      gridSpecs.appendChild(celda);
+    }
+
+    if (v.equipamiento && v.equipamiento.length) {
+      document.getElementById("bloque-equipamiento").classList.remove("hidden");
+      document.getElementById("lista-equipamiento").innerHTML = v.equipamiento
+        .map(
+          (item) =>
+            `<li class="text-xs bg-slate-100 border border-slate-200 rounded-md px-2 py-1"></li>`
+        )
+        .join("");
+      document
+        .querySelectorAll("#lista-equipamiento li")
+        .forEach((li, i) => (li.textContent = v.equipamiento[i]));
+    }
+
     if (v.notas) {
       document.getElementById("notas").textContent = v.notas;
     } else {

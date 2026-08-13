@@ -23,7 +23,7 @@
 
         <p id="precio" class="text-3xl font-bold text-indigo-700 mt-4"></p>
 
-        <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+        <div id="grid-specs" class="grid grid-cols-2 gap-3 mt-4 text-sm">
           <div class="bg-slate-50 rounded-lg px-3 py-2">
             <p class="text-xs text-slate-400">Año</p>
             <p id="dato-anio" class="font-semibold"></p>
@@ -32,6 +32,11 @@
             <p class="text-xs text-slate-400">Kilometraje</p>
             <p id="dato-km" class="font-semibold"></p>
           </div>
+        </div>
+
+        <div id="bloque-equipamiento" class="hidden mt-4">
+          <p class="text-xs text-slate-400 uppercase font-medium mb-1">Equipamiento</p>
+          <ul id="lista-equipamiento" class="flex flex-wrap gap-1.5"></ul>
         </div>
 
         <div id="bloque-notas" class="mt-4">

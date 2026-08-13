@@ -22,10 +22,22 @@
           Cambiar contraseña
         </button>
         <button
+          id="btn-config-sitio"
+          class="hidden text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Configuración del sitio
+        </button>
+        <button
           id="btn-usuarios"
           class="hidden text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
         >
           Usuarios
+        </button>
+        <button
+          id="btn-publicar"
+          class="hidden text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-2 rounded-lg"
+        >
+          Publicar en la web
         </button>
         <button
           id="btn-logout"
@@ -238,6 +250,95 @@
             </select>
           </div>
 
+          <div class="sm:col-span-2 border-t border-slate-100 pt-4 mt-1">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              Especificaciones (opcional, para la ficha pública)
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Versión</label>
+            <input id="f-version" class="campo" placeholder="SRX 4x4" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Carrocería</label>
+            <select id="f-carroceria" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Sedán">Sedán</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="SUV">SUV</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Coupé">Coupé</option>
+              <option value="Furgón">Furgón</option>
+              <option value="Rural/Wagon">Rural / Wagon</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Combustible</label>
+            <select id="f-combustible" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Nafta">Nafta</option>
+              <option value="Diesel">Diesel</option>
+              <option value="GNC">GNC</option>
+              <option value="Eléctrico">Eléctrico</option>
+              <option value="Híbrido">Híbrido</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Transmisión</label>
+            <select id="f-transmision" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Manual">Manual</option>
+              <option value="Automática">Automática</option>
+              <option value="CVT">CVT</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Tracción</label>
+            <select id="f-traccion" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Delantera">Delantera</option>
+              <option value="Trasera">Trasera</option>
+              <option value="4x4">4x4 / AWD</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Puertas</label>
+            <input id="f-puertas" type="number" min="1" max="6" class="campo" placeholder="4" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Color</label>
+            <input id="f-color" class="campo" placeholder="Blanco" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Motor</label>
+            <input id="f-motor" class="campo" placeholder="2.8L" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Potencia</label>
+            <input id="f-potencia" class="campo" placeholder="204cv" />
+          </div>
+          <div class="flex items-end pb-2">
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+              <input id="f-destacado" type="checkbox" class="rounded border-slate-300" />
+              Destacar en el catálogo web
+            </label>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Equipamiento</label>
+            <input
+              id="f-equipamiento"
+              class="campo"
+              placeholder="Aire acondicionado, Bluetooth, Cámara de retroceso"
+            />
+            <p class="text-[11px] text-slate-400 mt-1">Separado por comas.</p>
+          </div>
+
           <div class="sm:col-span-2">
             <label class="block text-xs font-medium text-slate-600 mb-1">Fotos</label>
             <div id="galeria-imagenes" class="flex flex-wrap gap-2 mb-2"></div>
@@ -385,6 +486,54 @@
           </button>
           <button type="submit" id="btn-confirmar-importar" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
             Importar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de configuración del sitio público (solo admin) -->
+  <div id="modal-config-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-config" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+      <form id="form-config">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+          <h2 class="text-lg font-semibold text-slate-900">Configuración del sitio público</h2>
+          <button type="button" id="btn-cerrar-config" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+          <p class="text-sm text-slate-600">
+            Estos datos se publican junto con el stock en el catálogo web (por ejemplo, tu sitio de Blogger).
+          </p>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Nombre de la concesionaria</label>
+            <input id="c-nombre" class="campo" placeholder="GyG" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Frase / tagline</label>
+            <input id="c-tagline" class="campo" placeholder="Selección premium de vehículos" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">WhatsApp (con código de país, sin +)</label>
+            <input id="c-whatsapp" class="campo" placeholder="5491123456789" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Texto de pie de página</label>
+            <input id="c-footer" class="campo" placeholder="Concesionaria GyG — stock en vivo desde la nube" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Imagen de portada (URL)</label>
+            <input id="c-hero" class="campo" placeholder="https://..." />
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+          <button type="button" id="btn-cancelar-config" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Guardar
           </button>
         </div>
       </form>
