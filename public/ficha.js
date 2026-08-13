@@ -99,10 +99,34 @@ async function iniciar() {
 
     const imagenes = v.imagenes_url && v.imagenes_url.length ? v.imagenes_url : [];
     const fotoPrincipal = document.getElementById("foto-principal");
+    const marcoFoto = document.getElementById("marco-foto");
     const miniaturas = document.getElementById("miniaturas");
+
+    function asegurarLightbox() {
+      let overlay = document.getElementById("lightbox");
+      if (overlay) return overlay;
+      overlay = document.createElement("div");
+      overlay.id = "lightbox";
+      overlay.className =
+        "hidden fixed inset-0 z-50 bg-black/90 flex items-center justify-center p-4 cursor-zoom-out no-imprimir";
+      overlay.innerHTML = `<img class="max-w-full max-h-full object-contain" alt="Foto ampliada" />`;
+      overlay.addEventListener("click", () => overlay.classList.add("hidden"));
+      document.addEventListener("keydown", (evento) => {
+        if (evento.key === "Escape") overlay.classList.add("hidden");
+      });
+      document.body.appendChild(overlay);
+      return overlay;
+    }
+
+    function abrirLightbox(url) {
+      const overlay = asegurarLightbox();
+      overlay.querySelector("img").src = url;
+      overlay.classList.remove("hidden");
+    }
 
     function mostrarFoto(url) {
       fotoPrincipal.src = url;
+      marcoFoto.onclick = () => abrirLightbox(url);
     }
 
     if (imagenes.length > 0) {
@@ -118,7 +142,7 @@ async function iniciar() {
         if (img) mostrarFoto(imagenes[Number(img.dataset.i)]);
       });
     } else {
-      fotoPrincipal.remove();
+      marcoFoto.remove();
     }
 
     contenedor.classList.remove("hidden");

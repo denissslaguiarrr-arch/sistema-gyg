@@ -9,7 +9,9 @@
 <body class="bg-slate-100 min-h-screen text-slate-800">
   <div class="max-w-2xl mx-auto px-4 py-6">
     <div id="contenido" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <img id="foto-principal" class="w-full h-72 object-cover bg-slate-100" alt="Foto del vehículo" />
+      <button type="button" id="marco-foto" class="block w-full bg-slate-900 cursor-zoom-in">
+        <img id="foto-principal" class="w-full max-h-[32rem] object-contain bg-slate-900" alt="Foto del vehículo" />
+      </button>
       <div id="miniaturas" class="flex gap-2 p-3 overflow-x-auto no-imprimir"></div>
 
       <div class="p-6">
@@ -71,6 +73,8 @@
     @media print {
       body { background: white; }
       .no-imprimir { display: none !important; }
+      #marco-foto { background: white; cursor: default; }
+      #foto-principal { max-height: none; background: white; }
     }
   </style>
 

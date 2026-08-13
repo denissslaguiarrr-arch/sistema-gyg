@@ -94,9 +94,14 @@ test("GET /api/public/vehiculos/:id devuelve 404 para un vehículo eliminado o i
 test("/ficha.html y /ficha.js son accesibles sin sesión", async () => {
   const html = await fetch(`${baseUrl}/ficha.html`);
   assert.equal(html.status, 200);
+  const markup = await html.text();
+  assert.match(markup, /object-contain/);
+  assert.doesNotMatch(markup, /id="foto-principal"[^>]*object-cover/);
 
   const js = await fetch(`${baseUrl}/ficha.js`);
   assert.equal(js.status, 200);
+  const script = await js.text();
+  assert.match(script, /abrirLightbox/);
 });
 
 test("/uploads/ es accesible sin sesión (fotos públicas de la ficha)", async () => {

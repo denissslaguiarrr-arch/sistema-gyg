@@ -340,6 +340,25 @@ pero la variable de entorno es más cómoda: no se pisa con `git pull`.
 Las fotos viejas en `/uploads/...` **solo se ven en el panel local**. Al
 publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
+### Fotos recortadas en Blogger (camioneta “cortada”)
+
+La foto **no está mal subida**: el recuadro de la ficha es apaisado y
+recorta arriba/abajo las fotos altas o casi cuadradas (`object-fit: cover`).
+No hace falta volver a cargar la Hilux.
+
+En Blogger:
+
+1. **Tema** → **Personalizar** → **Editar HTML** (o **Tema** → **Editar HTML**).
+2. Buscá `</body>` y pegá **antes** el contenido de
+   `blogger/parche-galeria.html`.
+3. Guardá y recargá https://gyg-automotores.blogspot.com/#/auto/gyg-008
+
+La foto grande se ve entera (con un fondo oscuro a los costados si hace
+falta). Las miniaturas pueden seguir recortadas: es normal.
+
+La ficha local (`/ficha.html`) ya muestra la foto completa; clic para
+ampliarla.
+
 ### Configuración del sitio
 
 Desde el botón **"Configuración del sitio"** (solo admin) se edita el
