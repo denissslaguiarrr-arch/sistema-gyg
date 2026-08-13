@@ -22,6 +22,12 @@
           Cambiar contraseña
         </button>
         <button
+          id="btn-usuarios"
+          class="hidden text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Usuarios
+        </button>
+        <button
           id="btn-logout"
           class="text-sm text-slate-500 hover:text-red-600 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
         >
@@ -29,7 +35,7 @@
         </button>
         <button
           id="btn-nuevo"
-          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition"
+          class="hidden inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition"
         >
           <span class="text-lg leading-none">+</span> Nuevo vehículo
         </button>
@@ -111,7 +117,7 @@
       </a>
       <button
         id="btn-papelera"
-        class="text-sm font-medium text-slate-600 hover:text-slate-800 px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50"
+        class="hidden text-sm font-medium text-slate-600 hover:text-slate-800 px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50"
       >
         Ver papelera
       </button>
@@ -145,7 +151,28 @@
         No hay vehículos que coincidan con la búsqueda.
       </div>
     </div>
-    <p id="contador" class="text-xs text-slate-400 mt-3"></p>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 mt-3">
+      <p id="contador" class="text-xs text-slate-400"></p>
+      <div class="flex items-center gap-2">
+        <select
+          id="selector-porpagina"
+          class="text-xs border border-slate-300 rounded-lg px-2 py-1.5"
+        >
+          <option value="12">12 por página</option>
+          <option value="24" selected>24 por página</option>
+          <option value="48">48 por página</option>
+          <option value="96">96 por página</option>
+        </select>
+        <button id="btn-pagina-anterior" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">
+          ← Anterior
+        </button>
+        <span id="texto-pagina" class="text-xs text-slate-500 min-w-[90px] text-center"></span>
+        <button id="btn-pagina-siguiente" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">
+          Siguiente →
+        </button>
+      </div>
+    </div>
   </div>
 
   <!-- Modal de carga / edición -->
@@ -282,6 +309,36 @@
           </button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- Modal de gestión de usuarios (solo admin) -->
+  <div id="modal-usuarios-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-usuarios" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+        <h2 class="text-lg font-semibold text-slate-900">Usuarios del panel</h2>
+        <button type="button" id="btn-cerrar-usuarios" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="px-6 py-4">
+        <div id="lista-usuarios" class="space-y-2 mb-5"></div>
+
+        <form id="form-nuevo-usuario" class="border-t border-slate-200 pt-4">
+          <p class="text-xs font-medium text-slate-600 mb-2">Agregar usuario</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <input id="u-username" required placeholder="Usuario" class="campo" />
+            <input id="u-password" required type="password" placeholder="Contraseña" minlength="6" class="campo" />
+            <select id="u-rol" class="campo">
+              <option value="vendedor">Vendedor</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <button type="submit" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm">
+            Crear usuario
+          </button>
+        </form>
+      </div>
     </div>
   </div>
 

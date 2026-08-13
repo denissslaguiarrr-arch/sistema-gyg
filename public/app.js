@@ -2,9 +2,14 @@ const API_BASE = "/api/vehiculos";
 
 const state = {
   vehiculos: [],
+  usuario: null,
   filtros: { q: "", estado: "", km: "" },
   vista: "activos", // "activos" | "papelera"
-  orden: { campo: null, direccion: "asc" },
+  orden: { campo: null, direccion: "desc" },
+  pagina: 1,
+  porPagina: 24,
+  totalPaginas: 1,
+  total: 0,
   formImagenes: [],
 };
 
@@ -17,6 +22,7 @@ const el = {
   usuarioActual: document.getElementById("usuario-actual"),
   btnLogout: document.getElementById("btn-logout"),
   btnCambiarPassword: document.getElementById("btn-cambiar-password"),
+  btnUsuarios: document.getElementById("btn-usuarios"),
 
   kpiTotal: document.getElementById("kpi-total"),
   kpiDisponibles: document.getElementById("kpi-disponibles"),
@@ -31,6 +37,11 @@ const el = {
   btnLimpiarFiltros: document.getElementById("btn-limpiar-filtros"),
   btnExportar: document.getElementById("btn-exportar"),
   btnPapelera: document.getElementById("btn-papelera"),
+
+  selectorPorPagina: document.getElementById("selector-porpagina"),
+  btnPaginaAnterior: document.getElementById("btn-pagina-anterior"),
+  btnPaginaSiguiente: document.getElementById("btn-pagina-siguiente"),
+  textoPagina: document.getElementById("texto-pagina"),
 
   btnNuevo: document.getElementById("btn-nuevo"),
   modalOverlay: document.getElementById("modal-overlay"),
@@ -68,6 +79,15 @@ const el = {
   pNueva: document.getElementById("p-nueva"),
   btnCerrarPassword: document.getElementById("btn-cerrar-password"),
   btnCancelarPassword: document.getElementById("btn-cancelar-password"),
+
+  modalUsuariosOverlay: document.getElementById("modal-usuarios-overlay"),
+  modalUsuarios: document.getElementById("modal-usuarios"),
+  btnCerrarUsuarios: document.getElementById("btn-cerrar-usuarios"),
+  listaUsuarios: document.getElementById("lista-usuarios"),
+  formNuevoUsuario: document.getElementById("form-nuevo-usuario"),
+  uUsername: document.getElementById("u-username"),
+  uPassword: document.getElementById("u-password"),
+  uRol: document.getElementById("u-rol"),
 };
 
 const ESTADO_BADGE = {
@@ -150,10 +170,21 @@ async function apiRequest(path, options = {}) {
 
 // ---------- Sesión ----------
 
+function esAdmin() {
+  return state.usuario && state.usuario.rol === "admin";
+}
+
 async function cargarUsuario() {
   try {
     const data = await apiRequest("/api/auth/me");
-    el.usuarioActual.textContent = `👤 ${data.usuario.username}`;
+    state.usuario = data.usuario;
+    const etiquetaRol = data.usuario.rol === "admin" ? "admin" : "vendedor";
+    el.usuarioActual.textContent = `👤 ${data.usuario.username} (${etiquetaRol})`;
+
+    const admin = esAdmin();
+    el.btnNuevo.classList.toggle("hidden", !admin);
+    el.btnPapelera.classList.toggle("hidden", !admin);
+    el.btnUsuarios.classList.toggle("hidden", !admin);
   } catch (_err) {
     // apiRequest ya redirige a /login.html si la sesión no es válida.
   }
@@ -200,6 +231,95 @@ el.formPassword.addEventListener("submit", async (evento) => {
   }
 });
 
+// ---------- Gestión de usuarios (solo admin) ----------
+
+function cerrarModalUsuarios() {
+  el.modalUsuariosOverlay.classList.add("hidden");
+  el.modalUsuarios.classList.add("hidden");
+}
+
+async function cargarUsuarios() {
+  try {
+    const usuarios = await apiRequest("/api/usuarios");
+    el.listaUsuarios.innerHTML = usuarios
+      .map((u) => {
+        const esUnoMismo = state.usuario && u.id === state.usuario.id;
+        const badgeRol =
+          u.rol === "admin"
+            ? "bg-indigo-100 text-indigo-700"
+            : "bg-slate-100 text-slate-600";
+        return `
+        <div class="flex items-center justify-between gap-2 border border-slate-200 rounded-lg px-3 py-2">
+          <div>
+            <p class="text-sm font-medium text-slate-800">${escapeHtml(u.username)}${esUnoMismo ? " (vos)" : ""}</p>
+            <span class="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-semibold ${badgeRol}">${u.rol}</span>
+          </div>
+          ${
+            esUnoMismo
+              ? ""
+              : `<div class="flex gap-2">
+                  <button data-accion-usuario="cambiar-rol" data-id="${u.id}" data-rol="${u.rol === "admin" ? "vendedor" : "admin"}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 hover:underline">
+                    Hacer ${u.rol === "admin" ? "vendedor" : "admin"}
+                  </button>
+                  <button data-accion-usuario="eliminar" data-id="${u.id}" class="text-xs font-medium text-red-500 hover:text-red-700 hover:underline">Eliminar</button>
+                </div>`
+          }
+        </div>`;
+      })
+      .join("");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+el.btnUsuarios.addEventListener("click", () => {
+  el.formNuevoUsuario.reset();
+  el.modalUsuariosOverlay.classList.remove("hidden");
+  el.modalUsuarios.classList.remove("hidden");
+  cargarUsuarios();
+});
+el.btnCerrarUsuarios.addEventListener("click", cerrarModalUsuarios);
+el.modalUsuariosOverlay.addEventListener("click", cerrarModalUsuarios);
+
+el.formNuevoUsuario.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  try {
+    await apiRequest("/api/usuarios", {
+      method: "POST",
+      body: JSON.stringify({
+        username: el.uUsername.value.trim(),
+        password: el.uPassword.value,
+        rol: el.uRol.value,
+      }),
+    });
+    mostrarAlerta("Usuario creado correctamente.", "ok");
+    el.formNuevoUsuario.reset();
+    await cargarUsuarios();
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
+el.listaUsuarios.addEventListener("click", async (evento) => {
+  const boton = evento.target.closest("button[data-accion-usuario]");
+  if (!boton) return;
+  const { accionUsuario, id, rol } = boton.dataset;
+
+  try {
+    if (accionUsuario === "cambiar-rol") {
+      await apiRequest(`/api/usuarios/${id}`, { method: "PATCH", body: JSON.stringify({ rol }) });
+      mostrarAlerta("Rol actualizado.", "ok");
+    } else if (accionUsuario === "eliminar") {
+      if (!window.confirm("¿Eliminar este usuario del panel?")) return;
+      await apiRequest(`/api/usuarios/${id}`, { method: "DELETE" });
+      mostrarAlerta("Usuario eliminado.", "ok");
+    }
+    await cargarUsuarios();
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
 // ---------- KPIs ----------
 
 async function cargarResumen() {
@@ -224,8 +344,13 @@ function construirQuery() {
   if (state.filtros.estado) params.set("estado", state.filtros.estado);
   if (state.filtros.km) params.set("km", state.filtros.km);
   if (state.vista === "papelera") params.set("papelera", "1");
-  const query = params.toString();
-  return query ? `${API_BASE}?${query}` : API_BASE;
+  if (state.orden.campo) {
+    params.set("orden", state.orden.campo);
+    params.set("direccion", state.orden.direccion);
+  }
+  params.set("pagina", state.pagina);
+  params.set("porPagina", state.porPagina);
+  return `${API_BASE}?${params.toString()}`;
 }
 
 function actualizarUrlExportar() {
@@ -239,25 +364,22 @@ function actualizarUrlExportar() {
 
 async function cargarVehiculos() {
   try {
-    state.vehiculos = await apiRequest(construirQuery());
-    aplicarOrden();
+    const respuesta = await apiRequest(construirQuery());
+    state.vehiculos = respuesta.items;
+    state.total = respuesta.total;
+    state.totalPaginas = respuesta.totalPaginas;
+    state.pagina = respuesta.pagina;
     renderTabla();
+    renderPaginador();
   } catch (err) {
     mostrarAlerta(err.message);
   }
 }
 
-function aplicarOrden() {
-  const { campo, direccion } = state.orden;
-  if (!campo) return;
-  const signo = direccion === "asc" ? 1 : -1;
-  state.vehiculos.sort((a, b) => {
-    const valorA = typeof a[campo] === "string" ? a[campo].toLowerCase() : a[campo];
-    const valorB = typeof b[campo] === "string" ? b[campo].toLowerCase() : b[campo];
-    if (valorA < valorB) return -1 * signo;
-    if (valorA > valorB) return 1 * signo;
-    return 0;
-  });
+function renderPaginador() {
+  el.textoPagina.textContent = `Página ${state.pagina} de ${state.totalPaginas}`;
+  el.btnPaginaAnterior.disabled = state.pagina <= 1;
+  el.btnPaginaSiguiente.disabled = state.pagina >= state.totalPaginas;
 }
 
 document.querySelectorAll("[data-orden]").forEach((th) => {
@@ -271,9 +393,25 @@ document.querySelectorAll("[data-orden]").forEach((th) => {
     }
     document.querySelectorAll(".orden-indicador").forEach((span) => (span.textContent = ""));
     th.querySelector(".orden-indicador").textContent = state.orden.direccion === "asc" ? "▲" : "▼";
-    aplicarOrden();
-    renderTabla();
+    state.pagina = 1;
+    cargarVehiculos();
   });
+});
+
+el.selectorPorPagina.addEventListener("change", () => {
+  state.porPagina = Number(el.selectorPorPagina.value);
+  state.pagina = 1;
+  cargarVehiculos();
+});
+el.btnPaginaAnterior.addEventListener("click", () => {
+  if (state.pagina <= 1) return;
+  state.pagina -= 1;
+  cargarVehiculos();
+});
+el.btnPaginaSiguiente.addEventListener("click", () => {
+  if (state.pagina >= state.totalPaginas) return;
+  state.pagina += 1;
+  cargarVehiculos();
 });
 
 function accionesRapidas(vehiculo) {
@@ -295,15 +433,22 @@ function accionesRapidas(vehiculo) {
     );
   }
 
+  if (esAdmin()) {
+    botones.push(
+      `<button data-accion="editar" data-id="${vehiculo.id}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 hover:underline">Editar</button>`
+    );
+  }
   botones.push(
-    `<button data-accion="editar" data-id="${vehiculo.id}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 hover:underline">Editar</button>`
+    `<a href="/ficha.html?id=${vehiculo.id}" target="_blank" rel="noopener" class="text-xs font-medium text-emerald-600 hover:text-emerald-800 hover:underline">Ficha</a>`
   );
   botones.push(
     `<button data-accion="historial" data-id="${vehiculo.id}" class="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline">Historial</button>`
   );
-  botones.push(
-    `<button data-accion="eliminar" data-id="${vehiculo.id}" class="text-xs font-medium text-red-500 hover:text-red-700 hover:underline">Eliminar</button>`
-  );
+  if (esAdmin()) {
+    botones.push(
+      `<button data-accion="eliminar" data-id="${vehiculo.id}" class="text-xs font-medium text-red-500 hover:text-red-700 hover:underline">Eliminar</button>`
+    );
+  }
 
   return `<div class="flex flex-wrap justify-end gap-3">${botones.join("")}</div>`;
 }
@@ -327,8 +472,8 @@ function renderTabla() {
   const filas = state.vehiculos;
   el.contador.textContent =
     state.vista === "papelera"
-      ? `${filas.length} vehículo(s) en la papelera`
-      : `${filas.length} vehículo(s) en stock`;
+      ? `${state.total} vehículo(s) en la papelera`
+      : `${state.total} vehículo(s) en stock`;
 
   if (filas.length === 0) {
     el.tablaBody.innerHTML = "";
@@ -622,6 +767,7 @@ function debounce(fn, espera = 300) {
 
 const buscarConDebounce = debounce(() => {
   state.filtros.q = el.filtroQ.value.trim();
+  state.pagina = 1;
   actualizarUrlExportar();
   cargarVehiculos();
 }, 300);
@@ -629,16 +775,19 @@ const buscarConDebounce = debounce(() => {
 el.filtroQ.addEventListener("input", buscarConDebounce);
 el.filtroEstado.addEventListener("change", () => {
   state.filtros.estado = el.filtroEstado.value;
+  state.pagina = 1;
   actualizarUrlExportar();
   cargarVehiculos();
 });
 el.filtroKm.addEventListener("change", () => {
   state.filtros.km = el.filtroKm.value;
+  state.pagina = 1;
   actualizarUrlExportar();
   cargarVehiculos();
 });
 el.btnLimpiarFiltros.addEventListener("click", () => {
   state.filtros = { q: "", estado: "", km: "" };
+  state.pagina = 1;
   el.filtroQ.value = "";
   el.filtroEstado.value = "";
   el.filtroKm.value = "";
@@ -648,8 +797,9 @@ el.btnLimpiarFiltros.addEventListener("click", () => {
 
 el.btnPapelera.addEventListener("click", () => {
   state.vista = state.vista === "papelera" ? "activos" : "papelera";
+  state.pagina = 1;
   el.btnPapelera.textContent = state.vista === "papelera" ? "Volver al stock" : "Ver papelera";
-  el.btnNuevo.classList.toggle("hidden", state.vista === "papelera");
+  el.btnNuevo.classList.toggle("hidden", state.vista === "papelera" || !esAdmin());
   cargarVehiculos();
 });
 
@@ -667,8 +817,10 @@ document.addEventListener("keydown", (evento) => {
   if (!el.modal.classList.contains("hidden")) cerrarModal();
   if (!el.modalHistorial.classList.contains("hidden")) cerrarHistorial();
   if (!el.modalPassword.classList.contains("hidden")) cerrarModalPassword();
+  if (!el.modalUsuarios.classList.contains("hidden")) cerrarModalUsuarios();
 });
 
-cargarUsuario();
-cargarResumen();
-cargarVehiculos();
+(async function iniciar() {
+  await cargarUsuario();
+  await Promise.all([cargarResumen(), cargarVehiculos()]);
+})();
