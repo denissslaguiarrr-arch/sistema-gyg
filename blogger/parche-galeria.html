@@ -1,12 +1,5 @@
-<!--
-  Pegá este bloque en Blogger, justo ANTES de </body>.
-  Tema → Personalizar → Editar HTML (o Tema → Editar HTML).
-
-  En la ficha (#/auto/...) la foto grande se muestra completa
-  (object-fit: contain) en vez de recortarse arriba y abajo.
--->
-<style id="gyg-fotos-enteras">
-  /* Recuadros típicos de la galería de la ficha */
+<!-- Parche GyG: foto completa en la ficha. Pegar al final de body, sin borrar el cierre. -->
+<style id='gyg-fotos-enteras' type='text/css'>
   .gallery-main img,
   .gallery-stage img,
   .photo-stage img,
@@ -17,26 +10,25 @@
     background: #111827;
   }
 </style>
-<script>
+<script type='text/javascript'>
+//<![CDATA[
 (function () {
   function esFicha() {
     return /#\/auto\//.test(location.hash || "");
   }
 
   function aplicar() {
-    var ficha = esFicha();
+    if (!esFicha()) return;
     var imgs = document.querySelectorAll("img");
-    for (var i = 0; i < imgs.length; i++) {
-      var img = imgs[i];
+    Array.prototype.forEach.call(imgs, function (img) {
       var grande = img.clientWidth >= 240 && img.clientHeight >= 180;
-      if (ficha && grande) {
-        img.style.setProperty("object-fit", "contain", "important");
-        img.style.setProperty("object-position", "center", "important");
-        if (img.parentElement) {
-          img.parentElement.style.backgroundColor = "#111827";
-        }
+      if (!grande) return;
+      img.style.setProperty("object-fit", "contain", "important");
+      img.style.setProperty("object-position", "center", "important");
+      if (img.parentElement) {
+        img.parentElement.style.backgroundColor = "#111827";
       }
-    }
+    });
   }
 
   var t;
@@ -56,4 +48,5 @@
   } catch (_err) {}
   programar();
 })();
+//]]>
 </script>

@@ -346,12 +346,18 @@ La foto **no está mal subida**: el recuadro de la ficha es apaisado y
 recorta arriba/abajo las fotos altas o casi cuadradas (`object-fit: cover`).
 No hace falta volver a cargar la Hilux.
 
-En Blogger:
+El tema de Blogger es **XML**. Si al guardar aparece
+`The element type "body" must be terminated by the matching end-tag "</body>"`,
+Blogger **no llegó a guardar**: cancelá, no borres `</body>` y usá el parche
+nuevo (va envuelto en `CDATA` para que el `<` del JavaScript no rompa el XML).
 
 1. **Tema** → **Personalizar** → **Editar HTML** (o **Tema** → **Editar HTML**).
-2. Buscá `</body>` y pegá **antes** el contenido de
-   `blogger/parche-galeria.html`.
-3. Guardá y recargá https://gyg-automotores.blogspot.com/#/auto/gyg-008
+2. Si el editor sigue en rojo por el intento anterior: **Revertir** / copiá
+   de nuevo el HTML desde una copia de seguridad del tema.
+3. Buscá la línea `</body>` (Ctrl+F). Poné el cursor **justo antes**, en
+   una línea nueva. **No borres** `</body>`.
+4. Pegá **todo** el archivo `blogger/parche-galeria.html`.
+5. Guardá y recargá https://gyg-automotores.blogspot.com/#/auto/gyg-008
 
 La foto grande se ve entera (con un fondo oscuro a los costados si hace
 falta). Las miniaturas pueden seguir recortadas: es normal.
