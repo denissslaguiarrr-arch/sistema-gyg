@@ -8,6 +8,8 @@ const vehiculosRouter = require("./routes/vehiculos");
 const uploadsRouter = require("./routes/uploads");
 const usuariosRouter = require("./routes/usuarios");
 const publicRouter = require("./routes/public");
+const configRouter = require("./routes/config");
+const syncRouter = require("./routes/sync");
 const requireAuth = require("./middleware/requireAuth");
 const requireRole = require("./middleware/requireRole");
 const { ValidationError } = require("./validators/vehiculo");
@@ -37,6 +39,8 @@ app.use("/api/public", publicRouter);
 app.use("/api/vehiculos", requireAuth, vehiculosRouter);
 app.use("/api/uploads", requireAuth, requireRole("admin"), uploadsRouter);
 app.use("/api/usuarios", requireAuth, requireRole("admin"), usuariosRouter);
+app.use("/api/config", requireAuth, configRouter);
+app.use("/api/sync", requireAuth, requireRole("admin"), syncRouter);
 
 // El resto del panel (HTML/JS/fotos subidas) requiere sesión activa;
 // login.html y login.js quedan públicos para poder autenticarse.
