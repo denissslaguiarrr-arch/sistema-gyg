@@ -22,7 +22,7 @@ backend/
     auth.js               Login, logout, usuario actual, cambio de contraseña
     usuarios.js            Gestión de usuarios y roles (solo admin)
     vehiculos.js          CRUD, papelera, historial, resumen KPI, export/import CSV, paginación
-    uploads.js            Subida de fotos (multer, solo admin)
+    uploads.js            Subida de fotos (local + Imgur, solo admin)
     public.js              API pública de solo lectura para la ficha compartible
     config.js              Configuración del catálogo público (nombre, WhatsApp, etc.)
     sync.js                 Endpoint que publica el stock en el Gist (fase 2)
@@ -32,6 +32,9 @@ backend/
     backup.js             Backup manual/programado de la base SQLite
   utils/
     csv.js                 Parser CSV (RFC 4180) reutilizado por export/import
+    fotos.js               URLs públicas vs locales para el catálogo web
+    imgur.js               Subida a Imgur (Client-ID) para fotos del sitio
+
 db/
   schema.sql            Definición de tablas (Vehiculos, Usuarios, Sesiones, HistorialEstados, ConfiguracionSitio, Meta)
   concesionaria.db       Archivo SQLite (generado en runtime, no versionado)
@@ -51,6 +54,8 @@ tests/
   import.test.js          Importación masiva de vehículos por CSV
   config.test.js          Configuración del catálogo público
   gist.test.js            Mapeo de datos y publicación en el Gist (fetch mockeado)
+  fotos.test.js           URLs públicas vs locales para Blogger
+  imgur.test.js           Subida a Imgur (fetch mockeado)
   sync.test.js            Endpoint /api/sync/publicar (fetch mockeado)
   api.test.js             CRUD, papelera, historial, filtros, paginación, export CSV
 ```
@@ -119,7 +124,8 @@ Hay dos roles:
 | PATCH  | `/api/vehiculos/:id/restaurar`    | Restaura un vehículo desde la papelera                  | admin |
 | DELETE | `/api/vehiculos/:id`              | Borrado lógico (va a la papelera)                       | admin |
 | DELETE | `/api/vehiculos/:id/permanente`   | Borra definitivamente (solo si ya está en la papelera)  | admin |
-| POST   | `/api/uploads`                    | Sube fotos (`multipart/form-data`, campo `imagenes`)     | admin |
+| POST   | `/api/uploads`                    | Sube fotos locales (`/uploads/...`, solo el panel)       | admin |
+| POST   | `/api/uploads/imgur`              | Sube fotos a Imgur y devuelve URLs públicas `https://`   | admin |
 
 `GET /api/vehiculos` devuelve `{ items, total, pagina, porPagina, totalPaginas }`.
 
@@ -243,11 +249,25 @@ explicando cuál falta configurar; el resto del sistema funciona igual.
 - Actualiza únicamente el archivo `stock.json` del Gist indicado; no toca
   nada más del sitio.
 
-Las fotos subidas desde la PC (`/uploads/...`) **solo se ven en el panel
-local**. El sitio de Blogger no puede abrir archivos de tu computadora. Para
-que se vean en la web, cada foto tiene que ser un link público `https://`
-(por ejemplo Google Drive compartido, Postimages o Imgur). Al publicar, las
-rutas locales se omiten y el panel avisa cuántas quedaron afuera.
+Las fotos que arrastrás a la dropzone del formulario se suben a **Imgur**
+y quedan con un link `https://i.imgur.com/...`, que Blogger sí puede
+mostrar. Para eso hace falta un Client-ID:
+
+1. Creá una app en [api.imgur.com/oauth2/addclient](https://api.imgur.com/oauth2/addclient)
+   (Anonymous usage, sin callback).
+2. Copiá el **Client ID**.
+3. Antes de `npm start`:
+
+```powershell
+$env:GYG_IMGUR_CLIENT_ID="TU_CLIENT_ID"
+npm start
+```
+
+También podés pegar el Client ID en `public/app.js` (`IMGUR_CLIENT_ID`),
+pero la variable de entorno es más cómoda: no se pisa con `git pull`.
+
+Las fotos viejas en `/uploads/...` **solo se ven en el panel local**. Al
+publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
 ### Configuración del sitio
 

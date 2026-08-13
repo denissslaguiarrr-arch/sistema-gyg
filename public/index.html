@@ -347,15 +347,22 @@
           <div class="sm:col-span-2">
             <label class="block text-xs font-medium text-slate-600 mb-1">Fotos</label>
             <div id="galeria-imagenes" class="flex flex-wrap gap-2 mb-2"></div>
-            <div class="flex flex-wrap gap-2 items-center">
-              <label class="text-xs font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer border border-indigo-200 hover:bg-indigo-50 rounded-lg px-3 py-1.5">
-                📷 Subir fotos
-                <input id="f-imagen-archivo" type="file" accept="image/*" multiple class="hidden" />
-              </label>
+
+            <div
+              id="dropzone-imagenes"
+              class="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50/60 transition-colors cursor-pointer px-4 py-8 text-center"
+            >
+              <input id="f-imagen-archivo" type="file" accept="image/*" multiple class="hidden" />
+              <p class="text-sm font-medium text-slate-700">Arrastrá fotos acá o hacé clic para elegirlas</p>
+              <p class="text-xs text-slate-500 mt-1">Se suben a Imgur (URL pública para el sitio web). JPG, PNG, WEBP o GIF · máx. 8 MB.</p>
+              <p id="dropzone-estado" class="hidden text-xs font-medium text-indigo-600 mt-3">Subiendo imagen...</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 items-center mt-3">
               <input
                 id="f-imagen-url"
                 type="text"
-                placeholder="Pegar una URL de foto"
+                placeholder="O pegar una URL de foto"
                 class="campo flex-1 min-w-[200px]"
               />
               <button
@@ -367,10 +374,6 @@
               </button>
             </div>
             <p id="imagenes-estado" class="text-[11px] text-slate-400 mt-1"></p>
-            <p class="text-[11px] text-slate-500 mt-2">
-              Las fotos subidas desde la PC se ven en este panel. Para que aparezcan en el sitio web
-              pegá un <strong>link público https://</strong> (Google Drive compartido, Postimages, Imgur, etc.).
-            </p>
           </div>
 
           <div class="sm:col-span-2">

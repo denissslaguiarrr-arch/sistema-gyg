@@ -1,5 +1,10 @@
 const API_BASE = "/api/vehiculos";
 
+// Pegá tu Client-ID de Imgur acá (https://api.imgur.com/oauth2/addclient,
+// tipo Anonymous, sin callback). Si lo dejás como está, el panel usa la
+// variable de entorno GYG_IMGUR_CLIENT_ID en el servidor.
+const IMGUR_CLIENT_ID = "TU_IMGUR_CLIENT_ID";
+
 const state = {
   vehiculos: [],
   usuario: null,
@@ -77,6 +82,8 @@ const el = {
   fDestacado: document.getElementById("f-destacado"),
   fEquipamiento: document.getElementById("f-equipamiento"),
   galeriaImagenes: document.getElementById("galeria-imagenes"),
+  dropzoneImagenes: document.getElementById("dropzone-imagenes"),
+  dropzoneEstado: document.getElementById("dropzone-estado"),
   fImagenArchivo: document.getElementById("f-imagen-archivo"),
   fImagenUrl: document.getElementById("f-imagen-url"),
   btnAgregarUrl: document.getElementById("btn-agregar-url"),
@@ -772,31 +779,126 @@ if (el.btnAgregarUrl) {
 
 el.fImagenArchivo.addEventListener("change", async () => {
   const archivos = Array.from(el.fImagenArchivo.files || []);
+  el.fImagenArchivo.value = "";
   if (archivos.length === 0) return;
+  await subirArchivosAlCatalogo(archivos);
+});
 
-  el.imagenesEstado.textContent = "Subiendo fotos...";
-  try {
-    const formData = new FormData();
-    archivos.forEach((archivo) => formData.append("imagenes", archivo));
+const DROPZONE_BASE =
+  "rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50/60 transition-colors cursor-pointer px-4 py-8 text-center";
+const DROPZONE_ACTIVA =
+  "rounded-xl border-2 border-dashed border-indigo-500 bg-indigo-100 transition-colors cursor-pointer px-4 py-8 text-center";
 
-    const res = await fetch("/api/uploads", { method: "POST", body: formData });
-    if (res.status === 401) {
-      window.location.href = "/login.html";
-      return;
+function marcarDropzone(activa) {
+  if (!el.dropzoneImagenes) return;
+  el.dropzoneImagenes.className = activa ? DROPZONE_ACTIVA : DROPZONE_BASE;
+}
+
+async function subirArchivoAImgur(archivo) {
+  const formData = new FormData();
+  const usarImgurDirecto = IMGUR_CLIENT_ID && IMGUR_CLIENT_ID !== "TU_IMGUR_CLIENT_ID";
+
+  if (usarImgurDirecto) {
+    formData.append("image", archivo);
+    const res = await fetch("https://api.imgur.com/3/image", {
+      method: "POST",
+      headers: { Authorization: `Client-ID ${IMGUR_CLIENT_ID}` },
+      body: formData,
+    });
+    const data = await res.json().catch(() => ({}));
+    const link = data && data.data && data.data.link;
+    if (!res.ok || !link) {
+      const detalle = (data.data && data.data.error) || "Imgur no pudo recibir la imagen";
+      throw new Error(String(detalle));
     }
-    const data = await res.json();
-    if (!res.ok) throw new Error(data.error || "No se pudieron subir las fotos");
+    return link;
+  }
 
-    state.formImagenes.push(...data.urls);
-    renderGaleria();
-    mostrarAlerta(`${data.urls.length} foto(s) subida(s).`, "ok");
+  formData.append("imagenes", archivo);
+  const res = await fetch("/api/uploads/imgur", { method: "POST", body: formData });
+  if (res.status === 401) {
+    window.location.href = "/login.html";
+    throw new Error("Sesión expirada");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "No se pudieron subir las fotos a Imgur");
+  const urls = data.urls || (data.url ? [data.url] : []);
+  if (!urls.length) throw new Error("Imgur no devolvió un link público");
+  return urls[0];
+}
+
+function setDropzoneCargando(visible, texto = "Subiendo imagen...") {
+  if (!el.dropzoneEstado) return;
+  el.dropzoneEstado.textContent = texto;
+  el.dropzoneEstado.classList.toggle("hidden", !visible);
+}
+
+async function subirArchivosAlCatalogo(archivos) {
+  const imagenes = archivos.filter((archivo) => archivo && archivo.type && archivo.type.startsWith("image/"));
+  if (imagenes.length === 0) {
+    mostrarAlerta("Soltá un archivo de imagen (JPG, PNG, WEBP o GIF).");
+    return;
+  }
+
+  setDropzoneCargando(true, imagenes.length > 1 ? `Subiendo ${imagenes.length} imágenes...` : "Subiendo imagen...");
+  el.imagenesEstado.textContent = "Subiendo imagen...";
+
+  try {
+    for (const archivo of imagenes) {
+      const url = await subirArchivoAImgur(archivo);
+      state.formImagenes.push(url);
+      renderGaleria();
+    }
+    mostrarAlerta(
+      imagenes.length === 1 ? "Foto subida. Ya tiene URL pública para el sitio web." : `${imagenes.length} fotos subidas a Imgur.`,
+      "ok"
+    );
   } catch (err) {
     mostrarAlerta(err.message);
     renderGaleria();
   } finally {
-    el.fImagenArchivo.value = "";
+    setDropzoneCargando(false);
   }
-});
+}
+
+if (el.dropzoneImagenes) {
+  let dragDepth = 0;
+
+  el.dropzoneImagenes.addEventListener("click", () => {
+    if (el.fImagenArchivo) el.fImagenArchivo.click();
+  });
+
+  el.dropzoneImagenes.addEventListener("dragenter", (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    dragDepth += 1;
+    marcarDropzone(true);
+  });
+
+  el.dropzoneImagenes.addEventListener("dragover", (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    evento.dataTransfer.dropEffect = "copy";
+    marcarDropzone(true);
+  });
+
+  el.dropzoneImagenes.addEventListener("dragleave", (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    dragDepth = Math.max(0, dragDepth - 1);
+    if (dragDepth === 0) marcarDropzone(false);
+  });
+
+  el.dropzoneImagenes.addEventListener("drop", async (evento) => {
+    evento.preventDefault();
+    evento.stopPropagation();
+    dragDepth = 0;
+    marcarDropzone(false);
+    const archivos = Array.from(evento.dataTransfer.files || []);
+    if (archivos.length === 0) return;
+    await subirArchivosAlCatalogo(archivos);
+  });
+}
 
 // ---------- Modal de alta / edición ----------
 
