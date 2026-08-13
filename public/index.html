@@ -13,13 +13,53 @@
         <h1 class="text-2xl font-bold text-slate-900">Stock de Vehículos</h1>
         <p class="text-sm text-slate-500">Panel de administración — sistema local</p>
       </div>
-      <button
-        id="btn-nuevo"
-        class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition"
-      >
-        <span class="text-lg leading-none">+</span> Nuevo vehículo
-      </button>
+      <div class="flex items-center gap-2">
+        <span id="usuario-actual" class="text-sm text-slate-500 mr-1"></span>
+        <button
+          id="btn-cambiar-password"
+          class="text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Cambiar contraseña
+        </button>
+        <button
+          id="btn-logout"
+          class="text-sm text-slate-500 hover:text-red-600 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Cerrar sesión
+        </button>
+        <button
+          id="btn-nuevo"
+          class="inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition"
+        >
+          <span class="text-lg leading-none">+</span> Nuevo vehículo
+        </button>
+      </div>
     </header>
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <p class="text-xs text-slate-400 uppercase font-medium">Total en stock</p>
+        <p id="kpi-total" class="text-2xl font-bold text-slate-900 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 border-l-4 border-l-green-500">
+        <p class="text-xs text-slate-400 uppercase font-medium">Disponibles</p>
+        <p id="kpi-disponibles" class="text-2xl font-bold text-green-700 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 border-l-4 border-l-yellow-500">
+        <p class="text-xs text-slate-400 uppercase font-medium">Reservados</p>
+        <p id="kpi-reservados" class="text-2xl font-bold text-yellow-700 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 border-l-4 border-l-gray-400">
+        <p class="text-xs text-slate-400 uppercase font-medium">Vendidos</p>
+        <p id="kpi-vendidos" class="text-2xl font-bold text-gray-600 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 col-span-2 sm:col-span-1">
+        <p class="text-xs text-slate-400 uppercase font-medium">Valor de stock activo</p>
+        <p id="kpi-valor-ars" class="text-sm font-semibold text-slate-900 mt-1">ARS —</p>
+        <p id="kpi-valor-usd" class="text-sm font-semibold text-slate-900">USD —</p>
+      </div>
+    </div>
 
     <!-- Toolbar: búsqueda y filtros -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap gap-3 items-end">
@@ -61,6 +101,20 @@
       >
         Limpiar filtros
       </button>
+      <div class="flex-1"></div>
+      <a
+        id="btn-exportar"
+        href="/api/vehiculos/export.csv"
+        class="text-sm font-medium text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-lg border border-indigo-200 hover:bg-indigo-50"
+      >
+        Exportar CSV
+      </a>
+      <button
+        id="btn-papelera"
+        class="text-sm font-medium text-slate-600 hover:text-slate-800 px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50"
+      >
+        Ver papelera
+      </button>
     </div>
 
     <!-- Alertas -->
@@ -72,11 +126,12 @@
         <table class="w-full text-sm">
           <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
             <tr>
-              <th class="px-4 py-3 text-left">Vehículo</th>
+              <th class="px-4 py-3 text-left"></th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="marca">Vehículo <span class="orden-indicador"></span></th>
               <th class="px-4 py-3 text-left">Patente</th>
-              <th class="px-4 py-3 text-left">Año</th>
-              <th class="px-4 py-3 text-left">Kilometraje</th>
-              <th class="px-4 py-3 text-left">Precio</th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="anio">Año <span class="orden-indicador"></span></th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="kilometraje">Kilometraje <span class="orden-indicador"></span></th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="precio">Precio <span class="orden-indicador"></span></th>
               <th class="px-4 py-3 text-left">Estado</th>
               <th class="px-4 py-3 text-right">Acciones</th>
             </tr>
@@ -151,9 +206,21 @@
           </div>
 
           <div class="sm:col-span-2">
-            <label class="block text-xs font-medium text-slate-600 mb-1">URLs de imágenes</label>
-            <textarea id="f-imagenes" rows="2" class="campo" placeholder="https://foto1.jpg, https://foto2.jpg"></textarea>
-            <p class="text-[11px] text-slate-400 mt-1">Separadas por comas.</p>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Fotos</label>
+            <div id="galeria-imagenes" class="flex flex-wrap gap-2 mb-2"></div>
+            <div class="flex flex-wrap gap-2 items-center">
+              <label class="text-xs font-medium text-indigo-600 hover:text-indigo-800 cursor-pointer border border-indigo-200 hover:bg-indigo-50 rounded-lg px-3 py-1.5">
+                📷 Subir fotos
+                <input id="f-imagen-archivo" type="file" accept="image/*" multiple class="hidden" />
+              </label>
+              <input
+                id="f-imagen-url"
+                type="text"
+                placeholder="o pegar una URL y presionar Enter"
+                class="campo flex-1 min-w-[200px]"
+              />
+            </div>
+            <p id="imagenes-estado" class="text-[11px] text-slate-400 mt-1"></p>
           </div>
 
           <div class="sm:col-span-2">
@@ -164,6 +231,50 @@
 
         <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">
           <button type="button" id="btn-cancelar" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de historial de estados -->
+  <div id="modal-historial-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-historial" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <h2 id="historial-titulo" class="text-lg font-semibold text-slate-900">Historial de estados</h2>
+        <button type="button" id="btn-cerrar-historial" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+      <div id="historial-lista" class="px-6 py-4 space-y-3 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Modal de cambio de contraseña -->
+  <div id="modal-password-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-password" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-xl">
+      <form id="form-password">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+          <h2 class="text-lg font-semibold text-slate-900">Cambiar contraseña</h2>
+          <button type="button" id="btn-cerrar-password" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Contraseña actual</label>
+            <input id="p-actual" type="password" required class="campo" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Contraseña nueva</label>
+            <input id="p-nueva" type="password" required minlength="6" class="campo" />
+            <p class="text-[11px] text-slate-400 mt-1">Mínimo 6 caracteres.</p>
+          </div>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+          <button type="button" id="btn-cancelar-password" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
             Cancelar
           </button>
           <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">

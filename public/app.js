@@ -3,6 +3,9 @@ const API_BASE = "/api/vehiculos";
 const state = {
   vehiculos: [],
   filtros: { q: "", estado: "", km: "" },
+  vista: "activos", // "activos" | "papelera"
+  orden: { campo: null, direccion: "asc" },
+  formImagenes: [],
 };
 
 const el = {
@@ -11,10 +14,23 @@ const el = {
   contador: document.getElementById("contador"),
   alerta: document.getElementById("alerta"),
 
+  usuarioActual: document.getElementById("usuario-actual"),
+  btnLogout: document.getElementById("btn-logout"),
+  btnCambiarPassword: document.getElementById("btn-cambiar-password"),
+
+  kpiTotal: document.getElementById("kpi-total"),
+  kpiDisponibles: document.getElementById("kpi-disponibles"),
+  kpiReservados: document.getElementById("kpi-reservados"),
+  kpiVendidos: document.getElementById("kpi-vendidos"),
+  kpiValorArs: document.getElementById("kpi-valor-ars"),
+  kpiValorUsd: document.getElementById("kpi-valor-usd"),
+
   filtroQ: document.getElementById("filtro-q"),
   filtroEstado: document.getElementById("filtro-estado"),
   filtroKm: document.getElementById("filtro-km"),
   btnLimpiarFiltros: document.getElementById("btn-limpiar-filtros"),
+  btnExportar: document.getElementById("btn-exportar"),
+  btnPapelera: document.getElementById("btn-papelera"),
 
   btnNuevo: document.getElementById("btn-nuevo"),
   modalOverlay: document.getElementById("modal-overlay"),
@@ -33,8 +49,25 @@ const el = {
   fEstado: document.getElementById("f-estado"),
   fPrecio: document.getElementById("f-precio"),
   fMoneda: document.getElementById("f-moneda"),
-  fImagenes: document.getElementById("f-imagenes"),
   fNotas: document.getElementById("f-notas"),
+  galeriaImagenes: document.getElementById("galeria-imagenes"),
+  fImagenArchivo: document.getElementById("f-imagen-archivo"),
+  fImagenUrl: document.getElementById("f-imagen-url"),
+  imagenesEstado: document.getElementById("imagenes-estado"),
+
+  modalHistorialOverlay: document.getElementById("modal-historial-overlay"),
+  modalHistorial: document.getElementById("modal-historial"),
+  historialTitulo: document.getElementById("historial-titulo"),
+  historialLista: document.getElementById("historial-lista"),
+  btnCerrarHistorial: document.getElementById("btn-cerrar-historial"),
+
+  modalPasswordOverlay: document.getElementById("modal-password-overlay"),
+  modalPassword: document.getElementById("modal-password"),
+  formPassword: document.getElementById("form-password"),
+  pActual: document.getElementById("p-actual"),
+  pNueva: document.getElementById("p-nueva"),
+  btnCerrarPassword: document.getElementById("btn-cerrar-password"),
+  btnCancelarPassword: document.getElementById("btn-cancelar-password"),
 };
 
 const ESTADO_BADGE = {
@@ -59,6 +92,13 @@ function formatoKilometraje(km) {
   return `${Number(km).toLocaleString("es-AR")} km`;
 }
 
+function formatoFecha(fechaIso) {
+  if (!fechaIso) return "";
+  const fecha = new Date(fechaIso.replace(" ", "T") + "Z");
+  if (Number.isNaN(fecha.getTime())) return fechaIso;
+  return fecha.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
+}
+
 function badgeEstado(estado) {
   const clase = ESTADO_BADGE[estado] || ESTADO_BADGE.Disponible;
   return `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold ${clase}">${estado}</span>`;
@@ -78,11 +118,22 @@ function mostrarAlerta(mensaje, tipo = "error") {
   }, 4500);
 }
 
+function escapeHtml(texto) {
+  const div = document.createElement("div");
+  div.textContent = texto ?? "";
+  return div.innerHTML;
+}
+
 async function apiRequest(path, options = {}) {
   const res = await fetch(path, {
     headers: { "Content-Type": "application/json" },
     ...options,
   });
+
+  if (res.status === 401) {
+    window.location.href = "/login.html";
+    throw new Error("Sesión expirada");
+  }
 
   if (res.status === 204) return null;
 
@@ -97,23 +148,133 @@ async function apiRequest(path, options = {}) {
   return data;
 }
 
+// ---------- Sesión ----------
+
+async function cargarUsuario() {
+  try {
+    const data = await apiRequest("/api/auth/me");
+    el.usuarioActual.textContent = `👤 ${data.usuario.username}`;
+  } catch (_err) {
+    // apiRequest ya redirige a /login.html si la sesión no es válida.
+  }
+}
+
+el.btnLogout.addEventListener("click", async () => {
+  try {
+    await apiRequest("/api/auth/logout", { method: "POST" });
+  } finally {
+    window.location.href = "/login.html";
+  }
+});
+
+el.btnCambiarPassword.addEventListener("click", () => {
+  el.formPassword.reset();
+  el.modalPasswordOverlay.classList.remove("hidden");
+  el.modalPassword.classList.remove("hidden");
+  el.pActual.focus();
+});
+
+function cerrarModalPassword() {
+  el.modalPasswordOverlay.classList.add("hidden");
+  el.modalPassword.classList.add("hidden");
+}
+
+el.btnCerrarPassword.addEventListener("click", cerrarModalPassword);
+el.btnCancelarPassword.addEventListener("click", cerrarModalPassword);
+el.modalPasswordOverlay.addEventListener("click", cerrarModalPassword);
+
+el.formPassword.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  try {
+    await apiRequest("/api/auth/me/password", {
+      method: "PATCH",
+      body: JSON.stringify({
+        passwordActual: el.pActual.value,
+        passwordNueva: el.pNueva.value,
+      }),
+    });
+    mostrarAlerta("Contraseña actualizada correctamente.", "ok");
+    cerrarModalPassword();
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
+// ---------- KPIs ----------
+
+async function cargarResumen() {
+  try {
+    const resumen = await apiRequest(`${API_BASE}/resumen`);
+    el.kpiTotal.textContent = resumen.total;
+    el.kpiDisponibles.textContent = resumen.disponibles;
+    el.kpiReservados.textContent = resumen.reservados;
+    el.kpiVendidos.textContent = resumen.vendidos;
+    el.kpiValorArs.textContent = `$ ${Number(resumen.valor_stock_ars).toLocaleString("es-AR")} ARS`;
+    el.kpiValorUsd.textContent = `US$ ${Number(resumen.valor_stock_usd).toLocaleString("es-AR")}`;
+  } catch (_err) {
+    // Si falla, las KPIs simplemente quedan en su valor previo.
+  }
+}
+
+// ---------- Listado, filtros, orden ----------
+
 function construirQuery() {
   const params = new URLSearchParams();
   if (state.filtros.q) params.set("q", state.filtros.q);
   if (state.filtros.estado) params.set("estado", state.filtros.estado);
   if (state.filtros.km) params.set("km", state.filtros.km);
+  if (state.vista === "papelera") params.set("papelera", "1");
   const query = params.toString();
   return query ? `${API_BASE}?${query}` : API_BASE;
+}
+
+function actualizarUrlExportar() {
+  const params = new URLSearchParams();
+  if (state.filtros.q) params.set("q", state.filtros.q);
+  if (state.filtros.estado) params.set("estado", state.filtros.estado);
+  if (state.filtros.km) params.set("km", state.filtros.km);
+  const query = params.toString();
+  el.btnExportar.href = query ? `${API_BASE}/export.csv?${query}` : `${API_BASE}/export.csv`;
 }
 
 async function cargarVehiculos() {
   try {
     state.vehiculos = await apiRequest(construirQuery());
+    aplicarOrden();
     renderTabla();
   } catch (err) {
     mostrarAlerta(err.message);
   }
 }
+
+function aplicarOrden() {
+  const { campo, direccion } = state.orden;
+  if (!campo) return;
+  const signo = direccion === "asc" ? 1 : -1;
+  state.vehiculos.sort((a, b) => {
+    const valorA = typeof a[campo] === "string" ? a[campo].toLowerCase() : a[campo];
+    const valorB = typeof b[campo] === "string" ? b[campo].toLowerCase() : b[campo];
+    if (valorA < valorB) return -1 * signo;
+    if (valorA > valorB) return 1 * signo;
+    return 0;
+  });
+}
+
+document.querySelectorAll("[data-orden]").forEach((th) => {
+  th.addEventListener("click", () => {
+    const campo = th.dataset.orden;
+    if (state.orden.campo === campo) {
+      state.orden.direccion = state.orden.direccion === "asc" ? "desc" : "asc";
+    } else {
+      state.orden.campo = campo;
+      state.orden.direccion = "asc";
+    }
+    document.querySelectorAll(".orden-indicador").forEach((span) => (span.textContent = ""));
+    th.querySelector(".orden-indicador").textContent = state.orden.direccion === "asc" ? "▲" : "▼";
+    aplicarOrden();
+    renderTabla();
+  });
+});
 
 function accionesRapidas(vehiculo) {
   const botones = [];
@@ -138,19 +299,44 @@ function accionesRapidas(vehiculo) {
     `<button data-accion="editar" data-id="${vehiculo.id}" class="text-xs font-medium text-indigo-600 hover:text-indigo-800 hover:underline">Editar</button>`
   );
   botones.push(
+    `<button data-accion="historial" data-id="${vehiculo.id}" class="text-xs font-medium text-slate-500 hover:text-slate-700 hover:underline">Historial</button>`
+  );
+  botones.push(
     `<button data-accion="eliminar" data-id="${vehiculo.id}" class="text-xs font-medium text-red-500 hover:text-red-700 hover:underline">Eliminar</button>`
   );
 
   return `<div class="flex flex-wrap justify-end gap-3">${botones.join("")}</div>`;
 }
 
+function accionesPapelera(vehiculo) {
+  return `<div class="flex flex-wrap justify-end gap-3">
+    <button data-accion="restaurar" data-id="${vehiculo.id}" class="text-xs font-medium text-green-700 hover:text-green-900 hover:underline">Restaurar</button>
+    <button data-accion="eliminar-permanente" data-id="${vehiculo.id}" class="text-xs font-medium text-red-600 hover:text-red-800 hover:underline">Eliminar definitivamente</button>
+  </div>`;
+}
+
+function miniatura(vehiculo) {
+  const primera = (vehiculo.imagenes_url || [])[0];
+  if (!primera) {
+    return `<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300 text-lg">🚗</div>`;
+  }
+  return `<img src="${escapeHtml(primera)}" class="w-10 h-10 rounded-lg object-cover border border-slate-200" onerror="this.replaceWith(Object.assign(document.createElement('div'), {className:'w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300 text-lg', textContent:'🚗'}))" />`;
+}
+
 function renderTabla() {
   const filas = state.vehiculos;
-  el.contador.textContent = `${filas.length} vehículo(s) en stock`;
+  el.contador.textContent =
+    state.vista === "papelera"
+      ? `${filas.length} vehículo(s) en la papelera`
+      : `${filas.length} vehículo(s) en stock`;
 
   if (filas.length === 0) {
     el.tablaBody.innerHTML = "";
     el.tablaVacio.classList.remove("hidden");
+    el.tablaVacio.textContent =
+      state.vista === "papelera"
+        ? "La papelera está vacía."
+        : "No hay vehículos que coincidan con la búsqueda.";
     return;
   }
 
@@ -159,6 +345,7 @@ function renderTabla() {
     .map(
       (v) => `
       <tr class="hover:bg-slate-50">
+        <td class="px-4 py-3">${miniatura(v)}</td>
         <td class="px-4 py-3">
           <div class="font-medium text-slate-900">${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</div>
           ${v.notas ? `<div class="text-xs text-slate-400 mt-0.5 max-w-xs truncate" title="${escapeHtml(v.notas)}">${escapeHtml(v.notas)}</div>` : ""}
@@ -168,20 +355,85 @@ function renderTabla() {
         <td class="px-4 py-3">${formatoKilometraje(v.kilometraje)}</td>
         <td class="px-4 py-3 font-medium">${formatoMoneda(v.precio, v.moneda)}</td>
         <td class="px-4 py-3">${badgeEstado(v.estado)}</td>
-        <td class="px-4 py-3 text-right">${accionesRapidas(v)}</td>
+        <td class="px-4 py-3 text-right">${state.vista === "papelera" ? accionesPapelera(v) : accionesRapidas(v)}</td>
       </tr>`
     )
     .join("");
 }
 
-function escapeHtml(texto) {
-  const div = document.createElement("div");
-  div.textContent = texto ?? "";
-  return div.innerHTML;
+// ---------- Galería de imágenes del formulario ----------
+
+function renderGaleria() {
+  if (state.formImagenes.length === 0) {
+    el.galeriaImagenes.innerHTML = "";
+    el.imagenesEstado.textContent = "Todavía no agregaste fotos.";
+    return;
+  }
+  el.imagenesEstado.textContent = `${state.formImagenes.length} foto(s) cargada(s).`;
+  el.galeriaImagenes.innerHTML = state.formImagenes
+    .map(
+      (url, i) => `
+      <div class="relative w-16 h-16">
+        <img src="${escapeHtml(url)}" class="w-16 h-16 rounded-lg object-cover border border-slate-200" onerror="this.style.opacity=0.3" />
+        <button type="button" data-quitar-imagen="${i}" class="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 text-xs leading-none flex items-center justify-center shadow">×</button>
+      </div>`
+    )
+    .join("");
 }
+
+el.galeriaImagenes.addEventListener("click", (evento) => {
+  const boton = evento.target.closest("button[data-quitar-imagen]");
+  if (!boton) return;
+  const indice = Number(boton.dataset.quitarImagen);
+  state.formImagenes.splice(indice, 1);
+  renderGaleria();
+});
+
+el.fImagenUrl.addEventListener("keydown", (evento) => {
+  if (evento.key !== "Enter") return;
+  evento.preventDefault();
+  const url = el.fImagenUrl.value.trim();
+  if (!url) return;
+  state.formImagenes.push(url);
+  el.fImagenUrl.value = "";
+  renderGaleria();
+});
+
+el.fImagenArchivo.addEventListener("change", async () => {
+  const archivos = Array.from(el.fImagenArchivo.files || []);
+  if (archivos.length === 0) return;
+
+  el.imagenesEstado.textContent = "Subiendo fotos...";
+  try {
+    const formData = new FormData();
+    archivos.forEach((archivo) => formData.append("imagenes", archivo));
+
+    const res = await fetch("/api/uploads", { method: "POST", body: formData });
+    if (res.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "No se pudieron subir las fotos");
+
+    state.formImagenes.push(...data.urls);
+    renderGaleria();
+    mostrarAlerta(`${data.urls.length} foto(s) subida(s).`, "ok");
+  } catch (err) {
+    mostrarAlerta(err.message);
+    renderGaleria();
+  } finally {
+    el.fImagenArchivo.value = "";
+  }
+});
+
+// ---------- Modal de alta / edición ----------
 
 function abrirModal(vehiculo = null) {
   el.form.reset();
+  state.formImagenes = vehiculo ? [...(vehiculo.imagenes_url || [])] : [];
+  renderGaleria();
+
   if (vehiculo) {
     el.modalTitulo.textContent = `Editar ${vehiculo.marca} ${vehiculo.modelo}`;
     el.fId.value = vehiculo.id;
@@ -193,7 +445,6 @@ function abrirModal(vehiculo = null) {
     el.fEstado.value = vehiculo.estado;
     el.fPrecio.value = vehiculo.precio;
     el.fMoneda.value = vehiculo.moneda;
-    el.fImagenes.value = (vehiculo.imagenes_url || []).join(", ");
     el.fNotas.value = vehiculo.notas || "";
   } else {
     el.modalTitulo.textContent = "Nuevo vehículo";
@@ -223,7 +474,7 @@ function leerFormulario() {
     estado: el.fEstado.value,
     precio: Number(el.fPrecio.value),
     moneda: el.fMoneda.value,
-    imagenes_url: el.fImagenes.value,
+    imagenes_url: state.formImagenes,
     notas: el.fNotas.value.trim(),
   };
 }
@@ -242,7 +493,7 @@ async function manejarSubmit(evento) {
       mostrarAlerta("Vehículo creado correctamente.", "ok");
     }
     cerrarModal();
-    await cargarVehiculos();
+    await Promise.all([cargarVehiculos(), cargarResumen()]);
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -255,7 +506,7 @@ async function cambiarEstado(id, estado) {
       body: JSON.stringify({ estado }),
     });
     mostrarAlerta(`Estado actualizado a "${estado}".`, "ok");
-    await cargarVehiculos();
+    await Promise.all([cargarVehiculos(), cargarResumen()]);
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -264,16 +515,77 @@ async function cambiarEstado(id, estado) {
 async function eliminarVehiculo(id) {
   const vehiculo = state.vehiculos.find((v) => v.id === Number(id));
   const nombre = vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.dominio})` : "este vehículo";
-  if (!window.confirm(`¿Seguro que querés eliminar ${nombre}? Esta acción no se puede deshacer.`)) {
+  if (!window.confirm(`¿Enviar ${nombre} a la papelera? Podés restaurarlo después.`)) {
     return;
   }
   try {
     await apiRequest(`${API_BASE}/${id}`, { method: "DELETE" });
-    mostrarAlerta("Vehículo eliminado.", "ok");
+    mostrarAlerta("Vehículo enviado a la papelera.", "ok");
+    await Promise.all([cargarVehiculos(), cargarResumen()]);
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+async function restaurarVehiculo(id) {
+  try {
+    await apiRequest(`${API_BASE}/${id}/restaurar`, { method: "PATCH" });
+    mostrarAlerta("Vehículo restaurado.", "ok");
+    await Promise.all([cargarVehiculos(), cargarResumen()]);
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+async function eliminarPermanente(id) {
+  const vehiculo = state.vehiculos.find((v) => v.id === Number(id));
+  const nombre = vehiculo ? `${vehiculo.marca} ${vehiculo.modelo} (${vehiculo.dominio})` : "este vehículo";
+  if (!window.confirm(`¿Eliminar definitivamente ${nombre}? Esta acción no se puede deshacer.`)) {
+    return;
+  }
+  try {
+    await apiRequest(`${API_BASE}/${id}/permanente`, { method: "DELETE" });
+    mostrarAlerta("Vehículo eliminado definitivamente.", "ok");
     await cargarVehiculos();
   } catch (err) {
     mostrarAlerta(err.message);
   }
+}
+
+async function verHistorial(id) {
+  const vehiculo = state.vehiculos.find((v) => v.id === Number(id));
+  try {
+    const historial = await apiRequest(`${API_BASE}/${id}/historial`);
+    el.historialTitulo.textContent = vehiculo
+      ? `Historial — ${vehiculo.marca} ${vehiculo.modelo}`
+      : "Historial de estados";
+
+    if (historial.length === 0) {
+      el.historialLista.innerHTML = `<p class="text-slate-400">Sin movimientos registrados.</p>`;
+    } else {
+      el.historialLista.innerHTML = historial
+        .map(
+          (h) => `
+          <div class="border-l-2 border-indigo-200 pl-3">
+            <p class="font-medium text-slate-800">
+              ${h.estado_anterior ? `${escapeHtml(h.estado_anterior)} → ` : "Alta: "}${escapeHtml(h.estado_nuevo)}
+            </p>
+            <p class="text-xs text-slate-400">${formatoFecha(h.creado_at)} · ${escapeHtml(h.username || "sistema")}</p>
+          </div>`
+        )
+        .join("");
+    }
+
+    el.modalHistorialOverlay.classList.remove("hidden");
+    el.modalHistorial.classList.remove("hidden");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+}
+
+function cerrarHistorial() {
+  el.modalHistorialOverlay.classList.add("hidden");
+  el.modalHistorial.classList.add("hidden");
 }
 
 function manejarClickTabla(evento) {
@@ -289,8 +601,16 @@ function manejarClickTabla(evento) {
     cambiarEstado(id, estado);
   } else if (accion === "eliminar") {
     eliminarVehiculo(id);
+  } else if (accion === "historial") {
+    verHistorial(id);
+  } else if (accion === "restaurar") {
+    restaurarVehiculo(id);
+  } else if (accion === "eliminar-permanente") {
+    eliminarPermanente(id);
   }
 }
+
+// ---------- Filtros y vista de papelera ----------
 
 function debounce(fn, espera = 300) {
   let temporizador;
@@ -302,16 +622,19 @@ function debounce(fn, espera = 300) {
 
 const buscarConDebounce = debounce(() => {
   state.filtros.q = el.filtroQ.value.trim();
+  actualizarUrlExportar();
   cargarVehiculos();
 }, 300);
 
 el.filtroQ.addEventListener("input", buscarConDebounce);
 el.filtroEstado.addEventListener("change", () => {
   state.filtros.estado = el.filtroEstado.value;
+  actualizarUrlExportar();
   cargarVehiculos();
 });
 el.filtroKm.addEventListener("change", () => {
   state.filtros.km = el.filtroKm.value;
+  actualizarUrlExportar();
   cargarVehiculos();
 });
 el.btnLimpiarFiltros.addEventListener("click", () => {
@@ -319,6 +642,14 @@ el.btnLimpiarFiltros.addEventListener("click", () => {
   el.filtroQ.value = "";
   el.filtroEstado.value = "";
   el.filtroKm.value = "";
+  actualizarUrlExportar();
+  cargarVehiculos();
+});
+
+el.btnPapelera.addEventListener("click", () => {
+  state.vista = state.vista === "papelera" ? "activos" : "papelera";
+  el.btnPapelera.textContent = state.vista === "papelera" ? "Volver al stock" : "Ver papelera";
+  el.btnNuevo.classList.toggle("hidden", state.vista === "papelera");
   cargarVehiculos();
 });
 
@@ -328,11 +659,16 @@ el.btnCancelar.addEventListener("click", cerrarModal);
 el.modalOverlay.addEventListener("click", cerrarModal);
 el.form.addEventListener("submit", manejarSubmit);
 el.tablaBody.addEventListener("click", manejarClickTabla);
+el.btnCerrarHistorial.addEventListener("click", cerrarHistorial);
+el.modalHistorialOverlay.addEventListener("click", cerrarHistorial);
 
 document.addEventListener("keydown", (evento) => {
-  if (evento.key === "Escape" && !el.modal.classList.contains("hidden")) {
-    cerrarModal();
-  }
+  if (evento.key !== "Escape") return;
+  if (!el.modal.classList.contains("hidden")) cerrarModal();
+  if (!el.modalHistorial.classList.contains("hidden")) cerrarHistorial();
+  if (!el.modalPassword.classList.contains("hidden")) cerrarModalPassword();
 });
 
+cargarUsuario();
+cargarResumen();
 cargarVehiculos();
