@@ -79,6 +79,7 @@ const el = {
   galeriaImagenes: document.getElementById("galeria-imagenes"),
   fImagenArchivo: document.getElementById("f-imagen-archivo"),
   fImagenUrl: document.getElementById("f-imagen-url"),
+  btnAgregarUrl: document.getElementById("btn-agregar-url"),
   imagenesEstado: document.getElementById("imagenes-estado"),
 
   modalHistorialOverlay: document.getElementById("modal-historial-overlay"),
@@ -728,15 +729,24 @@ el.galeriaImagenes.addEventListener("click", (evento) => {
   renderGaleria();
 });
 
-el.fImagenUrl.addEventListener("keydown", (evento) => {
-  if (evento.key !== "Enter") return;
-  evento.preventDefault();
+function agregarImagenUrl() {
   const url = el.fImagenUrl.value.trim();
   if (!url) return;
   state.formImagenes.push(url);
   el.fImagenUrl.value = "";
   renderGaleria();
+}
+
+el.fImagenUrl.addEventListener("keydown", (evento) => {
+  if (evento.key !== "Enter") return;
+  evento.preventDefault();
+  evento.stopPropagation();
+  agregarImagenUrl();
 });
+
+if (el.btnAgregarUrl) {
+  el.btnAgregarUrl.addEventListener("click", agregarImagenUrl);
+}
 
 el.fImagenArchivo.addEventListener("change", async () => {
   const archivos = Array.from(el.fImagenArchivo.files || []);
@@ -783,7 +793,7 @@ function abrirModal(vehiculo = null) {
     el.fKilometraje.value = vehiculo.kilometraje;
     el.fEstado.value = vehiculo.estado;
     el.fPrecio.value = vehiculo.precio;
-    el.fPrecioOferta.value = vehiculo.precio_oferta ?? "";
+    if (el.fPrecioOferta) el.fPrecioOferta.value = vehiculo.precio_oferta ?? "";
     el.fMoneda.value = vehiculo.moneda;
     el.fNotas.value = vehiculo.notas || "";
     el.fVersion.value = vehiculo.version || "";
@@ -825,7 +835,7 @@ function leerFormulario() {
     kilometraje: el.fKilometraje.value === "" ? 0 : Number(el.fKilometraje.value),
     estado: el.fEstado.value,
     precio: Number(el.fPrecio.value),
-    precio_oferta: el.fPrecioOferta.value === "" ? null : Number(el.fPrecioOferta.value),
+    precio_oferta: el.fPrecioOferta && el.fPrecioOferta.value !== "" ? Number(el.fPrecioOferta.value) : null,
     moneda: el.fMoneda.value,
     imagenes_url: state.formImagenes,
     notas: el.fNotas.value.trim(),

@@ -98,5 +98,5 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '5'),
+  ('schema_version', '6'),
   ('last_sync_at', '');

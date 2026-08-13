@@ -73,11 +73,22 @@ app.use((err, _req, res, _next) => {
       .status(409)
       .json({ error: "Ya existe un vehículo con esa patente (dominio)" });
   }
+  if (err && typeof err.code === "string" && err.code.startsWith("SQLITE")) {
+    console.error(err);
+    return res.status(500).json({
+      error:
+        "No se pudo guardar en la base de datos. Cerrá el servidor (Ctrl+C) y volvé a correr npm start para actualizarla.",
+    });
+  }
   if (err && err.name === "MulterError") {
     return res.status(400).json({ error: `Error al subir el archivo: ${err.message}` });
   }
+  if (err && ["ENOENT", "EACCES", "EPERM"].includes(err.code)) {
+    console.error(err);
+    return res.status(500).json({ error: `No se pudo guardar el archivo: ${err.message}` });
+  }
   console.error(err);
-  res.status(500).json({ error: "Error interno del servidor" });
+  res.status(500).json({ error: err && err.message ? err.message : "Error interno del servidor" });
 });
 
 module.exports = app;
