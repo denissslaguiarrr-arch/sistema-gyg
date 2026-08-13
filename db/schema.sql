@@ -69,7 +69,8 @@ CREATE INDEX IF NOT EXISTS idx_vehiculos_estado    ON Vehiculos (estado);
 CREATE INDEX IF NOT EXISTS idx_vehiculos_marca     ON Vehiculos (marca);
 CREATE INDEX IF NOT EXISTS idx_vehiculos_modelo    ON Vehiculos (modelo);
 CREATE INDEX IF NOT EXISTS idx_vehiculos_eliminado ON Vehiculos (eliminado);
-CREATE INDEX IF NOT EXISTS idx_vehiculos_origen    ON Vehiculos (origen);
+-- idx_vehiculos_origen y el trigger de fecha_ingreso se crean en migrate.js
+-- después de ALTER TABLE, para no romper bases que ya existían sin esas columnas.
 
 -- Auditoría de cambios de estado (Disponible/Reservado/Vendido) por vehículo.
 CREATE TABLE IF NOT EXISTS HistorialEstados (
@@ -148,13 +149,3 @@ CREATE TABLE IF NOT EXISTS Ventas (
 
 CREATE INDEX IF NOT EXISTS idx_ventas_vehiculo ON Ventas (vehiculo_id);
 CREATE INDEX IF NOT EXISTS idx_ventas_fecha ON Ventas (fecha_venta);
-
--- En bases migradas fecha_ingreso no tiene DEFAULT (SQLite no permite
--- date('now') en ALTER ADD COLUMN). Este trigger cubre INSERT del API actual.
-CREATE TRIGGER IF NOT EXISTS trg_vehiculos_fecha_ingreso
-AFTER INSERT ON Vehiculos
-FOR EACH ROW
-WHEN NEW.fecha_ingreso IS NULL OR NEW.fecha_ingreso = ''
-BEGIN
-  UPDATE Vehiculos SET fecha_ingreso = date('now') WHERE id = NEW.id;
-END;

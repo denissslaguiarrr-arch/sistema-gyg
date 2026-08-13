@@ -55,7 +55,12 @@ function migrate(db) {
   }
   ensureColumn(db, "Usuarios", "rol", "TEXT NOT NULL DEFAULT 'vendedor'");
 
-  db.exec("CREATE INDEX IF NOT EXISTS idx_vehiculos_eliminado ON Vehiculos (eliminado)");
+  if (tablasDe(db).includes("Vehiculos")) {
+    db.exec("CREATE INDEX IF NOT EXISTS idx_vehiculos_eliminado ON Vehiculos (eliminado)");
+    if (columnasDe(db, "Vehiculos").includes("origen")) {
+      db.exec("CREATE INDEX IF NOT EXISTS idx_vehiculos_origen ON Vehiculos (origen)");
+    }
+  }
 
   if (!tablasDe(db).includes("ConfiguracionSitio")) {
     db.exec(`
@@ -126,17 +131,17 @@ function migrate(db) {
     `);
   }
 
-  db.exec("CREATE INDEX IF NOT EXISTS idx_vehiculos_origen ON Vehiculos (origen)");
-
-  db.exec(`
-    CREATE TRIGGER IF NOT EXISTS trg_vehiculos_fecha_ingreso
-    AFTER INSERT ON Vehiculos
-    FOR EACH ROW
-    WHEN NEW.fecha_ingreso IS NULL OR NEW.fecha_ingreso = ''
-    BEGIN
-      UPDATE Vehiculos SET fecha_ingreso = date('now') WHERE id = NEW.id;
-    END;
-  `);
+  if (tablasDe(db).includes("Vehiculos") && columnasDe(db, "Vehiculos").includes("fecha_ingreso")) {
+    db.exec(`
+      CREATE TRIGGER IF NOT EXISTS trg_vehiculos_fecha_ingreso
+      AFTER INSERT ON Vehiculos
+      FOR EACH ROW
+      WHEN NEW.fecha_ingreso IS NULL OR NEW.fecha_ingreso = ''
+      BEGIN
+        UPDATE Vehiculos SET fecha_ingreso = date('now') WHERE id = NEW.id;
+      END;
+    `);
+  }
 
   if (schemaVersion(db) < 8) {
     db.exec(`
