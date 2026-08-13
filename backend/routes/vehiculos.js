@@ -15,17 +15,28 @@ function serialize(row) {
     ...row,
     imagenes_url: imagenes,
     es_0km: row.kilometraje === 0,
+    eliminado: !!row.eliminado,
   };
 }
 
-function findById(id) {
-  return db.prepare("SELECT * FROM Vehiculos WHERE id = ?").get(id);
+function findById(id, { incluirEliminados = false } = {}) {
+  const row = db.prepare("SELECT * FROM Vehiculos WHERE id = ?").get(id);
+  if (!row) return null;
+  if (row.eliminado && !incluirEliminados) return null;
+  return row;
 }
 
-// GET /api/vehiculos?q=&estado=&km=0km|usado
-router.get("/", (req, res) => {
-  const { q, estado, km } = req.query;
-  const clauses = [];
+function registrarCambioEstado({ vehiculoId, estadoAnterior, estadoNuevo, usuarioId }) {
+  if (estadoAnterior === estadoNuevo) return;
+  db.prepare(
+    `INSERT INTO HistorialEstados (vehiculo_id, estado_anterior, estado_nuevo, usuario_id)
+     VALUES (?, ?, ?, ?)`
+  ).run(vehiculoId, estadoAnterior, estadoNuevo, usuarioId ?? null);
+}
+
+function construirFiltro(req) {
+  const { q, estado, km, papelera } = req.query;
+  const clauses = [`eliminado = ${papelera === "1" ? 1 : 0}`];
   const params = {};
 
   if (q) {
@@ -42,12 +53,85 @@ router.get("/", (req, res) => {
     clauses.push("kilometraje > 0");
   }
 
-  const where = clauses.length ? `WHERE ${clauses.join(" AND ")}` : "";
+  return { where: `WHERE ${clauses.join(" AND ")}`, params };
+}
+
+// Debe declararse antes de "/:id" para no ser interpretado como un id.
+router.get("/resumen", (_req, res) => {
+  const row = db
+    .prepare(
+      `SELECT
+         COUNT(*) AS total,
+         SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END) AS disponibles,
+         SUM(CASE WHEN estado = 'Reservado' THEN 1 ELSE 0 END) AS reservados,
+         SUM(CASE WHEN estado = 'Vendido'   THEN 1 ELSE 0 END) AS vendidos,
+         SUM(CASE WHEN moneda = 'ARS' AND estado != 'Vendido' THEN precio ELSE 0 END) AS valor_stock_ars,
+         SUM(CASE WHEN moneda = 'USD' AND estado != 'Vendido' THEN precio ELSE 0 END) AS valor_stock_usd
+       FROM Vehiculos
+       WHERE eliminado = 0`
+    )
+    .get();
+
+  res.json({
+    total: row.total || 0,
+    disponibles: row.disponibles || 0,
+    reservados: row.reservados || 0,
+    vendidos: row.vendidos || 0,
+    valor_stock_ars: row.valor_stock_ars || 0,
+    valor_stock_usd: row.valor_stock_usd || 0,
+  });
+});
+
+router.get("/export.csv", (req, res) => {
+  const { where, params } = construirFiltro(req);
   const rows = db
     .prepare(`SELECT * FROM Vehiculos ${where} ORDER BY created_at DESC, id DESC`)
     .all(params);
 
+  const columnas = [
+    "id", "marca", "modelo", "anio", "dominio", "kilometraje",
+    "precio", "moneda", "estado", "notas", "created_at", "updated_at",
+  ];
+  const escaparCsv = (valor) => {
+    const texto = String(valor ?? "");
+    return /[",\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
+  };
+
+  const lineas = [columnas.join(",")];
+  for (const row of rows) {
+    lineas.push(columnas.map((campo) => escaparCsv(row[campo])).join(","));
+  }
+
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="stock.csv"');
+  res.send(lineas.join("\n"));
+});
+
+router.get("/", (req, res) => {
+  const { where, params } = construirFiltro(req);
+  const rows = db
+    .prepare(`SELECT * FROM Vehiculos ${where} ORDER BY created_at DESC, id DESC`)
+    .all(params);
   res.json(rows.map(serialize));
+});
+
+router.get("/:id/historial", (req, res) => {
+  if (!findById(req.params.id, { incluirEliminados: true })) {
+    return res.status(404).json({ error: "Vehículo no encontrado" });
+  }
+
+  const historial = db
+    .prepare(
+      `SELECT HistorialEstados.id, HistorialEstados.estado_anterior, HistorialEstados.estado_nuevo,
+              HistorialEstados.creado_at, Usuarios.username
+       FROM HistorialEstados
+       LEFT JOIN Usuarios ON Usuarios.id = HistorialEstados.usuario_id
+       WHERE vehiculo_id = ?
+       ORDER BY HistorialEstados.creado_at DESC, HistorialEstados.id DESC`
+    )
+    .all(req.params.id);
+
+  res.json(historial);
 });
 
 router.get("/:id", (req, res) => {
@@ -68,6 +152,13 @@ router.post("/", (req, res, next) => {
       )
       .run(data);
 
+    registrarCambioEstado({
+      vehiculoId: result.lastInsertRowid,
+      estadoAnterior: null,
+      estadoNuevo: data.estado,
+      usuarioId: req.usuario && req.usuario.id,
+    });
+
     res.status(201).json(serialize(findById(result.lastInsertRowid)));
   } catch (err) {
     next(err);
@@ -76,9 +167,8 @@ router.post("/", (req, res, next) => {
 
 router.put("/:id", (req, res, next) => {
   try {
-    if (!findById(req.params.id)) {
-      return res.status(404).json({ error: "Vehículo no encontrado" });
-    }
+    const existente = findById(req.params.id);
+    if (!existente) return res.status(404).json({ error: "Vehículo no encontrado" });
 
     const data = validateVehiculo(req.body);
     db.prepare(
@@ -90,6 +180,13 @@ router.put("/:id", (req, res, next) => {
        WHERE id = @id`
     ).run({ ...data, id: req.params.id });
 
+    registrarCambioEstado({
+      vehiculoId: req.params.id,
+      estadoAnterior: existente.estado,
+      estadoNuevo: data.estado,
+      usuarioId: req.usuario && req.usuario.id,
+    });
+
     res.json(serialize(findById(req.params.id)));
   } catch (err) {
     next(err);
@@ -99,14 +196,20 @@ router.put("/:id", (req, res, next) => {
 // Acción rápida: cambiar únicamente el estado sin pasar por el formulario completo.
 router.patch("/:id/estado", (req, res, next) => {
   try {
-    if (!findById(req.params.id)) {
-      return res.status(404).json({ error: "Vehículo no encontrado" });
-    }
+    const existente = findById(req.params.id);
+    if (!existente) return res.status(404).json({ error: "Vehículo no encontrado" });
 
     const estado = validateEstado(req.body);
     db.prepare(
       "UPDATE Vehiculos SET estado = ?, updated_at = datetime('now') WHERE id = ?"
     ).run(estado, req.params.id);
+
+    registrarCambioEstado({
+      vehiculoId: req.params.id,
+      estadoAnterior: existente.estado,
+      estadoNuevo: estado,
+      usuarioId: req.usuario && req.usuario.id,
+    });
 
     res.json(serialize(findById(req.params.id)));
   } catch (err) {
@@ -114,11 +217,40 @@ router.patch("/:id/estado", (req, res, next) => {
   }
 });
 
-router.delete("/:id", (req, res) => {
-  const result = db.prepare("DELETE FROM Vehiculos WHERE id = ?").run(req.params.id);
-  if (result.changes === 0) {
-    return res.status(404).json({ error: "Vehículo no encontrado" });
+router.patch("/:id/restaurar", (req, res) => {
+  const row = db.prepare("SELECT * FROM Vehiculos WHERE id = ?").get(req.params.id);
+  if (!row || !row.eliminado) {
+    return res.status(404).json({ error: "Vehículo no encontrado en la papelera" });
   }
+
+  db.prepare(
+    "UPDATE Vehiculos SET eliminado = 0, eliminado_en = NULL, updated_at = datetime('now') WHERE id = ?"
+  ).run(req.params.id);
+
+  res.json(serialize(findById(req.params.id)));
+});
+
+// Elimina definitivamente un vehículo que ya estaba en la papelera.
+router.delete("/:id/permanente", (req, res) => {
+  const result = db
+    .prepare("DELETE FROM Vehiculos WHERE id = ? AND eliminado = 1")
+    .run(req.params.id);
+
+  if (result.changes === 0) {
+    return res.status(404).json({ error: "Vehículo no encontrado en la papelera" });
+  }
+  res.status(204).send();
+});
+
+// Borrado lógico: el vehículo pasa a la papelera y puede restaurarse.
+router.delete("/:id", (req, res) => {
+  const row = findById(req.params.id);
+  if (!row) return res.status(404).json({ error: "Vehículo no encontrado" });
+
+  db.prepare(
+    "UPDATE Vehiculos SET eliminado = 1, eliminado_en = datetime('now'), updated_at = datetime('now') WHERE id = ?"
+  ).run(req.params.id);
+
   res.status(204).send();
 });
 
