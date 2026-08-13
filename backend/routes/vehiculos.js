@@ -1,13 +1,40 @@
 const express = require("express");
+const multer = require("multer");
 const { db } = require("../db");
 const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
 const requireRole = require("../middleware/requireRole");
+const { parseCsv, normalizarEncabezado } = require("../utils/csv");
 
 const router = express.Router();
+const importUpload = multer({
+  storage: multer.memoryStorage(),
+  limits: { fileSize: 5 * 1024 * 1024 },
+});
 
 const CAMPOS_ORDEN = new Set(["marca", "anio", "kilometraje", "precio", "created_at"]);
 const PAGINA_TAMANIO_DEFAULT = 24;
 const PAGINA_TAMANIO_MAX = 100;
+
+// Encabezados aceptados por columna, ya normalizados (minúsculas, sin acentos).
+// Permite que el CSV venga de una planilla armada por alguien que use "patente"
+// en vez de "dominio", "km" en vez de "kilometraje", etc.
+const ALIAS_COLUMNAS = {
+  marca: ["marca"],
+  modelo: ["modelo"],
+  anio: ["anio", "ano"],
+  dominio: ["dominio", "patente"],
+  kilometraje: ["kilometraje", "km", "kms"],
+  precio: ["precio"],
+  moneda: ["moneda"],
+  estado: ["estado"],
+  notas: ["notas", "detalle", "detalles"],
+  imagenes_url: ["imagenes_url", "imagenes", "fotos", "imagen"],
+};
+
+const COLUMNAS_PLANTILLA = [
+  "marca", "modelo", "anio", "dominio", "kilometraje",
+  "precio", "moneda", "estado", "notas", "imagenes_url",
+];
 
 function serialize(row) {
   let imagenes = [];
@@ -122,6 +149,111 @@ router.get("/export.csv", (req, res) => {
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", 'attachment; filename="stock.csv"');
   res.send(lineas.join("\n"));
+});
+
+router.get("/plantilla.csv", (_req, res) => {
+  const ejemplo = [
+    "Toyota", "Hilux", "2024", "AB123CD", "0",
+    "45000", "USD", "Disponible", "Único dueño", "https://ejemplo.com/foto1.jpg",
+  ];
+  const csv = [COLUMNAS_PLANTILLA.join(","), ejemplo.join(",")].join("\n");
+  res.setHeader("Content-Type", "text/csv; charset=utf-8");
+  res.setHeader("Content-Disposition", 'attachment; filename="plantilla-vehiculos.csv"');
+  res.send(csv);
+});
+
+// Importación masiva desde un CSV. Actualiza por patente si ya existe un
+// vehículo activo con ese dominio; si no, lo crea. No falla todo el archivo
+// por una fila con errores: reporta cuáles se pudieron procesar y cuáles no.
+router.post("/import", requireRole("admin"), importUpload.single("archivo"), (req, res) => {
+  if (!req.file) {
+    return res.status(400).json({ error: "Debés adjuntar un archivo CSV (campo 'archivo')" });
+  }
+
+  const filas = parseCsv(req.file.buffer.toString("utf8"));
+  if (filas.length < 2) {
+    return res.status(400).json({ error: "El CSV no tiene filas de datos" });
+  }
+
+  const encabezados = filas[0].map(normalizarEncabezado);
+  const indice = {};
+  for (const [campo, alias] of Object.entries(ALIAS_COLUMNAS)) {
+    const posicion = encabezados.findIndex((h) => alias.includes(h));
+    if (posicion !== -1) indice[campo] = posicion;
+  }
+
+  const resultado = { creados: 0, actualizados: 0, errores: [] };
+
+  filas.slice(1).forEach((fila, i) => {
+    const numeroFila = i + 2; // la fila 1 son los encabezados
+    if (fila.every((valor) => valor.trim() === "")) return;
+
+    const obtener = (campo) => (indice[campo] !== undefined ? fila[indice[campo]] : undefined);
+
+    try {
+      const data = validateVehiculo({
+        marca: obtener("marca"),
+        modelo: obtener("modelo"),
+        anio: obtener("anio"),
+        dominio: obtener("dominio"),
+        kilometraje: obtener("kilometraje"),
+        precio: obtener("precio"),
+        moneda: obtener("moneda"),
+        estado: obtener("estado"),
+        notas: obtener("notas"),
+        imagenes_url: obtener("imagenes_url"),
+      });
+
+      const existente = db
+        .prepare("SELECT * FROM Vehiculos WHERE dominio = ? COLLATE NOCASE AND eliminado = 0")
+        .get(data.dominio);
+
+      if (existente) {
+        db.prepare(
+          `UPDATE Vehiculos SET
+             marca = @marca, modelo = @modelo, anio = @anio, dominio = @dominio,
+             kilometraje = @kilometraje, precio = @precio, moneda = @moneda,
+             estado = @estado, imagenes_url = @imagenes_url, notas = @notas,
+             updated_at = datetime('now')
+           WHERE id = @id`
+        ).run({ ...data, id: existente.id });
+
+        registrarCambioEstado({
+          vehiculoId: existente.id,
+          estadoAnterior: existente.estado,
+          estadoNuevo: data.estado,
+          usuarioId: req.usuario && req.usuario.id,
+        });
+        resultado.actualizados += 1;
+      } else {
+        const insertado = db
+          .prepare(
+            `INSERT INTO Vehiculos
+               (marca, modelo, anio, dominio, kilometraje, precio, moneda, estado, imagenes_url, notas)
+             VALUES
+               (@marca, @modelo, @anio, @dominio, @kilometraje, @precio, @moneda, @estado, @imagenes_url, @notas)`
+          )
+          .run(data);
+
+        registrarCambioEstado({
+          vehiculoId: insertado.lastInsertRowid,
+          estadoAnterior: null,
+          estadoNuevo: data.estado,
+          usuarioId: req.usuario && req.usuario.id,
+        });
+        resultado.creados += 1;
+      }
+    } catch (err) {
+      const detalle = Array.isArray(err.errors) ? err.errors.join("; ") : err.message || "Error desconocido";
+      resultado.errores.push({
+        fila: numeroFila,
+        dominio: obtener("dominio") || "(sin patente)",
+        error: detalle,
+      });
+    }
+  });
+
+  res.json(resultado);
 });
 
 router.get("/", (req, res) => {

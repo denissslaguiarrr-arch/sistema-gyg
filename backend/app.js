@@ -69,6 +69,9 @@ app.use((err, _req, res, _next) => {
       .status(409)
       .json({ error: "Ya existe un vehículo con esa patente (dominio)" });
   }
+  if (err && err.name === "MulterError") {
+    return res.status(400).json({ error: `Error al subir el archivo: ${err.message}` });
+  }
   console.error(err);
   res.status(500).json({ error: "Error interno del servidor" });
 });
