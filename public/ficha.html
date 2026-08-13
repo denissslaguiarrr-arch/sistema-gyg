@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Ficha del vehículo</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+  <div class="max-w-2xl mx-auto px-4 py-6">
+    <div id="contenido" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <img id="foto-principal" class="w-full h-72 object-cover bg-slate-100" alt="Foto del vehículo" />
+      <div id="miniaturas" class="flex gap-2 p-3 overflow-x-auto no-imprimir"></div>
+
+      <div class="p-6">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h1 id="titulo" class="text-2xl font-bold text-slate-900"></h1>
+            <p id="subtitulo" class="text-sm text-slate-500 mt-1"></p>
+          </div>
+          <span id="badge-estado" class="shrink-0 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
+        </div>
+
+        <p id="precio" class="text-3xl font-bold text-indigo-700 mt-4"></p>
+
+        <div class="grid grid-cols-2 gap-3 mt-4 text-sm">
+          <div class="bg-slate-50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-400">Año</p>
+            <p id="dato-anio" class="font-semibold"></p>
+          </div>
+          <div class="bg-slate-50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-400">Kilometraje</p>
+            <p id="dato-km" class="font-semibold"></p>
+          </div>
+        </div>
+
+        <div id="bloque-notas" class="mt-4">
+          <p class="text-xs text-slate-400 uppercase font-medium mb-1">Detalles</p>
+          <p id="notas" class="text-sm text-slate-600 whitespace-pre-line"></p>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-6 no-imprimir">
+          <button id="btn-whatsapp" class="flex-1 min-w-[140px] bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg text-sm">
+            Compartir por WhatsApp
+          </button>
+          <button id="btn-copiar" class="flex-1 min-w-[140px] border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm">
+            Copiar enlace
+          </button>
+          <button id="btn-imprimir" class="flex-1 min-w-[140px] border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm">
+            Imprimir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="error" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center text-slate-500">
+      No se encontró el vehículo solicitado.
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      body { background: white; }
+      .no-imprimir { display: none !important; }
+    }
+  </style>
+
+  <script src="ficha.js"></script>
+</body>
+</html>
