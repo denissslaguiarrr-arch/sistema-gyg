@@ -57,6 +57,7 @@ tests/
   import.test.js          Importación masiva de vehículos por CSV
   config.test.js          Configuración del catálogo público
   gist.test.js            Mapeo de datos y publicación en el Gist (fetch mockeado)
+  blogger-tema.test.js    El tema de Blogger conserva el diseño GyG y el zoom
   fotos.test.js           URLs públicas vs locales para Blogger
   imgur.test.js           Subida a Imgur (fetch mockeado)
   sync.test.js            Endpoint /api/sync/publicar (fetch mockeado)
@@ -345,30 +346,24 @@ publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
 ### Fotos recortadas, celular y Contacto (Blogger)
 
-La foto **no está mal subida**: el recuadro viejo recortaba las camionetas.
-El catálogo nuevo (`public/catalogo.js`) muestra la foto completa, permite
-**zoom** (tocar la foto, pellizcar o usar +/−) y deja margen abajo en el
-celular para que Contacto no se corte.
+Los cambios van **sobre el tema GyG que ya tenían** (Syne/Manrope, vitrina,
+hero), no sobre el catálogo corto de 477 líneas.
 
-En **Configuración del sitio** cargá Instagram y/o Facebook (link o
-`@usuario`). Si un campo queda vacío, esa red **no aparece**. El título de
-Contacto por defecto es **Contactanos**.
+- La foto grande usa `object-fit: contain` y se puede ampliar (tocar, pellizcar o +/−).
+- En el celular hay margen inferior para que Contacto no se corte.
+- El título de Contacto es **Contactanos**. Instagram y Facebook se cargan
+  en el panel; si el campo está vacío, esa red no aparece.
 
-Para que esto se vea en https://gyg-automotores.blogspot.com/ hay que
-reemplazar el HTML del tema **una vez** (hacé una copia de seguridad antes):
+Para actualizar el blog (hacé una copia de seguridad antes):
 
 1. Blogger → **Tema** → **Copia de seguridad** → descargar.
 2. **Tema** → **Editar HTML**.
-3. Seleccioná todo, pegá el contenido de `blogger/tema.xml` (está en XML
-   con `CDATA`; no borres nada a mano).
-4. Guardá.
-5. En el panel: completá WhatsApp / Instagram / Facebook y **Publicar en la web**.
-6. Recargá el blog en el celular.
+3. Seleccioná todo y pegá `blogger/tema.xml`.
+4. Guardá. Si Blogger rechaza el XML, restaurá la copia del paso 1.
+5. En el panel: Instagram / Facebook / texto de contacto y **Publicar en la web**.
 
-Si Blogger rechaza el XML, restaurá la copia de seguridad del paso 1.
-
-La ficha local (`/ficha.html`) y la vista previa (`/catalogo.html`) ya
-traen zoom y foto completa.
+Si cambiaste `blogger/gyg-showroom.css` o `.js`, regenerá el XML con
+`npm run blogger`.
 
 ### Configuración del sitio
 
