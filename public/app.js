@@ -36,6 +36,7 @@ const el = {
   filtroKm: document.getElementById("filtro-km"),
   btnLimpiarFiltros: document.getElementById("btn-limpiar-filtros"),
   btnExportar: document.getElementById("btn-exportar"),
+  btnImportar: document.getElementById("btn-importar"),
   btnPapelera: document.getElementById("btn-papelera"),
 
   selectorPorPagina: document.getElementById("selector-porpagina"),
@@ -88,6 +89,15 @@ const el = {
   uUsername: document.getElementById("u-username"),
   uPassword: document.getElementById("u-password"),
   uRol: document.getElementById("u-rol"),
+
+  modalImportarOverlay: document.getElementById("modal-importar-overlay"),
+  modalImportar: document.getElementById("modal-importar"),
+  formImportar: document.getElementById("form-importar"),
+  iArchivo: document.getElementById("i-archivo"),
+  importarResultado: document.getElementById("importar-resultado"),
+  btnCerrarImportar: document.getElementById("btn-cerrar-importar"),
+  btnCancelarImportar: document.getElementById("btn-cancelar-importar"),
+  btnConfirmarImportar: document.getElementById("btn-confirmar-importar"),
 };
 
 const ESTADO_BADGE = {
@@ -185,6 +195,7 @@ async function cargarUsuario() {
     el.btnNuevo.classList.toggle("hidden", !admin);
     el.btnPapelera.classList.toggle("hidden", !admin);
     el.btnUsuarios.classList.toggle("hidden", !admin);
+    el.btnImportar.classList.toggle("hidden", !admin);
   } catch (_err) {
     // apiRequest ya redirige a /login.html si la sesión no es válida.
   }
@@ -317,6 +328,68 @@ el.listaUsuarios.addEventListener("click", async (evento) => {
     await cargarUsuarios();
   } catch (err) {
     mostrarAlerta(err.message);
+  }
+});
+
+// ---------- Importar vehículos por CSV (solo admin) ----------
+
+function cerrarModalImportar() {
+  el.modalImportarOverlay.classList.add("hidden");
+  el.modalImportar.classList.add("hidden");
+}
+
+el.btnImportar.addEventListener("click", () => {
+  el.formImportar.reset();
+  el.importarResultado.classList.add("hidden");
+  el.importarResultado.innerHTML = "";
+  el.modalImportarOverlay.classList.remove("hidden");
+  el.modalImportar.classList.remove("hidden");
+});
+el.btnCerrarImportar.addEventListener("click", cerrarModalImportar);
+el.btnCancelarImportar.addEventListener("click", cerrarModalImportar);
+el.modalImportarOverlay.addEventListener("click", cerrarModalImportar);
+
+el.formImportar.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  const archivo = el.iArchivo.files && el.iArchivo.files[0];
+  if (!archivo) return;
+
+  el.btnConfirmarImportar.disabled = true;
+  el.btnConfirmarImportar.textContent = "Importando...";
+  el.importarResultado.classList.add("hidden");
+
+  try {
+    const formData = new FormData();
+    formData.append("archivo", archivo);
+
+    const res = await fetch("/api/vehiculos/import", { method: "POST", body: formData });
+    if (res.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "No se pudo importar el archivo");
+
+    const resumen = `<p class="font-medium text-slate-800">${data.creados} creado(s), ${data.actualizados} actualizado(s), ${data.errores.length} con error.</p>`;
+    const detalleErrores = data.errores.length
+      ? `<ul class="list-disc pl-5 text-red-600 space-y-1">${data.errores
+          .map((e) => `<li>Fila ${e.fila} (${escapeHtml(e.dominio)}): ${escapeHtml(e.error)}</li>`)
+          .join("")}</ul>`
+      : "";
+
+    el.importarResultado.innerHTML = resumen + detalleErrores;
+    el.importarResultado.classList.remove("hidden");
+
+    mostrarAlerta(
+      `Importación completa: ${data.creados} creado(s), ${data.actualizados} actualizado(s).`,
+      "ok"
+    );
+    await Promise.all([cargarVehiculos(), cargarResumen()]);
+  } catch (err) {
+    mostrarAlerta(err.message);
+  } finally {
+    el.btnConfirmarImportar.disabled = false;
+    el.btnConfirmarImportar.textContent = "Importar";
   }
 });
 
@@ -818,6 +891,7 @@ document.addEventListener("keydown", (evento) => {
   if (!el.modalHistorial.classList.contains("hidden")) cerrarHistorial();
   if (!el.modalPassword.classList.contains("hidden")) cerrarModalPassword();
   if (!el.modalUsuarios.classList.contains("hidden")) cerrarModalUsuarios();
+  if (!el.modalImportar.classList.contains("hidden")) cerrarModalImportar();
 });
 
 (async function iniciar() {
