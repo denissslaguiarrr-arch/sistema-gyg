@@ -89,6 +89,7 @@ test("POST /api/vehiculos crea un vehículo y aparece en el listado", async () =
   const creado = await res.json();
   assert.equal(creado.estado, "Disponible");
   assert.equal(creado.es_0km, true);
+  assert.equal(creado.precio_oferta, null);
 
   const lista = await listar("/api/vehiculos");
   assert.equal(lista.total, 1);
@@ -169,6 +170,43 @@ test("GET /api/vehiculos/resumen calcula KPIs sobre los vehículos activos", asy
   assert.equal(resumen.vendidos, 0);
   assert.equal(resumen.valor_stock_usd, 45000);
   assert.equal(resumen.valor_stock_ars, 8000000);
+});
+
+test("POST /api/vehiculos guarda y limpia un precio_oferta", async () => {
+  const res = await post("/api/vehiculos", {
+    marca: "Chevrolet",
+    modelo: "Cruze",
+    anio: 2021,
+    dominio: "OFE999",
+    kilometraje: 10000,
+    precio: 20000,
+    precio_oferta: 17500,
+    moneda: "USD",
+  });
+  assert.equal(res.status, 201);
+  const creado = await res.json();
+  assert.equal(creado.precio, 20000);
+  assert.equal(creado.precio_oferta, 17500);
+
+  assert.equal(detalle.precio_oferta, 17500);
+
+  const resumenConOferta = await (await get("/api/vehiculos/resumen")).json();
+  assert.equal(resumenConOferta.valor_stock_usd, 45000 + 17500);
+
+  const sinOferta = await put(`/api/vehiculos/${creado.id}`, {
+    marca: "Chevrolet",
+    modelo: "Cruze",
+    anio: 2021,
+    dominio: "OFE999",
+    kilometraje: 10000,
+    precio: 20000,
+    precio_oferta: "",
+    moneda: "USD",
+  });
+  assert.equal(sinOferta.status, 200);
+  assert.equal((await sinOferta.json()).precio_oferta, null);
+
+  await del(`/api/vehiculos/${creado.id}`);
 });
 
 test("PUT /api/vehiculos/:id actualiza el vehículo y registra el cambio de estado", async () => {

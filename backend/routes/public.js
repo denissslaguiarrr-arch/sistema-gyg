@@ -25,6 +25,7 @@ function serializePublico(row) {
     anio: row.anio,
     kilometraje: row.kilometraje,
     precio: row.precio,
+    precio_oferta: row.precio_oferta ?? null,
     moneda: row.moneda,
     estado: row.estado,
     imagenes_url: imagenes,

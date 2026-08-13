@@ -30,6 +30,7 @@ CREATE TABLE IF NOT EXISTS Vehiculos (
   dominio       TEXT    NOT NULL COLLATE NOCASE,
   kilometraje   INTEGER NOT NULL DEFAULT 0 CHECK (kilometraje >= 0),
   precio        REAL    NOT NULL CHECK (precio >= 0),
+  precio_oferta REAL    CHECK (precio_oferta IS NULL OR precio_oferta >= 0),
   moneda        TEXT    NOT NULL CHECK (moneda IN ('ARS', 'USD')),
   estado        TEXT    NOT NULL DEFAULT 'Disponible'
                   CHECK (estado IN ('Disponible', 'Reservado', 'Vendido')),
@@ -97,5 +98,5 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '4'),
+  ('schema_version', '5'),
   ('last_sync_at', '');

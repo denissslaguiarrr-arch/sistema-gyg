@@ -132,18 +132,26 @@ requiere sesión (401 si no la hay, 403 si el rol no alcanza).
 
 Además de los campos obligatorios (marca, modelo, año, patente, kilometraje,
 precio, moneda, estado), cada vehículo acepta estos campos opcionales
-—pensados para completar la ficha del catálogo web—: `version`,
-`combustible`, `transmision`, `traccion`, `puertas`, `color`, `motor`,
-`potencia`, `carroceria`, `destacado` (booleano) y `equipamiento` (lista).
-Si no se completan, quedan vacíos y simplemente no se muestran en la ficha.
+—pensados para completar la ficha del catálogo web—: `precio_oferta`,
+`version`, `combustible`, `transmision`, `traccion`, `puertas`, `color`,
+`motor`, `potencia`, `carroceria`, `destacado` (booleano) y `equipamiento`
+(lista). Si no se completan, quedan vacíos y simplemente no se muestran en
+la ficha.
+
+`precio_oferta` es opcional. Si se carga, tiene que ser menor que el precio
+de lista: el panel y la ficha tachan el precio original y muestran la
+oferta. Al publicar, viaja al Gist en el campo `precio_oferta` (o `null`
+si no hay). El catálogo de Blogger hoy muestra `precio`; para que también
+se vea la oferta en el sitio hay que usar `precio_oferta` en esa plantilla.
 
 ## Importar vehículos desde CSV
 
 Desde el panel, el botón "Importar CSV" (solo admin) abre un modal donde se
 puede descargar una plantilla de ejemplo y subir un archivo `.csv` con las
-columnas `marca, modelo, anio, dominio, kilometraje, precio, moneda, estado,
+columnas `marca, modelo, anio, dominio, kilometraje, precio, precio_oferta, moneda, estado,
 notas, imagenes_url`. También acepta los alias `patente` (en vez de
-`dominio`) y `km` (en vez de `kilometraje`), pensados para planillas armadas
+`dominio`), `km` (en vez de `kilometraje`) y `oferta` (en vez de
+`precio_oferta`), pensados para planillas armadas
 a mano en Excel/Google Sheets.
 
 Reglas de importación:
@@ -225,7 +233,7 @@ explicando cuál falta configurar; el resto del sistema funciona igual.
 - Toma todos los vehículos activos (no eliminados) y los mapea al esquema
   que espera el catálogo público: `status` (disponible/reservado/vendido en
   minúsculas), `categoria` (`0km` si el kilometraje es 0, `usado` si no),
-  `patente`, `descripcion`, `fotos`, `equipamiento`, `ingreso`, `updatedAt`, etc.
+  `patente`, `descripcion`, `fotos`, `equipamiento`, `precio_oferta`, `ingreso`, `updatedAt`, etc.
 - Combina la **Configuración del sitio** (nombre, tagline, WhatsApp, texto de
   pie, imagen de portada — editable desde el botón "Configuración del sitio")
   con lo que ya hubiera en el Gist: si un campo local está vacío, no pisa lo

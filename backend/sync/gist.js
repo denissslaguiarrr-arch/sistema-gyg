@@ -68,6 +68,7 @@ function mapearVehiculo(v) {
     anio: v.anio,
     km: v.kilometraje,
     precio: v.precio,
+    precio_oferta: v.precio_oferta ?? null,
     moneda: v.moneda,
     combustible: v.combustible || "",
     transmision: v.transmision || "",

@@ -10,6 +10,14 @@ function formatoMoneda(valor, moneda) {
   return `${simbolo} ${numero}`;
 }
 
+function tienePrecioOferta(v) {
+  return (
+    v.precio_oferta != null &&
+    Number.isFinite(Number(v.precio_oferta)) &&
+    Number(v.precio_oferta) < Number(v.precio)
+  );
+}
+
 async function iniciar() {
   const id = new URLSearchParams(window.location.search).get("id");
   const contenedor = document.getElementById("contenido");
@@ -33,7 +41,19 @@ async function iniciar() {
     badge.textContent = v.estado;
     badge.className = `shrink-0 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${ESTADO_BADGE[v.estado] || ESTADO_BADGE.Disponible}`;
 
-    document.getElementById("precio").textContent = formatoMoneda(v.precio, v.moneda);
+    const precioEl = document.getElementById("precio");
+    const precioAnteriorEl = document.getElementById("precio-anterior");
+    const badgeOferta = document.getElementById("badge-oferta");
+    if (tienePrecioOferta(v)) {
+      precioAnteriorEl.textContent = formatoMoneda(v.precio, v.moneda);
+      precioAnteriorEl.classList.remove("hidden");
+      precioEl.textContent = formatoMoneda(v.precio_oferta, v.moneda);
+      precioEl.classList.remove("text-indigo-700");
+      precioEl.classList.add("text-emerald-700");
+      badgeOferta.classList.remove("hidden");
+    } else {
+      precioEl.textContent = formatoMoneda(v.precio, v.moneda);
+    }
     document.getElementById("dato-anio").textContent = v.anio;
     document.getElementById("dato-km").textContent = v.es_0km ? "0KM" : `${Number(v.kilometraje).toLocaleString("es-AR")} km`;
 
@@ -103,7 +123,10 @@ async function iniciar() {
 
     contenedor.classList.remove("hidden");
 
-    const textoWhatsapp = `${v.marca} ${v.modelo} ${v.anio} — ${formatoMoneda(v.precio, v.moneda)}${v.es_0km ? " (0KM)" : ""}\n${window.location.href}`;
+    const textoPrecio = tienePrecioOferta(v)
+      ? `${formatoMoneda(v.precio_oferta, v.moneda)} (antes ${formatoMoneda(v.precio, v.moneda)})`
+      : formatoMoneda(v.precio, v.moneda);
+    const textoWhatsapp = `${v.marca} ${v.modelo} ${v.anio} — ${textoPrecio}${v.es_0km ? " (0KM)" : ""}\n${window.location.href}`;
     document.getElementById("btn-whatsapp").addEventListener("click", () => {
       window.open(`https://wa.me/?text=${encodeURIComponent(textoWhatsapp)}`, "_blank");
     });

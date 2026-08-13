@@ -121,3 +121,63 @@ test("validateEstado solo acepta los 3 valores permitidos", () => {
   assert.throws(() => validateEstado({ estado: "Cancelado" }), ValidationError);
   assert.throws(() => validateEstado({}), ValidationError);
 });
+
+test("precio_oferta vacío se normaliza a null", () => {
+  const data = validateVehiculo({
+    marca: "Ford",
+    modelo: "Focus",
+    anio: 2020,
+    dominio: "OFE001",
+    precio: 10000,
+    moneda: "USD",
+  });
+  assert.equal(data.precio_oferta, null);
+});
+
+test("acepta un precio_oferta menor al precio de lista", () => {
+  const data = validateVehiculo({
+    marca: "Ford",
+    modelo: "Focus",
+    anio: 2020,
+    dominio: "OFE002",
+    precio: 10000,
+    precio_oferta: 8500,
+    moneda: "USD",
+  });
+  assert.equal(data.precio, 10000);
+  assert.equal(data.precio_oferta, 8500);
+});
+
+test("rechaza precio_oferta negativo o mayor/igual al precio de lista", () => {
+  try {
+    validateVehiculo({
+      marca: "Ford",
+      modelo: "Focus",
+      anio: 2020,
+      dominio: "OFE003",
+      precio: 10000,
+      precio_oferta: -1,
+      moneda: "USD",
+    });
+    assert.fail("debía lanzar ValidationError");
+  } catch (err) {
+    assert.ok(err instanceof ValidationError);
+    assert.ok(err.errors.some((e) => e.includes("precio_oferta")));
+  }
+
+  try {
+    validateVehiculo({
+      marca: "Ford",
+      modelo: "Focus",
+      anio: 2020,
+      dominio: "OFE004",
+      precio: 10000,
+      precio_oferta: 10000,
+      moneda: "USD",
+    });
+    assert.fail("debía lanzar ValidationError");
+  } catch (err) {
+    assert.ok(err instanceof ValidationError);
+    assert.ok(err.errors.some((e) => /menor que el precio/.test(e)));
+  }
+});

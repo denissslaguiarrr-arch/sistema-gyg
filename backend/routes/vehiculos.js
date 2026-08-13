@@ -18,7 +18,7 @@ const PAGINA_TAMANIO_MAX = 100;
 // Columnas que se cargan/editan a través del formulario. Se centralizan acá
 // para armar los INSERT/UPDATE sin repetir la lista en cada ruta.
 const COLUMNAS_VEHICULO = [
-  "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "moneda", "estado",
+  "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "imagenes_url", "notas", "version", "combustible", "transmision", "traccion",
   "puertas", "color", "motor", "potencia", "carroceria", "destacado", "equipamiento",
 ];
@@ -33,6 +33,7 @@ const ALIAS_COLUMNAS = {
   dominio: ["dominio", "patente"],
   kilometraje: ["kilometraje", "km", "kms"],
   precio: ["precio"],
+  precio_oferta: ["precio_oferta", "preciooferta", "precio oferta", "oferta"],
   moneda: ["moneda"],
   estado: ["estado"],
   notas: ["notas", "detalle", "detalles", "descripcion"],
@@ -51,8 +52,8 @@ const ALIAS_COLUMNAS = {
 };
 
 const COLUMNAS_PLANTILLA = [
-  "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "moneda", "estado", "notas",
-  "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color",
+  "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
+  "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color",
   "motor", "potencia", "carroceria", "destacado", "equipamiento",
 ];
 
@@ -126,7 +127,9 @@ function construirPaginacion(req) {
 function construirOrden(req) {
   const campo = CAMPOS_ORDEN.has(req.query.orden) ? req.query.orden : "created_at";
   const direccion = req.query.direccion === "asc" ? "ASC" : "DESC";
-  return `ORDER BY ${campo} ${direccion}, id ${direccion}`;
+  // Si hay oferta, el orden por precio usa el valor que realmente se cobra.
+  const expresion = campo === "precio" ? "COALESCE(precio_oferta, precio)" : campo;
+  return `ORDER BY ${expresion} ${direccion}, id ${direccion}`;
 }
 
 // Debe declararse antes de "/:id" para no ser interpretado como un id.
@@ -138,8 +141,8 @@ router.get("/resumen", (_req, res) => {
          SUM(CASE WHEN estado = 'Disponible' THEN 1 ELSE 0 END) AS disponibles,
          SUM(CASE WHEN estado = 'Reservado' THEN 1 ELSE 0 END) AS reservados,
          SUM(CASE WHEN estado = 'Vendido'   THEN 1 ELSE 0 END) AS vendidos,
-         SUM(CASE WHEN moneda = 'ARS' AND estado != 'Vendido' THEN precio ELSE 0 END) AS valor_stock_ars,
-         SUM(CASE WHEN moneda = 'USD' AND estado != 'Vendido' THEN precio ELSE 0 END) AS valor_stock_usd
+         SUM(CASE WHEN moneda = 'ARS' AND estado != 'Vendido' THEN COALESCE(precio_oferta, precio) ELSE 0 END) AS valor_stock_ars,
+         SUM(CASE WHEN moneda = 'USD' AND estado != 'Vendido' THEN COALESCE(precio_oferta, precio) ELSE 0 END) AS valor_stock_usd
        FROM Vehiculos
        WHERE eliminado = 0`
     )
@@ -161,7 +164,7 @@ router.get("/export.csv", (req, res) => {
   const rows = db.prepare(`SELECT * FROM Vehiculos ${where} ${orden}`).all(params);
 
   const columnas = [
-    "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "moneda", "estado",
+    "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
     "notas", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
     "potencia", "carroceria", "destacado", "created_at", "updated_at",
   ];
@@ -186,7 +189,7 @@ router.get("/plantilla.csv", (_req, res) => {
     return /[",\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
   };
   const ejemplo = [
-    "Toyota", "Hilux", "2024", "AB123CD", "0", "45000", "USD", "Disponible", "Único dueño",
+    "Toyota", "Hilux", "2024", "AB123CD", "0", "45000", "42000", "USD", "Disponible", "Único dueño",
     "https://ejemplo.com/foto1.jpg", "SRX 4x4", "Diesel", "Automática", "4x4", 4, "Blanco",
     "2.8L", "204cv", "Pickup", "1", "Aire acondicionado, Bluetooth, Cámara de retroceso",
   ];
@@ -232,6 +235,7 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
         dominio: obtener("dominio"),
         kilometraje: obtener("kilometraje"),
         precio: obtener("precio"),
+        precio_oferta: obtener("precio_oferta"),
         moneda: obtener("moneda"),
         estado: obtener("estado"),
         notas: obtener("notas"),

@@ -65,6 +65,9 @@ function validateVehiculo(body = {}) {
       ? 0
       : Number(body.kilometraje);
   const precio = Number(body.precio);
+  const precioOfertaVacio =
+    body.precio_oferta === undefined || body.precio_oferta === null || body.precio_oferta === "";
+  const precioOferta = precioOfertaVacio ? null : Number(body.precio_oferta);
 
   // Campos opcionales para la ficha pública / catálogo web (fase 2).
   // No son obligatorios: si faltan, el catálogo simplemente no los muestra.
@@ -94,6 +97,11 @@ function validateVehiculo(body = {}) {
   }
   if (!Number.isFinite(precio) || precio < 0) {
     errors.push("precio debe ser un número mayor o igual a 0");
+  }
+  if (!precioOfertaVacio && (!Number.isFinite(precioOferta) || precioOferta < 0)) {
+    errors.push("precio_oferta debe ser un número mayor o igual a 0 (o vacío)");
+  } else if (precioOferta !== null && Number.isFinite(precio) && precioOferta >= precio) {
+    errors.push("precio_oferta debe ser menor que el precio de lista");
   }
   if (!MONEDAS.includes(moneda)) {
     errors.push(`moneda debe ser una de: ${MONEDAS.join(", ")}`);
@@ -128,6 +136,7 @@ function validateVehiculo(body = {}) {
     dominio,
     kilometraje,
     precio,
+    precio_oferta: precioOferta,
     moneda,
     estado,
     imagenes_url: JSON.stringify(imagenes),

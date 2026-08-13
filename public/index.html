@@ -239,8 +239,13 @@
           </div>
 
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Precio *</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio de lista *</label>
             <input id="f-precio" type="number" step="0.01" min="0" required class="campo" placeholder="45000" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio oferta</label>
+            <input id="f-precio-oferta" type="number" step="0.01" min="0" class="campo" placeholder="Opcional" />
+            <p class="text-[11px] text-slate-400 mt-1">Si lo cargás, se tacha el de lista y este queda como oferta. Tiene que ser más bajo.</p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Moneda</label>
@@ -461,7 +466,7 @@
 
         <div class="px-6 py-5 space-y-4">
           <p class="text-sm text-slate-600">
-            Subí un archivo CSV con columnas <code>marca, modelo, anio, dominio, kilometraje, precio, moneda, estado, notas, imagenes_url</code>
+            Subí un archivo CSV con columnas <code>marca, modelo, anio, dominio, kilometraje, precio, precio_oferta, moneda, estado, notas, imagenes_url</code>
             (también acepta <code>patente</code> en vez de <code>dominio</code>, y <code>km</code> en vez de <code>kilometraje</code>).
             Si la patente ya existe, se <strong>actualiza</strong> ese vehículo; si no, se crea uno nuevo.
           </p>

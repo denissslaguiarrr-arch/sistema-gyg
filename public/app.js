@@ -62,6 +62,7 @@ const el = {
   fKilometraje: document.getElementById("f-kilometraje"),
   fEstado: document.getElementById("f-estado"),
   fPrecio: document.getElementById("f-precio"),
+  fPrecioOferta: document.getElementById("f-precio-oferta"),
   fMoneda: document.getElementById("f-moneda"),
   fNotas: document.getElementById("f-notas"),
   fVersion: document.getElementById("f-version"),
@@ -137,6 +138,24 @@ function formatoMoneda(valor, moneda) {
     maximumFractionDigits: 2,
   });
   return `${simbolo} ${numero}`;
+}
+
+function tienePrecioOferta(v) {
+  return (
+    v.precio_oferta != null &&
+    Number.isFinite(Number(v.precio_oferta)) &&
+    Number(v.precio_oferta) < Number(v.precio)
+  );
+}
+
+function htmlPrecio(v) {
+  if (!tienePrecioOferta(v)) {
+    return `<span class="font-medium">${formatoMoneda(v.precio, v.moneda)}</span>`;
+  }
+  return `<div>
+      <div class="text-xs text-slate-400 line-through">${formatoMoneda(v.precio, v.moneda)}</div>
+      <div class="font-medium text-emerald-700">${formatoMoneda(v.precio_oferta, v.moneda)}</div>
+    </div>`;
 }
 
 function formatoKilometraje(km) {
@@ -673,7 +692,7 @@ function renderTabla() {
         <td class="px-4 py-3 font-mono text-slate-600">${escapeHtml(v.dominio)}</td>
         <td class="px-4 py-3">${v.anio}</td>
         <td class="px-4 py-3">${formatoKilometraje(v.kilometraje)}</td>
-        <td class="px-4 py-3 font-medium">${formatoMoneda(v.precio, v.moneda)}</td>
+        <td class="px-4 py-3">${htmlPrecio(v)}</td>
         <td class="px-4 py-3">${badgeEstado(v.estado)}</td>
         <td class="px-4 py-3 text-right">${state.vista === "papelera" ? accionesPapelera(v) : accionesRapidas(v)}</td>
       </tr>`
@@ -764,6 +783,7 @@ function abrirModal(vehiculo = null) {
     el.fKilometraje.value = vehiculo.kilometraje;
     el.fEstado.value = vehiculo.estado;
     el.fPrecio.value = vehiculo.precio;
+    el.fPrecioOferta.value = vehiculo.precio_oferta ?? "";
     el.fMoneda.value = vehiculo.moneda;
     el.fNotas.value = vehiculo.notas || "";
     el.fVersion.value = vehiculo.version || "";
@@ -805,6 +825,7 @@ function leerFormulario() {
     kilometraje: el.fKilometraje.value === "" ? 0 : Number(el.fKilometraje.value),
     estado: el.fEstado.value,
     precio: Number(el.fPrecio.value),
+    precio_oferta: el.fPrecioOferta.value === "" ? null : Number(el.fPrecioOferta.value),
     moneda: el.fMoneda.value,
     imagenes_url: state.formImagenes,
     notas: el.fNotas.value.trim(),

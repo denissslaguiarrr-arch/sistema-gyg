@@ -47,7 +47,7 @@ test("GET /api/vehiculos/plantilla.csv devuelve encabezados y una fila de ejempl
   const texto = await res.text();
   const lineas = texto.trim().split("\n");
   assert.equal(lineas.length, 2);
-  assert.match(lineas[0], /^marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,notas,imagenes_url/);
+  assert.match(lineas[0], /^marca,modelo,anio,dominio,kilometraje,precio,precio_oferta,moneda,estado,notas,imagenes_url/);
   assert.match(lineas[0], /version,combustible,transmision,traccion,puertas,color,motor,potencia,carroceria,destacado,equipamiento$/);
 });
 
@@ -106,6 +106,32 @@ test("POST /api/vehiculos/import crea y actualiza vehículos, reportando errores
   assert.equal(listaFinal.items.length, 1);
   assert.equal(listaFinal.items[0].modelo, "Hilux SRX");
   assert.equal(listaFinal.items[0].estado, "Reservado");
+});
+
+test("POST /api/vehiculos/import acepta la columna oferta como precio_oferta", async () => {
+  const csv = [
+    "marca,modelo,anio,patente,km,precio,oferta,moneda,estado",
+    "Honda,Civic,2020,IMP0FE,30000,18000,15000,USD,Disponible",
+  ].join("\n");
+
+  const formData = new FormData();
+  formData.append("archivo", csvComoArchivo(csv));
+
+  const res = await fetch(`${baseUrl}/api/vehiculos/import`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formData,
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.creados, 1);
+  assert.equal(body.errores.length, 0);
+
+  const lista = await (
+    await fetch(`${baseUrl}/api/vehiculos?q=IMP0FE`, { headers: { Cookie: cookie } })
+  ).json();
+  assert.equal(lista.items[0].precio, 18000);
+  assert.equal(lista.items[0].precio_oferta, 15000);
 });
 
 test("POST /api/vehiculos/import sin archivo devuelve 400", async () => {

@@ -26,6 +26,7 @@ test("mapearVehiculo arma el objeto con el esquema del catálogo público", () =
     anio: 2024,
     kilometraje: 0,
     precio: 45000,
+    precio_oferta: 42000,
     moneda: "USD",
     combustible: "Diesel",
     transmision: "Automática",
@@ -55,6 +56,8 @@ test("mapearVehiculo arma el objeto con el esquema del catálogo público", () =
   assert.deepEqual(vehiculo.fotos, ["https://a.com/1.jpg"]);
   assert.equal(vehiculo.ingreso, "2026-01-15");
   assert.equal(vehiculo.updatedAt, "2026-02-01T12:30:00.000Z");
+  assert.equal(vehiculo.precio, 45000);
+  assert.equal(vehiculo.precio_oferta, 42000);
 });
 
 test("mapearVehiculo marca categoria 'usado' cuando el kilometraje es mayor a 0", () => {
@@ -64,6 +67,7 @@ test("mapearVehiculo marca categoria 'usado' cuando el kilometraje es mayor a 0"
     equipamiento: [], imagenes_url: [], created_at: "2026-01-01", updated_at: "2026-01-01",
   });
   assert.equal(vehiculo.categoria, "usado");
+  assert.equal(vehiculo.precio_oferta, null);
 });
 
 test("mergeSiteConfig prioriza los valores locales, pero no pisa con vacíos", () => {
