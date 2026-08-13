@@ -2,8 +2,10 @@
 
 Sistema de Control de Stock y Gestión para una concesionaria de vehículos.
 
-Fase 1: panel de administración y backend locales (Node.js + Express + SQLite).
-La sincronización con la nube (JSON/Gist) queda para una fase posterior.
+- **Fase 1**: panel de administración y backend locales (Node.js + Express + SQLite).
+- **Fase 2**: publicación del stock a un catálogo web público (ej. un sitio de
+  Blogger) vía un Gist de GitHub, con un botón "Publicar en la web" desde el
+  panel. Ver la sección [Publicar en la web](#publicar-en-la-web-fase-2).
 
 ## Estructura
 
@@ -22,12 +24,16 @@ backend/
     vehiculos.js          CRUD, papelera, historial, resumen KPI, export/import CSV, paginación
     uploads.js            Subida de fotos (multer, solo admin)
     public.js              API pública de solo lectura para la ficha compartible
+    config.js              Configuración del catálogo público (nombre, WhatsApp, etc.)
+    sync.js                 Endpoint que publica el stock en el Gist (fase 2)
+  sync/
+    gist.js                 Mapeo de datos y publicación en el Gist (GitHub API)
   scripts/
     backup.js             Backup manual/programado de la base SQLite
   utils/
     csv.js                 Parser CSV (RFC 4180) reutilizado por export/import
 db/
-  schema.sql            Definición de tablas (Vehiculos, Usuarios, Sesiones, HistorialEstados, Meta)
+  schema.sql            Definición de tablas (Vehiculos, Usuarios, Sesiones, HistorialEstados, ConfiguracionSitio, Meta)
   concesionaria.db       Archivo SQLite (generado en runtime, no versionado)
   backups/               Backups automáticos (generado en runtime, no versionado)
 public/
@@ -43,6 +49,9 @@ tests/
   public.test.js          Ficha pública sin sesión
   csv.test.js             Parser CSV (comillas, comas, BOM, acentos)
   import.test.js          Importación masiva de vehículos por CSV
+  config.test.js          Configuración del catálogo público
+  gist.test.js            Mapeo de datos y publicación en el Gist (fetch mockeado)
+  sync.test.js            Endpoint /api/sync/publicar (fetch mockeado)
   api.test.js             CRUD, papelera, historial, filtros, paginación, export CSV
 ```
 
@@ -50,7 +59,7 @@ tests/
 
 ```bash
 npm install
-npm test    # 46 tests automatizados
+npm test    # 63 tests automatizados
 npm start   # http://localhost:3000
 ```
 
@@ -119,6 +128,15 @@ duplicarla devuelve `409`. Los datos inválidos devuelven `400` con el
 detalle de los errores. Toda la API de vehículos y de subida de fotos
 requiere sesión (401 si no la hay, 403 si el rol no alcanza).
 
+### Campos opcionales para el catálogo público
+
+Además de los campos obligatorios (marca, modelo, año, patente, kilometraje,
+precio, moneda, estado), cada vehículo acepta estos campos opcionales
+—pensados para completar la ficha del catálogo web—: `version`,
+`combustible`, `transmision`, `traccion`, `puertas`, `color`, `motor`,
+`potencia`, `carroceria`, `destacado` (booleano) y `equipamiento` (lista).
+Si no se completan, quedan vacíos y simplemente no se muestran en la ficha.
+
 ## Importar vehículos desde CSV
 
 Desde el panel, el botón "Importar CSV" (solo admin) abre un modal donde se
@@ -179,8 +197,54 @@ las últimas 30 por defecto (`GYG_BACKUP_MAX`). El servidor además programa
 un backup automático cada 24 horas mientras esté corriendo
 (`GYG_BACKUP_INTERVAL_HOURS=0` lo desactiva).
 
+## Publicar en la web (fase 2)
+
+El panel puede publicar el stock activo en un **Gist de GitHub** (un archivo
+`stock.json` público) que alimenta un catálogo web (por ejemplo, un sitio de
+Blogger con una plantilla que lee ese mismo Gist). El botón **"Publicar en
+la web"** (solo admin) hace esto manualmente, cuando vos lo decidís.
+
+### Configuración necesaria (una sola vez)
+
+1. Generá un **Personal Access Token** de GitHub con permiso **`gist`**
+   únicamente: [github.com/settings/tokens](https://github.com/settings/tokens/new).
+2. Definí estas variables de entorno antes de arrancar el servidor (o
+   agregalas como secretos si corrés esto en Cursor Cloud Agents):
+   - `GYG_GIST_ID`: el ID del Gist que ya tiene (o va a tener) el `stock.json`.
+   - `GYG_GITHUB_TOKEN`: el token generado en el paso 1.
+
+```bash
+GYG_GIST_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx GYG_GITHUB_TOKEN=ghp_xxx npm start
+```
+
+Sin estas dos variables, el botón "Publicar en la web" devuelve un error
+explicando cuál falta configurar; el resto del sistema funciona igual.
+
+### Qué hace "Publicar en la web"
+
+- Toma todos los vehículos activos (no eliminados) y los mapea al esquema
+  que espera el catálogo público: `status` (disponible/reservado/vendido en
+  minúsculas), `categoria` (`0km` si el kilometraje es 0, `usado` si no),
+  `patente`, `descripcion`, `fotos`, `equipamiento`, `ingreso`, `updatedAt`, etc.
+- Combina la **Configuración del sitio** (nombre, tagline, WhatsApp, texto de
+  pie, imagen de portada — editable desde el botón "Configuración del sitio")
+  con lo que ya hubiera en el Gist: si un campo local está vacío, no pisa lo
+  que ya estaba publicado.
+- Conserva la estructura de páginas (`pages`) que ya tenga el Gist tal cual
+  está: esta fase no incluye una pantalla para editar la navegación del sitio.
+- Actualiza únicamente el archivo `stock.json` del Gist indicado; no toca
+  nada más del sitio.
+
+### Configuración del sitio
+
+Desde el botón **"Configuración del sitio"** (solo admin) se edita el
+nombre de la concesionaria, la frase/tagline, el número de WhatsApp (con
+código de país, sin `+`), el texto de pie de página y la imagen de portada.
+Estos datos se guardan localmente y se incluyen la próxima vez que
+publiques.
+
 ## Próxima fase
 
-La sincronización con la nube (JSON/Gist) queda para una fase posterior.
-La tabla `Meta` y las columnas `created_at`/`updated_at` ya están
-preparadas para ese flujo.
+Quedan como posibles mejoras futuras: publicación automática (en vez de
+manual), edición de la estructura de páginas del catálogo desde el panel, e
+IDs no secuenciales para la ficha pública.
