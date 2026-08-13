@@ -1,5 +1,13 @@
+const { hoyIso, parseFechaIso } = require("../utils/fechas");
+
 const ESTADOS = ["Disponible", "Reservado", "Vendido"];
 const MONEDAS = ["ARS", "USD"];
+const ORIGENES = ["Compra", "Consignación", "Permuta"];
+const ORIGEN_POR_CLAVE = {
+  compra: "Compra",
+  consignacion: "Consignación",
+  permuta: "Permuta",
+};
 
 class ValidationError extends Error {
   constructor(errors) {
@@ -44,7 +52,21 @@ function parseBooleano(value) {
   return false;
 }
 
-function validateVehiculo(body = {}) {
+function campoPresente(body, clave) {
+  return Object.prototype.hasOwnProperty.call(body, clave) && body[clave] !== undefined;
+}
+
+function parseOrigen(value) {
+  if (value === undefined || value === null || String(value).trim() === "") return null;
+  const clave = String(value)
+    .trim()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toLowerCase();
+  return ORIGEN_POR_CLAVE[clave] || null;
+}
+
+function validateVehiculo(body = {}, { existente } = {}) {
   const errors = [];
 
   const marca = typeof body.marca === "string" ? body.marca.trim() : "";
@@ -113,6 +135,48 @@ function validateVehiculo(body = {}) {
     errors.push("puertas debe ser un número entero entre 1 y 6 (o vacío)");
   }
 
+  let origen = existente ? existente.origen || "Compra" : "Compra";
+  if (campoPresente(body, "origen")) {
+    if (body.origen === null || String(body.origen).trim() === "") {
+      origen = existente ? existente.origen || "Compra" : "Compra";
+    } else {
+      const origenParseado = parseOrigen(body.origen);
+      if (!origenParseado) {
+        errors.push(`origen debe ser uno de: ${ORIGENES.join(", ")}`);
+      } else {
+        origen = origenParseado;
+      }
+    }
+  }
+
+  let precio_compra = existente ? existente.precio_compra ?? null : null;
+  if (campoPresente(body, "precio_compra")) {
+    const vacio =
+      body.precio_compra === null || body.precio_compra === "";
+    if (vacio) {
+      precio_compra = null;
+    } else {
+      const n = Number(body.precio_compra);
+      if (!Number.isFinite(n) || n < 0) {
+        errors.push("precio_compra debe ser un número mayor o igual a 0 (o vacío)");
+      } else {
+        precio_compra = n;
+      }
+    }
+  }
+
+  let fecha_ingreso = existente ? existente.fecha_ingreso || hoyIso() : hoyIso();
+  if (campoPresente(body, "fecha_ingreso")) {
+    const parsed = parseFechaIso(body.fecha_ingreso);
+    if (parsed.error) {
+      errors.push("fecha_ingreso debe ser YYYY-MM-DD");
+    } else if (parsed.vacio) {
+      fecha_ingreso = existente ? existente.fecha_ingreso || hoyIso() : hoyIso();
+    } else {
+      fecha_ingreso = parsed.valor;
+    }
+  }
+
   const imagenes = parseListaTexto(body.imagenes_url);
   if (imagenes === null) {
     errors.push(
@@ -152,6 +216,9 @@ function validateVehiculo(body = {}) {
     carroceria,
     destacado: destacado ? 1 : 0,
     equipamiento: JSON.stringify(equipamiento),
+    origen,
+    precio_compra,
+    fecha_ingreso,
   };
 }
 
@@ -166,7 +233,9 @@ function validateEstado(body = {}) {
 module.exports = {
   ESTADOS,
   MONEDAS,
+  ORIGENES,
   ValidationError,
+  parseBooleano,
   validateVehiculo,
   validateEstado,
 };

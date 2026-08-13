@@ -4,6 +4,8 @@ const { db } = require("../db");
 const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
 const requireRole = require("../middleware/requireRole");
 const { parseCsv, normalizarEncabezado } = require("../utils/csv");
+const { diasDesde } = require("../utils/fechas");
+const erpRouter = require("./erp");
 
 const router = express.Router();
 const importUpload = multer({
@@ -21,6 +23,7 @@ const COLUMNAS_VEHICULO = [
   "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "imagenes_url", "notas", "version", "combustible", "transmision", "traccion",
   "puertas", "color", "motor", "potencia", "carroceria", "destacado", "equipamiento",
+  "origen", "precio_compra", "fecha_ingreso",
 ];
 
 // Encabezados aceptados por columna, ya normalizados (minúsculas, sin acentos).
@@ -49,12 +52,15 @@ const ALIAS_COLUMNAS = {
   carroceria: ["carroceria", "carrocería"],
   destacado: ["destacado"],
   equipamiento: ["equipamiento", "equipo", "extras"],
+  origen: ["origen"],
+  precio_compra: ["precio_compra", "preciocompra", "precio compra", "costo", "precio costo"],
+  fecha_ingreso: ["fecha_ingreso", "fechaingreso", "fecha ingreso", "ingreso"],
 };
 
 const COLUMNAS_PLANTILLA = [
   "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color",
-  "motor", "potencia", "carroceria", "destacado", "equipamiento",
+  "motor", "potencia", "carroceria", "destacado", "equipamiento", "origen", "precio_compra", "fecha_ingreso",
 ];
 
 function serialize(row) {
@@ -77,6 +83,10 @@ function serialize(row) {
     destacado: !!row.destacado,
     es_0km: row.kilometraje === 0,
     eliminado: !!row.eliminado,
+    origen: row.origen || "Compra",
+    precio_compra: row.precio_compra ?? null,
+    fecha_ingreso: row.fecha_ingreso || null,
+    dias_en_stock: diasDesde(row.fecha_ingreso),
   };
 }
 
@@ -166,7 +176,8 @@ router.get("/export.csv", (req, res) => {
   const columnas = [
     "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
     "notas", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
-    "potencia", "carroceria", "destacado", "created_at", "updated_at",
+    "potencia", "carroceria", "destacado", "origen", "precio_compra", "fecha_ingreso",
+    "created_at", "updated_at",
   ];
   const escaparCsv = (valor) => {
     const texto = String(valor ?? "");
@@ -192,6 +203,7 @@ router.get("/plantilla.csv", (_req, res) => {
     "Toyota", "Hilux", "2024", "AB123CD", "0", "45000", "42000", "USD", "Disponible", "Único dueño",
     "https://ejemplo.com/foto1.jpg", "SRX 4x4", "Diesel", "Automática", "4x4", 4, "Blanco",
     "2.8L", "204cv", "Pickup", "1", "Aire acondicionado, Bluetooth, Cámara de retroceso",
+    "Compra", "40000", "2026-01-15",
   ];
   const csv = [COLUMNAS_PLANTILLA.join(","), ejemplo.map(escaparCsv).join(",")].join("\n");
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
@@ -228,6 +240,14 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
     const obtener = (campo) => (indice[campo] !== undefined ? fila[indice[campo]] : undefined);
 
     try {
+      const dominioBusqueda =
+        typeof obtener("dominio") === "string" ? obtener("dominio").trim().toUpperCase() : "";
+      const existente = dominioBusqueda
+        ? db
+            .prepare("SELECT * FROM Vehiculos WHERE dominio = ? COLLATE NOCASE AND eliminado = 0")
+            .get(dominioBusqueda)
+        : undefined;
+
       const data = validateVehiculo({
         marca: obtener("marca"),
         modelo: obtener("modelo"),
@@ -251,11 +271,10 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
         carroceria: obtener("carroceria"),
         destacado: obtener("destacado"),
         equipamiento: obtener("equipamiento"),
-      });
-
-      const existente = db
-        .prepare("SELECT * FROM Vehiculos WHERE dominio = ? COLLATE NOCASE AND eliminado = 0")
-        .get(data.dominio);
+        origen: obtener("origen"),
+        precio_compra: obtener("precio_compra"),
+        fecha_ingreso: obtener("fecha_ingreso"),
+      }, { existente });
 
       if (existente) {
         db.prepare(
@@ -320,6 +339,8 @@ router.get("/", (req, res) => {
   });
 });
 
+router.use(erpRouter);
+
 router.get("/:id/historial", (req, res) => {
   if (!findById(req.params.id, { incluirEliminados: true })) {
     return res.status(404).json({ error: "Vehículo no encontrado" });
@@ -373,7 +394,7 @@ router.put("/:id", requireRole("admin"), (req, res, next) => {
     const existente = findById(req.params.id);
     if (!existente) return res.status(404).json({ error: "Vehículo no encontrado" });
 
-    const data = validateVehiculo(req.body);
+    const data = validateVehiculo(req.body, { existente });
     db.prepare(
       `UPDATE Vehiculos SET
          ${COLUMNAS_VEHICULO.map((c) => `${c} = @${c}`).join(", ")},

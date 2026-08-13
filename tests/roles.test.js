@@ -125,6 +125,33 @@ test("un vendedor no puede crear, editar ni eliminar vehículos", async () => {
   assert.equal(purgar.status, 403);
 });
 
+test("un vendedor puede consultar la gestión y cerrar una venta, pero no cargar gastos", async () => {
+  const gestion = await fetch(`${baseUrl}/api/vehiculos/${vehiculoId}/gestion`, {
+    headers: conCookie(cookieVendedor),
+  });
+  assert.equal(gestion.status, 200);
+
+  const gasto = await fetch(`${baseUrl}/api/vehiculos/${vehiculoId}/gastos`, {
+    method: "POST",
+    headers: conCookie(cookieVendedor),
+    body: JSON.stringify({ concepto: "Taller", monto: 100 }),
+  });
+  assert.equal(gasto.status, 403);
+
+  const venta = await fetch(`${baseUrl}/api/vehiculos/${vehiculoId}/venta`, {
+    method: "POST",
+    headers: conCookie(cookieVendedor),
+    body: JSON.stringify({
+      cliente_nombre: "Cliente Demo",
+      cliente_telefono: "111",
+      precio_venta_final: 19000,
+      fecha_venta: "2026-05-01",
+    }),
+  });
+  assert.equal(venta.status, 201);
+  assert.equal((await venta.json()).fin_garantia, "2026-08-01");
+});
+
 test("un vendedor no puede subir fotos ni gestionar usuarios", async () => {
   const subirFoto = await fetch(`${baseUrl}/api/uploads`, {
     method: "POST",

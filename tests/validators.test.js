@@ -22,6 +22,9 @@ test("valida un vehículo correcto y normaliza dominio/moneda", () => {
   assert.equal(data.dominio, "AB123CD");
   assert.equal(data.moneda, "USD");
   assert.equal(data.estado, "Disponible");
+  assert.equal(data.origen, "Compra");
+  assert.equal(data.precio_compra, null);
+  assert.match(data.fecha_ingreso, /^\d{4}-\d{2}-\d{2}$/);
   assert.deepEqual(JSON.parse(data.imagenes_url), [
     "http://a.com/1.jpg",
     "http://a.com/2.jpg",
@@ -146,6 +149,60 @@ test("acepta un precio_oferta menor al precio de lista", () => {
   });
   assert.equal(data.precio, 10000);
   assert.equal(data.precio_oferta, 8500);
+});
+
+test("acepta origen, precio_compra y fecha_ingreso", () => {
+  const data = validateVehiculo({
+    marca: "Ford",
+    modelo: "Focus",
+    anio: 2020,
+    dominio: "COS001",
+    precio: 10000,
+    moneda: "USD",
+    origen: "consignacion",
+    precio_compra: 7000,
+    fecha_ingreso: "2026-04-01",
+  });
+  assert.equal(data.origen, "Consignación");
+  assert.equal(data.precio_compra, 7000);
+  assert.equal(data.fecha_ingreso, "2026-04-01");
+});
+
+test("PUT conserva costo y origen si el body no los manda", () => {
+  const data = validateVehiculo(
+    {
+      marca: "Ford",
+      modelo: "Focus",
+      anio: 2020,
+      dominio: "COS002",
+      precio: 10000,
+      moneda: "USD",
+    },
+    { existente: { origen: "Permuta", precio_compra: 5500, fecha_ingreso: "2025-12-01" } }
+  );
+  assert.equal(data.origen, "Permuta");
+  assert.equal(data.precio_compra, 5500);
+  assert.equal(data.fecha_ingreso, "2025-12-01");
+});
+
+test("rechaza origen o precio_compra inválidos", () => {
+  try {
+    validateVehiculo({
+      marca: "Ford",
+      modelo: "Focus",
+      anio: 2020,
+      dominio: "COS003",
+      precio: 10000,
+      moneda: "USD",
+      origen: "alquiler",
+      precio_compra: -10,
+    });
+    assert.fail("debía lanzar ValidationError");
+  } catch (err) {
+    assert.ok(err instanceof ValidationError);
+    assert.ok(err.errors.some((e) => e.includes("origen")));
+    assert.ok(err.errors.some((e) => e.includes("precio_compra")));
+  }
 });
 
 test("rechaza precio_oferta negativo o mayor/igual al precio de lista", () => {
