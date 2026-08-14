@@ -579,14 +579,20 @@ el.formImportar.addEventListener("submit", async (evento) => {
     const data = await res.json();
     if (!res.ok) throw new Error(data.error || "No se pudo importar el archivo");
 
+    const avisos = Array.isArray(data.avisos) ? data.avisos : [];
     const resumen = `<p class="font-medium text-slate-800">${data.creados} creado(s), ${data.actualizados} actualizado(s), ${data.errores.length} con error.</p>`;
+    const detalleAvisos = avisos.length
+      ? `<ul class="list-disc pl-5 text-amber-700 space-y-1">${avisos
+          .map((a) => `<li>Fila ${a.fila} (${escapeHtml(a.dominio)}): ${escapeHtml(a.mensaje)}</li>`)
+          .join("")}</ul>`
+      : "";
     const detalleErrores = data.errores.length
       ? `<ul class="list-disc pl-5 text-red-600 space-y-1">${data.errores
           .map((e) => `<li>Fila ${e.fila} (${escapeHtml(e.dominio)}): ${escapeHtml(e.error)}</li>`)
           .join("")}</ul>`
       : "";
 
-    el.importarResultado.innerHTML = resumen + detalleErrores;
+    el.importarResultado.innerHTML = resumen + detalleAvisos + detalleErrores;
     el.importarResultado.classList.remove("hidden");
 
     mostrarAlerta(

@@ -3,7 +3,7 @@ const multer = require("multer");
 const { db } = require("../db");
 const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
 const requireRole = require("../middleware/requireRole");
-const { parseCsv, normalizarEncabezado, listaATextoCsv } = require("../utils/csv");
+const { parseCsvFlexible, esFilaDeEncabezados, alinearColumnas, normalizarEncabezado, listaATextoCsv } = require("../utils/csv");
 const { diasDesde } = require("../utils/fechas");
 const erpRouter = require("./erp");
 
@@ -57,11 +57,63 @@ const ALIAS_COLUMNAS = {
   fecha_ingreso: ["fecha_ingreso", "fechaingreso", "fecha ingreso", "ingreso"],
 };
 
+const COLUMNAS_EXPORT = [
+  "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
+  "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
+  "potencia", "carroceria", "destacado", "origen", "precio_compra", "fecha_ingreso",
+  "created_at", "updated_at",
+];
+
 const COLUMNAS_PLANTILLA = [
   "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color",
   "motor", "potencia", "carroceria", "destacado", "equipamiento", "origen", "precio_compra", "fecha_ingreso",
 ];
+
+function indiceDesdeEncabezados(encabezados) {
+  const indice = {};
+  for (const [campo, alias] of Object.entries(ALIAS_COLUMNAS)) {
+    const posicion = encabezados.findIndex((h) => alias.includes(h));
+    if (posicion !== -1) indice[campo] = posicion;
+  }
+  return indice;
+}
+
+function encabezadosPorDefecto(primeraFila) {
+  const primera = String((primeraFila && primeraFila[0]) || "").trim();
+  const columnas = /^\d+$/.test(primera) ? COLUMNAS_EXPORT : COLUMNAS_PLANTILLA;
+  return columnas.map(normalizarEncabezado);
+}
+
+function slugDominioParte(texto) {
+  return String(texto || "")
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]+/g, "")
+    .slice(0, 12);
+}
+
+function dominioYaUsado(candidato, usadosEnEsteArchivo) {
+  if (usadosEnEsteArchivo.has(candidato)) return true;
+  return !!db
+    .prepare("SELECT id FROM Vehiculos WHERE dominio = ? COLLATE NOCASE AND eliminado = 0")
+    .get(candidato);
+}
+
+function generarDominioTemporal(marca, modelo, anio, usadosEnEsteArchivo) {
+  const modeloSlug = slugDominioParte(modelo) || slugDominioParte(marca) || "SINPAT";
+  const anioParte = String(anio || "").replace(/\D/g, "").slice(0, 4) || "0000";
+  const base = `SD-${modeloSlug}-${anioParte}`;
+  let candidato = base;
+  let n = 1;
+  while (dominioYaUsado(candidato, usadosEnEsteArchivo)) {
+    n += 1;
+    candidato = `${base}-${n}`;
+  }
+  usadosEnEsteArchivo.add(candidato);
+  return candidato;
+}
 
 function serialize(row) {
   let imagenes = [];
@@ -173,12 +225,7 @@ router.get("/export.csv", (req, res) => {
   const orden = construirOrden(req);
   const rows = db.prepare(`SELECT * FROM Vehiculos ${where} ${orden}`).all(params);
 
-  const columnas = [
-    "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
-    "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
-    "potencia", "carroceria", "destacado", "origen", "precio_compra", "fecha_ingreso",
-    "created_at", "updated_at",
-  ];
+  const columnas = COLUMNAS_EXPORT;
   const escaparCsv = (valor) => {
     const texto = String(valor ?? "");
     return /[",\n]/.test(texto) ? `"${texto.replace(/"/g, '""')}"` : texto;
@@ -226,47 +273,76 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
     return res.status(400).json({ error: "Debés adjuntar un archivo CSV (campo 'archivo')" });
   }
 
-  const filas = parseCsv(req.file.buffer.toString("utf8"));
-  if (filas.length < 2) {
+  const filas = parseCsvFlexible(req.file.buffer.toString("utf8"));
+  if (!filas.length) {
     return res.status(400).json({ error: "El CSV no tiene filas de datos" });
   }
 
-  const encabezados = filas[0].map(normalizarEncabezado);
-  const indice = {};
-  for (const [campo, alias] of Object.entries(ALIAS_COLUMNAS)) {
-    const posicion = encabezados.findIndex((h) => alias.includes(h));
-    if (posicion !== -1) indice[campo] = posicion;
+  let encabezados;
+  let filasDatos;
+  let numeroPrimeraFila;
+  if (esFilaDeEncabezados(filas[0])) {
+    encabezados = filas[0].map(normalizarEncabezado);
+    filasDatos = filas.slice(1);
+    numeroPrimeraFila = 2;
+  } else {
+    encabezados = encabezadosPorDefecto(filas[0]);
+    filasDatos = filas;
+    numeroPrimeraFila = 1;
   }
 
-  const resultado = { creados: 0, actualizados: 0, errores: [] };
+  if (!filasDatos.length) {
+    return res.status(400).json({ error: "El CSV no tiene filas de datos" });
+  }
 
-  filas.slice(1).forEach((fila, i) => {
-    const numeroFila = i + 2; // la fila 1 son los encabezados
-    if (fila.every((valor) => valor.trim() === "")) return;
+  const indice = indiceDesdeEncabezados(encabezados);
+  const usadosEnEsteArchivo = new Set();
+  const resultado = { creados: 0, actualizados: 0, errores: [], avisos: [] };
 
+  filasDatos.forEach((filaCruda, i) => {
+    const numeroFila = i + numeroPrimeraFila;
+    if (filaCruda.every((valor) => String(valor || "").trim() === "")) return;
+
+    const fila = alinearColumnas(filaCruda, encabezados.length);
     const obtener = (campo) => (indice[campo] !== undefined ? fila[indice[campo]] : undefined);
 
     try {
-      const dominioBusqueda =
+      let dominioBusqueda =
         typeof obtener("dominio") === "string" ? obtener("dominio").trim().toUpperCase() : "";
-      const existente = dominioBusqueda
-        ? db
-            .prepare("SELECT * FROM Vehiculos WHERE dominio = ? COLLATE NOCASE AND eliminado = 0")
-            .get(dominioBusqueda)
-        : undefined;
+      let avisoDominio = null;
+      if (!dominioBusqueda) {
+        dominioBusqueda = generarDominioTemporal(
+          obtener("marca"),
+          obtener("modelo"),
+          obtener("anio"),
+          usadosEnEsteArchivo
+        );
+        avisoDominio = `Sin patente: se asignó ${dominioBusqueda}`;
+      } else {
+        usadosEnEsteArchivo.add(dominioBusqueda);
+      }
+
+      const existente = db
+        .prepare("SELECT * FROM Vehiculos WHERE dominio = ? COLLATE NOCASE AND eliminado = 0")
+        .get(dominioBusqueda);
+
+      let imagenesValor = obtener("imagenes_url");
+      if (existente && (imagenesValor === undefined || String(imagenesValor).trim() === "")) {
+        imagenesValor = existente.imagenes_url;
+      }
 
       const data = validateVehiculo({
         marca: obtener("marca"),
         modelo: obtener("modelo"),
         anio: obtener("anio"),
-        dominio: obtener("dominio"),
+        dominio: dominioBusqueda,
         kilometraje: obtener("kilometraje"),
         precio: obtener("precio"),
         precio_oferta: obtener("precio_oferta"),
         moneda: obtener("moneda"),
         estado: obtener("estado"),
         notas: obtener("notas"),
-        imagenes_url: obtener("imagenes_url"),
+        imagenes_url: imagenesValor,
         version: obtener("version"),
         combustible: obtener("combustible"),
         transmision: obtener("transmision"),
@@ -313,6 +389,14 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
           usuarioId: req.usuario && req.usuario.id,
         });
         resultado.creados += 1;
+      }
+
+      if (avisoDominio) {
+        resultado.avisos.push({
+          fila: numeroFila,
+          dominio: data.dominio,
+          mensaje: avisoDominio,
+        });
       }
     } catch (err) {
       const detalle = Array.isArray(err.errors) ? err.errors.join("; ") : err.message || "Error desconocido";

@@ -1,11 +1,12 @@
 // Parser CSV simple (RFC 4180): soporta campos entre comillas, comas y
 // comillas escapadas ("") dentro del campo, y saltos de línea \n o \r\n.
-function parseCsv(texto) {
+function parseCsv(texto, separador = ",") {
   const contenido = String(texto ?? "").replace(/^\uFEFF/, ""); // BOM de Excel
   const filas = [];
   let fila = [];
   let campo = "";
   let dentroDeComillas = false;
+  const sep = String(separador || ",")[0];
 
   for (let i = 0; i < contenido.length; i += 1) {
     const c = contenido[i];
@@ -26,7 +27,7 @@ function parseCsv(texto) {
 
     if (c === '"') {
       dentroDeComillas = true;
-    } else if (c === ",") {
+    } else if (c === sep) {
       fila.push(campo);
       campo = "";
     } else if (c === "\r") {
@@ -48,6 +49,38 @@ function parseCsv(texto) {
 
   // Se descartan líneas completamente vacías (comunes al final del archivo).
   return filas.filter((f) => !(f.length === 1 && f[0].trim() === ""));
+}
+
+function parseCsvFlexible(texto) {
+  const porComa = parseCsv(texto, ",");
+  const porPuntoYComa = parseCsv(texto, ";");
+  const colsComa = (porComa[0] || []).length;
+  const colsPyc = (porPuntoYComa[0] || []).length;
+  return colsPyc > colsComa ? porPuntoYComa : porComa;
+}
+
+function esFilaDeEncabezados(fila) {
+  const nombres = (fila || []).map(normalizarEncabezado);
+  return nombres.includes("marca") && nombres.includes("modelo");
+}
+
+// Si Excel agregó una columna vacía extra (típico: ,,,,false en vez de ,,,false),
+// se elimina el vacío de más para alinear destacado/origen.
+function alinearColumnas(fila, cantidadEsperada) {
+  const actual = Array.isArray(fila) ? [...fila] : [];
+  if (!cantidadEsperada || actual.length === cantidadEsperada) return actual;
+  if (actual.length !== cantidadEsperada + 1) return actual;
+  if (String(actual[actual.length - 1] || "").trim() === "") {
+    return actual.slice(0, cantidadEsperada);
+  }
+  const desde = Math.max(0, actual.length - 10);
+  for (let i = desde; i < actual.length; i += 1) {
+    if (String(actual[i] || "").trim() === "") {
+      actual.splice(i, 1);
+      return actual;
+    }
+  }
+  return actual.slice(0, cantidadEsperada);
 }
 
 function quitarAcentos(texto) {
@@ -118,4 +151,12 @@ function parseListaUrls(value) {
   return texto.split(",").map((v) => v.trim()).filter(Boolean);
 }
 
-module.exports = { parseCsv, normalizarEncabezado, listaATextoCsv, parseListaUrls };
+module.exports = {
+  parseCsv,
+  parseCsvFlexible,
+  esFilaDeEncabezados,
+  alinearColumnas,
+  normalizarEncabezado,
+  listaATextoCsv,
+  parseListaUrls,
+};

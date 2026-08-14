@@ -204,3 +204,91 @@ test("POST /api/vehiculos/import lee los links de fotos en el mismo orden que el
   const texto = await exportado.text();
   assert.match(texto, /https:\/\/a\.com\/frente\.jpg \| https:\/\/a\.com\/lateral\.jpg \| https:\/\/youtu\.be\/abcdefghijk/);
 });
+
+test("POST /api/vehiculos/import acepta un export sin encabezados y con coma extra", async () => {
+  const csv = [
+    "10,TOYOTA,COROLLA XEI PACK,2018,AC788QS,66000,28500000,,ARS,Disponible,,,,NAFTA,AUTOMÁTICO,DELANTERA,5,BLANCO,1.8 CVT,,,,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "11,VOLKSWAGEN,TAOS HIGHLINE,2024,AG440IZ,57000,51500000,,ARS,Disponible,,,,NAFTA,AUTOMÁTICO,DELANTERA,5,GRIS PLATA,1.4 TSI,,NO INFORMADO,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "12,VOLKSWAGEN,TAOS COMFORTLINE,2024,AG410WJ,29478,45900000,,ARS,Disponible,,,,NAFTA,AUTOMÁTICO,DELANTERA,5,AZUL ATLÁNTICO,1.4 TSI,,NO INFORMADO,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "13,VOLKSWAGEN,SAVEIRO,2015,PBP988,125000,16500000,,ARS,Disponible,,,,NAFTA,MANUAL,DELANTERA,2,GRIS OSCURO,1.6L,,NO INFORMADO,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "14,FIAT,STRADA FREEDOM,2024,AG606BU,60976,27900000,,ARS,Disponible,,,,NAFTA,MANUAL,DELANTERA,4,NEGRO,1.3 CD,,NO INFORMADO,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "15,VOLKSWAGEN,AMAROK,2016,AA415RR,175000,24900000,,ARS,Disponible,,,,DIESEL,MANUAL,4X4,2,BLANCO,2.0 TDI,140 CV a 3.500 rpm,NO INFORMADO,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "16,VOLKSWAGEN,AMAROK TRENDLINE,2024,AG913VP,42000,46500000,,ARS,Disponible,,,,DIESEL,MANUAL,4X2,4,GRIS PLATA,2.0 TDI,,C. ABIERTA,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "17,VOLKSWAGEN,AMAROK TRENDLINE,2023,AG297OL,19000,39800000,,ARS,Disponible,,,,DIESEL,MANUAL,4X2,4,BLANCA,2.0L TDI,,C. ABIERTA,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "18,TOYOTA,HILUX,2016,AA568QV,175000,44800000,,ARS,Disponible,,,,DIESEL,MANUAL,4X4,4,GRIS OSCURO,2.8 TDI,,,,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "19,FORD,RANGER,2012,LWQ138,225000,19800000,,ARS,Disponible,,,,DIESEL,MANUAL,4X2,4,GRIS/CHAMPÁN,2.2L,,OTROS,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "20,TOYOTA,HILUX SR,2023,AG024IN,98000,44800000,,ARS,Disponible,,,,DIESEL,MANUAL,4X2,4,BLANCO,2.4 TDI,,,,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "21,TOYOTA,HILUX DX,2019,,0,41900000,,ARS,Disponible,,,,DIESEL,MANUAL,4X2,4,BLANCO,2.4,,,,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+    "22,VOLKSWAGEN,AMAROK TRENDLINE,2025,AH893GH,0,49800000,,ARS,Disponible,,,,DIESEL,MANUAL,4X2,4,GRIS PLATA,2.0 TDI,,NO INFORMADO,false,Compra,,2026-08-14,2026-08-14 17:03:17,2026-08-14 17:03:17",
+  ].join("\n");
+
+  const formData = new FormData();
+  formData.append("archivo", csvComoArchivo(csv));
+
+  const res = await fetch(`${baseUrl}/api/vehiculos/import`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formData,
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.errores.length, 0, JSON.stringify(body.errores));
+  assert.equal(body.creados, 13);
+  assert.equal(body.avisos.length, 1);
+  assert.match(body.avisos[0].dominio, /^SD-HILUXDX-2019/);
+
+  const corolla = await (
+    await fetch(`${baseUrl}/api/vehiculos?q=AC788QS`, { headers: { Cookie: cookie } })
+  ).json();
+  assert.equal(corolla.items[0].marca, "TOYOTA");
+  assert.equal(corolla.items[0].modelo, "COROLLA XEI PACK");
+  assert.equal(corolla.items[0].origen, "Compra");
+  assert.equal(corolla.items[0].destacado, false);
+  assert.equal(corolla.items[0].motor, "1.8 CVT");
+
+  const hiluxDx = await (
+    await fetch(`${baseUrl}/api/vehiculos?q=SD-HILUXDX-2019`, { headers: { Cookie: cookie } })
+  ).json();
+  assert.equal(hiluxDx.items.length, 1);
+  assert.equal(hiluxDx.items[0].modelo, "HILUX DX");
+  assert.equal(hiluxDx.items[0].precio, 41900000);
+});
+
+test("POST /api/vehiculos/import no borra fotos al reimportar con imagenes_url vacío", async () => {
+  const alta = [
+    "marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,imagenes_url",
+    "Chevrolet,Onix,2021,IMPFOT2,20000,12000,USD,Disponible,https://a.com/frente.jpg | https://a.com/fondo.jpg",
+  ].join("\n");
+  const formAlta = new FormData();
+  formAlta.append("archivo", csvComoArchivo(alta));
+  const altaRes = await fetch(`${baseUrl}/api/vehiculos/import`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formAlta,
+  });
+  assert.equal((await altaRes.json()).creados, 1);
+
+  const update = [
+    "marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,imagenes_url",
+    "Chevrolet,Onix Premier,2021,IMPFOT2,21000,12500,USD,Disponible,",
+  ].join("\n");
+  const formUpdate = new FormData();
+  formUpdate.append("archivo", csvComoArchivo(update));
+  const updateRes = await fetch(`${baseUrl}/api/vehiculos/import`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formUpdate,
+  });
+  const updateBody = await updateRes.json();
+  assert.equal(updateBody.actualizados, 1);
+  assert.equal(updateBody.errores.length, 0);
+
+  const lista = await (
+    await fetch(`${baseUrl}/api/vehiculos?q=IMPFOT2`, { headers: { Cookie: cookie } })
+  ).json();
+  assert.equal(lista.items[0].modelo, "Onix Premier");
+  assert.deepEqual(lista.items[0].imagenes_url, [
+    "https://a.com/frente.jpg",
+    "https://a.com/fondo.jpg",
+  ]);
+});

@@ -573,10 +573,12 @@
 
         <div class="px-6 py-5 space-y-4">
           <p class="text-sm text-slate-600">
-            Subí un archivo CSV con columnas <code>marca, modelo, anio, dominio, kilometraje, precio, precio_oferta, moneda, estado, notas, imagenes_url</code>
-            (también acepta <code>patente</code> en vez de <code>dominio</code>, y <code>km</code> en vez de <code>kilometraje</code>).
-            Los links de fotos van en <code>imagenes_url</code> separados por <code> | </code> (el mismo orden que al exportar: el primero es la foto principal).
+            Subí un archivo CSV (coma o punto y coma). Puede ser el export del sistema, con o sin la fila de encabezados.
+            También acepta <code>patente</code> en vez de <code>dominio</code>, y <code>km</code> en vez de <code>kilometraje</code>.
+            Los links de fotos van en <code>imagenes_url</code> separados por <code> | </code> (el primero es la foto principal).
             Si la patente ya existe, se <strong>actualiza</strong> ese vehículo; si no, se crea uno nuevo.
+            Si una fila viene sin patente, se le asigna una temporal (<code>SD-MODELO-AÑO</code>).
+            Al actualizar, si <code>imagenes_url</code> viene vacío, se conservan las fotos que ya tenía el vehículo.
           </p>
           <a
             href="/api/vehiculos/plantilla.csv"
