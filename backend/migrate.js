@@ -85,6 +85,7 @@ function migrate(db) {
   ensureColumn(db, "ConfiguracionSitio", "facebook", "TEXT NOT NULL DEFAULT ''");
   ensureColumn(db, "ConfiguracionSitio", "contacto_titulo", "TEXT NOT NULL DEFAULT 'Contactanos'");
   ensureColumn(db, "ConfiguracionSitio", "contacto_texto", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "ConfiguracionSitio", "imgbb_api_key", "TEXT NOT NULL DEFAULT ''");
 
   if (!tablasDe(db).includes("Gastos")) {
     db.exec(`

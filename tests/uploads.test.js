@@ -127,6 +127,29 @@ test("POST /api/uploads/imgur sin Client-ID configurado devuelve 400", async () 
   assert.match(body.error, /Imgur ya no registra Client ID/);
 });
 
+test("POST /api/uploads/publico sin ImgBB ni Imgur pide la clave de ImgBB", async () => {
+  const anteriorImgur = process.env.GYG_IMGUR_CLIENT_ID;
+  const anteriorImgbb = process.env.GYG_IMGBB_API_KEY;
+  delete process.env.GYG_IMGUR_CLIENT_ID;
+  delete process.env.GYG_IMGBB_API_KEY;
+
+  const formData = new FormData();
+  formData.append("imagenes", new File([PNG_1X1], "foto.png", { type: "image/png" }));
+  const res = await fetch(`${baseUrl}/api/uploads/publico`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formData,
+  });
+  if (anteriorImgur === undefined) delete process.env.GYG_IMGUR_CLIENT_ID;
+  else process.env.GYG_IMGUR_CLIENT_ID = anteriorImgur;
+  if (anteriorImgbb === undefined) delete process.env.GYG_IMGBB_API_KEY;
+  else process.env.GYG_IMGBB_API_KEY = anteriorImgbb;
+
+  assert.equal(res.status, 400);
+  const body = await res.json();
+  assert.match(body.error, /api\.imgbb\.com/);
+});
+
 test("POST /api/uploads/imgur devuelve el link público de Imgur", async () => {
   const anterior = process.env.GYG_IMGUR_CLIENT_ID;
   process.env.GYG_IMGUR_CLIENT_ID = "client-de-test";

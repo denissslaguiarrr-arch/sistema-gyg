@@ -97,6 +97,7 @@ CREATE TABLE IF NOT EXISTS ConfiguracionSitio (
   contacto_texto  TEXT NOT NULL DEFAULT '',
   footer_text TEXT NOT NULL DEFAULT '',
   hero_image  TEXT NOT NULL DEFAULT '',
+  imgbb_api_key TEXT NOT NULL DEFAULT '',
   updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

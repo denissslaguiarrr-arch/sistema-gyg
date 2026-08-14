@@ -2,6 +2,8 @@ const express = require("express");
 const { db } = require("../db");
 const requireRole = require("../middleware/requireRole");
 const { texto, normalizarInstagram, normalizarFacebook } = require("../utils/redes");
+const { imgurConfigurado } = require("../utils/imgur");
+const { imgbbConfigurado } = require("../utils/imgbb");
 
 const router = express.Router();
 
@@ -16,6 +18,8 @@ function serialize(row) {
     contactoTexto: row.contacto_texto || "",
     footerText: row.footer_text,
     heroImage: row.hero_image,
+    imgbbConfigurado: imgbbConfigurado() || Boolean(String((row && row.imgbb_api_key) || "").trim()),
+    imgurConfigurado: imgurConfigurado(),
     updated_at: row.updated_at,
   };
 }
@@ -30,6 +34,11 @@ router.get("/sitio", (_req, res) => {
 
 router.put("/sitio", requireRole("admin"), (req, res) => {
   const body = req.body || {};
+  const actual = obtenerConfig() || {};
+  const claveNueva =
+    typeof body.imgbbApiKey === "string" && body.imgbbApiKey.trim()
+      ? body.imgbbApiKey.trim()
+      : actual.imgbb_api_key || "";
 
   db.prepare(
     `UPDATE ConfiguracionSitio SET
@@ -37,6 +46,7 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
        instagram = @instagram, facebook = @facebook,
        contacto_titulo = @contactoTitulo, contacto_texto = @contactoTexto,
        footer_text = @footerText, hero_image = @heroImage,
+       imgbb_api_key = @imgbbApiKey,
        updated_at = datetime('now')
      WHERE id = 1`
   ).run({
@@ -49,6 +59,7 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
     contactoTexto: texto(body.contactoTexto),
     footerText: texto(body.footerText),
     heroImage: texto(body.heroImage),
+    imgbbApiKey: claveNueva,
   });
 
   res.json(serialize(obtenerConfig()));

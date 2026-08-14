@@ -157,6 +157,8 @@ const el = {
   cContactoTexto: document.getElementById("c-contacto-texto"),
   cFooter: document.getElementById("c-footer"),
   cHero: document.getElementById("c-hero"),
+  cImgbb: document.getElementById("c-imgbb"),
+  cImgbbEstado: document.getElementById("c-imgbb-estado"),
   btnCerrarConfig: document.getElementById("btn-cerrar-config"),
   btnCancelarConfig: document.getElementById("btn-cancelar-config"),
 };
@@ -465,6 +467,12 @@ el.btnConfigSitio.addEventListener("click", async () => {
     el.cContactoTexto.value = config.contactoTexto || "";
     el.cFooter.value = config.footerText || "";
     el.cHero.value = config.heroImage || "";
+    if (el.cImgbb) el.cImgbb.value = "";
+    if (el.cImgbbEstado) {
+      el.cImgbbEstado.textContent = config.imgbbConfigurado
+        ? "Clave ImgBB cargada. Dejá el campo vacío para no cambiarla, o pegá otra para reemplazarla."
+        : "Imgur ya no da API. Creá una clave gratis en api.imgbb.com y pegala acá para que el arrastre publique las fotos.";
+    }
     el.modalConfigOverlay.classList.remove("hidden");
     el.modalConfig.classList.remove("hidden");
   } catch (err) {
@@ -490,6 +498,7 @@ el.formConfig.addEventListener("submit", async (evento) => {
         contactoTexto: el.cContactoTexto.value.trim(),
         footerText: el.cFooter.value.trim(),
         heroImage: el.cHero.value.trim(),
+        imgbbApiKey: el.cImgbb && el.cImgbb.value.trim() ? el.cImgbb.value.trim() : undefined,
       }),
     });
     mostrarAlerta("Configuración del sitio guardada.", "ok");
@@ -931,7 +940,7 @@ function marcarDropzone(activa) {
   el.dropzoneImagenes.className = activa ? DROPZONE_ACTIVA : DROPZONE_BASE;
 }
 
-async function subirArchivoAImgur(archivo) {
+async function subirArchivoPublico(archivo) {
   const formData = new FormData();
   const usarImgurDirecto = IMGUR_CLIENT_ID && IMGUR_CLIENT_ID !== "TU_IMGUR_CLIENT_ID";
 
@@ -952,15 +961,15 @@ async function subirArchivoAImgur(archivo) {
   }
 
   formData.append("imagenes", archivo);
-  const res = await fetch("/api/uploads/imgur", { method: "POST", body: formData });
+  const res = await fetch("/api/uploads/publico", { method: "POST", body: formData });
   if (res.status === 401) {
     window.location.href = "/login.html";
     throw new Error("Sesión expirada");
   }
   const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || "No se pudieron subir las fotos a Imgur");
+  if (!res.ok) throw new Error(data.error || "No se pudieron publicar las fotos");
   const urls = data.urls || (data.url ? [data.url] : []);
-  if (!urls.length) throw new Error("Imgur no devolvió un link público");
+  if (!urls.length) throw new Error("No se recibió un link público");
   return urls[0];
 }
 
@@ -1004,7 +1013,7 @@ async function subirArchivosAlCatalogo(archivos) {
   try {
     for (const archivo of imagenes) {
       try {
-        const urlPublica = await subirArchivoAImgur(archivo);
+        const urlPublica = await subirArchivoPublico(archivo);
         state.formImagenes.push(urlPublica);
         publicas += 1;
       } catch (_imgurErr) {
@@ -1037,7 +1046,7 @@ async function subirArchivosAlCatalogo(archivos) {
       );
     } else if (locales) {
       mostrarAlerta(
-        "Archivos guardados en este panel. Para Blogger: pegá un link https de la foto (imgur/Drive) o un video de YouTube.",
+        "Archivos guardados en este panel. Para el sitio: clave de ImgBB en Configuración, o pegá el link directo de la foto (en Imgur: clic derecho → copiar dirección de imagen).",
         "ok"
       );
     }

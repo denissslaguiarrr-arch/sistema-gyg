@@ -59,6 +59,8 @@ test("GET /api/config/sitio devuelve valores vacíos por defecto", async () => {
   assert.equal(body.instagram, "");
   assert.equal(body.facebook, "");
   assert.equal(body.contactoTitulo, "Contactanos");
+  assert.equal(body.imgbbConfigurado, false);
+  assert.equal(body.imgbbApiKey, undefined);
 });
 
 test("GET /api/config/sitio requiere sesión, pero no rol admin", async () => {
@@ -105,4 +107,20 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
   ).json();
   assert.equal(relectura.tagline, "Selección premium");
   assert.equal(relectura.heroImage, "https://ejemplo.com/hero.jpg");
+});
+
+test("PUT /api/config/sitio guarda la clave ImgBB sin devolverla", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "GyG",
+      imgbbApiKey: "clave-secreta-imgbb",
+    }),
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.imgbbConfigurado, true);
+  assert.equal(body.imgbbApiKey, undefined);
+  assert.doesNotMatch(JSON.stringify(body), /clave-secreta-imgbb/);
 });

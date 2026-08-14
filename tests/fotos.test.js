@@ -30,6 +30,12 @@ test("normalizarUrlFoto convierte un enlace de Google Drive en miniatura directa
   );
 });
 
+test("normalizarUrlFoto convierte un link de página de Imgur en i.imgur.com", () => {
+  assert.equal(normalizarUrlFoto("https://imgur.com/abcDEF1"), "https://i.imgur.com/abcDEF1.jpg");
+  assert.equal(normalizarUrlFoto("https://i.imgur.com/abcDEF1.png"), "https://i.imgur.com/abcDEF1.png");
+  assert.equal(normalizarUrlFoto("https://imgur.com/a/album123"), "https://imgur.com/a/album123");
+});
+
 test("fotosParaCatalogo omite locales y deja los https públicos", () => {
   const resultado = fotosParaCatalogo([
     "/uploads/local.jpg",

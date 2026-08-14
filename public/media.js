@@ -52,10 +52,25 @@
     return String(url || "").trim();
   }
 
+  function normalizarUrlImgur(url) {
+    const texto = String(url || "").trim();
+    if (!/imgur\.com/i.test(texto)) return "";
+    if (/imgur\.com\/(?:a|gallery|t|user|hot|new|upload)\b/i.test(texto)) return "";
+    const directo = texto.match(/i\.imgur\.com\/([a-zA-Z0-9]+)(\.[a-zA-Z0-9]+)?/i);
+    const pagina = directo || texto.match(/imgur\.com\/(?:download\/)?([a-zA-Z0-9]+)(\.[a-zA-Z0-9]+)?/i);
+    if (!pagina) return "";
+    const reservados = { a: 1, gallery: 1, t: 1, upload: 1, signin: 1, privacy: 1, tos: 1, help: 1, meme: 1 };
+    if (reservados[pagina[1].toLowerCase()]) return "";
+    const ext = (pagina[2] || ".jpg").replace(/^\./, "");
+    return "https://i.imgur.com/" + pagina[1] + "." + ext;
+  }
+
   function normalizarUrlFoto(url) {
     const texto = String(url || "").trim();
     if (!texto) return "";
     if (esVideo(texto)) return texto;
+    const imgur = normalizarUrlImgur(texto);
+    if (imgur) return imgur;
     const drive = idGoogleDrive(texto);
     if (/drive\.google\.com/i.test(texto) && drive) {
       return "https://drive.google.com/thumbnail?id=" + drive + "&sz=w2000";

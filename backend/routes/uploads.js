@@ -3,7 +3,8 @@ const fs = require("fs");
 const crypto = require("crypto");
 const express = require("express");
 const multer = require("multer");
-const { subirBufferAImgur } = require("../utils/imgur");
+const { subirBufferAImgur, imgurConfigurado } = require("../utils/imgur");
+const { subirBufferAImgbb, imgbbConfigurado } = require("../utils/imgbb");
 
 const UPLOADS_DIR = path.join(__dirname, "..", "..", "public", "uploads");
 
@@ -78,8 +79,55 @@ function responderErrorSubida(res, err) {
   });
 }
 
-// Sube a Imgur y devuelve URLs públicas https://i.imgur.com/... (las que
-// sí puede mostrar Blogger). Requiere GYG_IMGUR_CLIENT_ID. Solo imágenes.
+// Sube a Imgur (si hay Client-ID viejo) o ImgBB (clave en Configuración del sitio).
+router.post("/publico", (req, res) => {
+  uploadMemoria.array("imagenes", 8)(req, res, async (err) => {
+    if (err) return responderErrorSubida(res, err);
+
+    const archivos = (req.files || []).filter((archivo) =>
+      String(archivo.mimetype || "").startsWith("image/")
+    );
+    if (archivos.length === 0) {
+      return res.status(400).json({
+        error: "No se recibió ninguna imagen. Arrastrá un JPG, PNG, WEBP o GIF de hasta 8 MB.",
+      });
+    }
+
+    if (!imgurConfigurado() && !imgbbConfigurado()) {
+      return res.status(400).json({
+        error:
+          "Imgur ya no da API a cuentas nuevas. Creá una clave gratis en https://api.imgbb.com/ y pegala en Configuración del sitio, o pegá un link https de la foto.",
+      });
+    }
+
+    try {
+      const urls = [];
+      for (const archivo of archivos) {
+        let link = "";
+        if (imgurConfigurado()) {
+          try {
+            link = await subirBufferAImgur(archivo.buffer, {
+              filename: archivo.originalname || "foto.jpg",
+            });
+          } catch (_imgurErr) {
+            link = "";
+          }
+        }
+        if (!link) {
+          link = await subirBufferAImgbb(archivo.buffer, {
+            filename: archivo.originalname || "foto.jpg",
+          });
+        }
+        urls.push(link);
+      }
+      res.status(201).json({ urls });
+    } catch (subidaErr) {
+      res.status(subidaErr.status || 502).json({
+        error: subidaErr.message || "No se pudo publicar la imagen",
+      });
+    }
+  });
+});
 router.post("/imgur", (req, res) => {
   uploadMemoria.array("imagenes", 8)(req, res, async (err) => {
     if (err) return responderErrorSubida(res, err);

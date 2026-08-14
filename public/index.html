@@ -384,7 +384,7 @@
               <input id="f-imagen-archivo" type="file" accept="image/*,video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" multiple class="hidden" />
               <p class="text-sm font-medium text-slate-700">Arrastrá fotos o videos acá o hacé clic para elegirlos</p>
               <p class="text-xs text-slate-500 mt-1">Fotos JPG, PNG, WEBP o GIF · videos MP4, WEBM o MOV (máx. 40 MB). Se guardan en este panel.</p>
-              <p class="text-xs text-slate-500 mt-1">Para el sitio web pegá un link https de la foto (imgur.com o Drive) o un video de YouTube. La primera foto es la principal; podés reordenarlas abajo.</p>
+              <p class="text-xs text-slate-500 mt-1">Para el sitio: arrastrá la foto si cargaste la clave de ImgBB (Configuración del sitio), o pegá el link directo de la imagen. Imgur ya no da API a cuentas nuevas.</p>
               <p id="dropzone-estado" class="hidden text-xs font-medium text-indigo-600 mt-3">Subiendo imagen...</p>
             </div>
 
@@ -392,7 +392,7 @@
               <input
                 id="f-imagen-url"
                 type="text"
-                placeholder="Pegar link https de foto o video (YouTube, imgur, Drive)"
+                placeholder="Pegar link de la foto (clic derecho → copiar dirección de imagen) o YouTube"
                 class="campo flex-1 min-w-[200px]"
               />
               <label class="inline-flex items-center gap-1.5 text-xs text-slate-600 whitespace-nowrap">
@@ -656,6 +656,15 @@
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Imagen de portada (URL)</label>
             <input id="c-hero" class="campo" placeholder="https://..." />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Clave ImgBB (fotos del sitio)</label>
+            <input id="c-imgbb" type="password" autocomplete="off" class="campo" placeholder="Pegá la clave de api.imgbb.com" />
+            <p id="c-imgbb-estado" class="text-[11px] text-slate-400 mt-1">
+              Imgur ya no da API. Creá una clave gratis en
+              <a href="https://api.imgbb.com/" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">api.imgbb.com</a>
+              y pegala acá para que el arrastre publique las fotos en el sitio.
+            </p>
           </div>
         </div>
 

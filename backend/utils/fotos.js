@@ -67,10 +67,34 @@ function normalizarUrlVideo(url) {
   return texto.replace(/^http:\/\//i, "https://");
 }
 
+function idImgur(url) {
+  const texto = String(url || "").trim();
+  if (!/imgur\.com/i.test(texto)) return null;
+  if (/imgur\.com\/(?:a|gallery|t|user|hot|new|upload)\b/i.test(texto)) return null;
+  const directo = texto.match(/i\.imgur\.com\/([a-zA-Z0-9]+)(\.[a-zA-Z0-9]+)?/i);
+  if (directo) {
+    return { id: directo[1], ext: (directo[2] || ".jpg").replace(/^\./, "") };
+  }
+  const pagina = texto.match(/imgur\.com\/(?:download\/)?([a-zA-Z0-9]+)(\.[a-zA-Z0-9]+)?/i);
+  if (!pagina) return null;
+  const reservados = new Set(["a", "gallery", "t", "upload", "signin", "privacy", "tos", "help", "meme"]);
+  if (reservados.has(pagina[1].toLowerCase())) return null;
+  return { id: pagina[1], ext: (pagina[2] || ".jpg").replace(/^\./, "") };
+}
+
+function normalizarUrlImgur(url) {
+  const info = idImgur(url);
+  if (!info) return "";
+  return `https://i.imgur.com/${info.id}.${info.ext || "jpg"}`;
+}
+
 function normalizarUrlFoto(url) {
   const texto = String(url || "").trim();
   if (!texto) return "";
   if (esVideo(texto)) return texto;
+
+  const imgur = normalizarUrlImgur(texto);
+  if (imgur) return imgur;
 
   const driveId = idGoogleDrive(texto);
   if (driveId) {
@@ -152,11 +176,13 @@ module.exports = {
   esUrlPublica,
   esVideo,
   idGoogleDrive,
+  idImgur,
   idYoutube,
   idVimeo,
   miniaturaVideo,
   urlEmbedVideo,
   normalizarUrlFoto,
+  normalizarUrlImgur,
   normalizarUrlVideo,
   mediaParaCatalogo,
   fotosParaCatalogo,

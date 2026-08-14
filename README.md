@@ -334,19 +334,29 @@ explicando cuál falta configurar; el resto del sistema funciona igual.
 Las fotos y videos del panel se pueden **arrastrar** (quedan en este equipo) o
 **pegar como link https**. En el formulario se reordenan con ← → y la
 **estrella** marca la foto principal (la que sale en el listado y en el sitio).
-Blogger solo muestra links públicos (`https://i.imgur.com/...`, Google Drive o
-YouTube). Imgur **ya no da Client ID** a aplicaciones nuevas, así que no hace
-falta API:
+Blogger solo muestra links públicos (`https://i.imgur.com/...`, ImgBB, Google
+Drive o YouTube). Imgur **ya no da Client ID** a aplicaciones nuevas: crear
+una cuenta en Imgur **no** habilita la API.
 
-1. Subí la foto en [imgur.com](https://imgur.com/upload) o Google Drive.
-2. Copiá el link y pegalo en el campo de URL del formulario.
-3. Para un video, pegá el link de YouTube (o marcá “Es un video” si es Drive)
-   o arrastrá un MP4 al panel (el MP4 local no se publica en Blogger).
-4. Guardá el vehículo. Al **Exportar CSV** esos links van en `imagenes_url`
-   separados por ` | `, en el mismo orden; al importar vuelven igual.
+Para que el arrastre publique fotos en el sitio:
+
+1. Entrá a [api.imgbb.com](https://api.imgbb.com/), registrate y copiá la clave.
+2. En el panel: **Configuración del sitio** → pegá la clave ImgBB → Guardar.
+3. Arrastrá las fotos al vehículo. Van a quedar con un link `https://i.ibb.co/...`.
+
+Sin esa clave, podés seguir pegando el link de la foto:
+
+1. Subí la foto en [imgur.com](https://imgur.com/upload) (como página web, no API).
+2. Clic derecho en la imagen → **Copiar dirección de imagen** (`https://i.imgur.com/...`).
+   No copies el link de la página (`imgur.com/abc`).
+3. Pegalo en el formulario. El panel lo convierte al link directo.
+
+Para un video, pegá YouTube (o marcá “Es un video” si es Drive) o arrastrá un
+MP4 al panel (el MP4 local no se publica en Blogger). Al **Exportar CSV** los
+links van en `imagenes_url` separados por ` | `.
 
 Si ya tenías un `GYG_IMGUR_CLIENT_ID` de antes, el arrastre sigue subiéndolas
-solas a Imgur. Si no, el arrastre guarda la foto solo en el panel local.
+a Imgur. Si no, usa ImgBB cuando hay clave, o guarda la foto solo en el panel.
 
 Las fotos y videos en `/uploads/...` **solo se ven en el panel local**. Al
 publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
