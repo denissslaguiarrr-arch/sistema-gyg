@@ -38,6 +38,12 @@ test("el nombre G&G está disponible en las dos partes del script de Blogger", (
   assert.match(partes[1], /brand-amp/);
 });
 
+test("el tema reproduce videos de YouTube en la galería", () => {
+  assert.match(tema, /youtube\.com\/embed/);
+  assert.match(tema, /galleryItems/);
+  assert.match(tema, /is-video/);
+});
+
 test("el & del hero usa serif clásico, no el glifo de Syne", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   assert.match(css, /\.brand-amp/);

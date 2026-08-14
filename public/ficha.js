@@ -98,9 +98,9 @@ async function iniciar() {
     }
 
     const imagenes = v.imagenes_url && v.imagenes_url.length ? v.imagenes_url : [];
-    const fotoPrincipal = document.getElementById("foto-principal");
     const marcoFoto = document.getElementById("marco-foto");
     const miniaturas = document.getElementById("miniaturas");
+    const media = window.GygMedia || {};
 
     function asegurarLightbox() {
       let overlay = document.getElementById("lightbox");
@@ -193,21 +193,44 @@ async function iniciar() {
     }
 
     function mostrarFoto(url) {
-      fotoPrincipal.src = url;
-      marcoFoto.onclick = () => abrirLightbox(url);
+      const info = media.describirMedia ? media.describirMedia(url) : { tipo: "img", src: url, esVideo: false };
+      if (info.tipo === "iframe") {
+        marcoFoto.classList.remove("cursor-zoom-in");
+        marcoFoto.onclick = null;
+        marcoFoto.innerHTML = `<iframe src="${info.src}" class="w-full aspect-video bg-black" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen title="Video del vehículo"></iframe>`;
+        return;
+      }
+      if (info.tipo === "video") {
+        marcoFoto.classList.remove("cursor-zoom-in");
+        marcoFoto.onclick = null;
+        marcoFoto.innerHTML = `<video src="${info.src}" class="w-full max-h-[32rem] bg-black" controls playsinline></video>`;
+        return;
+      }
+      let img = document.getElementById("foto-principal");
+      if (!img) {
+        marcoFoto.innerHTML = `<img id="foto-principal" class="w-full max-h-[32rem] object-contain bg-slate-900" alt="Foto del vehículo" />`;
+        img = document.getElementById("foto-principal");
+      }
+      img.src = info.src;
+      marcoFoto.classList.add("cursor-zoom-in");
+      marcoFoto.onclick = () => abrirLightbox(info.src);
     }
 
     if (imagenes.length > 0) {
       mostrarFoto(imagenes[0]);
       miniaturas.innerHTML = imagenes
-        .map(
-          (url, i) =>
-            `<img src="${url}" data-i="${i}" class="w-16 h-16 rounded-lg object-cover border border-slate-200 cursor-pointer shrink-0" />`
-        )
+        .map((url, i) => {
+          const thumb = media.miniaturaDe ? media.miniaturaDe(url) : url;
+          const esVid = media.esVideo ? media.esVideo(url) : false;
+          if (esVid && !thumb) {
+            return `<button type="button" data-i="${i}" class="w-16 h-16 rounded-lg bg-slate-900 text-white shrink-0">▶</button>`;
+          }
+          return `<img src="${thumb || url}" data-i="${i}" class="w-16 h-16 rounded-lg object-cover border border-slate-200 cursor-pointer shrink-0" alt="" />`;
+        })
         .join("");
       miniaturas.addEventListener("click", (evento) => {
-        const img = evento.target.closest("img[data-i]");
-        if (img) mostrarFoto(imagenes[Number(img.dataset.i)]);
+        const nodo = evento.target.closest("[data-i]");
+        if (nodo) mostrarFoto(imagenes[Number(nodo.dataset.i)]);
       });
     } else {
       marcoFoto.remove();

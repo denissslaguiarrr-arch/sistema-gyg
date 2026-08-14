@@ -361,6 +361,7 @@ test("GET /api/vehiculos/export.csv incluye los links de las fotos", async () =>
   assert.match(encabezado, /imagenes_url/);
   assert.match(texto, /https:\/\/i\.imgur\.com\/abc\.jpg/);
   assert.match(texto, /FOT999/);
+  assert.match(texto, /abc\.jpg \| https:\/\/drive\.google\.com/);
 
   const body = await creado.json();
   await del(`/api/vehiculos/${body.id}`);

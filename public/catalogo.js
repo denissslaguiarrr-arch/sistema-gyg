@@ -31,7 +31,9 @@
       ".gyg-muted{color:var(--muted);font-size:13px}",
       ".gyg-detail{display:grid;gap:16px}",
       ".gyg-photo{background:#0f172a;border-radius:16px;overflow:hidden}",
-      ".gyg-photo img{width:100%;max-height:min(70vh,520px);object-fit:contain;display:block;background:#0f172a;cursor:zoom-in}",
+      ".gyg-photo img,.gyg-photo video{width:100%;max-height:min(70vh,520px);object-fit:contain;display:block;background:#0f172a}",
+      ".gyg-photo img{cursor:zoom-in}",
+      ".gyg-photo iframe{width:100%;aspect-ratio:16/9;border:0;display:block;background:#000}",
       ".gyg-thumbs{display:flex;gap:8px;overflow:auto;padding:10px}",
       ".gyg-thumbs img{width:64px;height:64px;object-fit:cover;border-radius:10px;cursor:pointer;border:2px solid transparent}",
       ".gyg-thumbs img.on{border-color:#38bdf8}",
@@ -219,6 +221,33 @@
     return html;
   }
 
+  function galleryItems(v) {
+    if (v.media && v.media.length) return v.media;
+    var fotos = v.fotos && v.fotos.length ? v.fotos : [];
+    var videos = v.videos && v.videos.length ? v.videos : [];
+    var items = fotos.map(function (url) {
+      return { tipo: "foto", url: url, thumbnail: url };
+    });
+    videos.forEach(function (vid) {
+      if (typeof vid === "string") items.push({ tipo: "video", url: vid, thumbnail: "" });
+      else items.push({ tipo: "video", url: vid.url, thumbnail: vid.thumbnail || "", embed: vid.embed });
+    });
+    return items;
+  }
+
+  function mainMediaHtml(item, alt) {
+    if (!item) return "";
+    var media = window.GygMedia;
+    if (item.tipo === "video") {
+      var info = media && media.describirMedia ? media.describirMedia(item.url) : { tipo: "video", src: item.embed || item.url };
+      if (info.tipo === "iframe") {
+        return '<iframe src="' + esc(info.src) + '" title="' + esc(alt) + '" allowfullscreen allow="autoplay; encrypted-media"></iframe>';
+      }
+      return '<video id="gyg-main-foto" src="' + esc(info.src) + '" controls playsinline></video>';
+    }
+    return '<img id="gyg-main-foto" src="' + esc(item.url) + '" alt="' + esc(alt) + '">';
+  }
+
   function specs(v) {
     var rows = [
       ["Año", v.anio],
@@ -242,26 +271,30 @@
   }
 
   function autoHtml(v) {
-    var fotos = v.fotos && v.fotos.length ? v.fotos : [];
+    var items = galleryItems(v);
     var i = state.fotoIdx;
-    if (i >= fotos.length) i = 0;
-    var principal = fotos[i] || "";
+    if (i >= items.length) i = 0;
+    var actual = items[i] || null;
     var s = site();
     var wa = waDigits(s.whatsapp);
     var msg = encodeURIComponent("Hola, consulto por " + v.marca + " " + v.modelo + " (" + v.id + ")");
     var thumbs =
-      fotos.length > 1
+      items.length > 1
         ? '<div class="gyg-thumbs">' +
-          fotos
-            .map(function (f, idx) {
+          items
+            .map(function (item, idx) {
+              var thumb = item.thumbnail || item.url || "";
+              var play = item.tipo === "video" ? " ▶" : "";
               return (
                 '<img data-i="' +
                 idx +
                 '" class="' +
                 (idx === i ? "on" : "") +
                 '" src="' +
-                esc(f) +
-                '" alt="">'
+                esc(thumb) +
+                '" alt="' +
+                play +
+                '">'
               );
             })
             .join("") +
@@ -269,11 +302,9 @@
         : "";
     return (
       '<a class="gyg-back" href="#/stock">← Volver</a><div class="gyg-detail"><div class="gyg-photo">' +
-      (principal
-        ? '<img id="gyg-main-foto" src="' + esc(principal) + '" alt="' + esc(v.marca + " " + v.modelo) + '">'
-        : "") +
+      mainMediaHtml(actual, v.marca + " " + v.modelo) +
       thumbs +
-      (principal ? '<p class="gyg-hint">Tocá la foto para ampliar y hacer zoom</p>' : "") +
+      (actual && actual.tipo !== "video" ? '<p class="gyg-hint">Tocá la foto para ampliar y hacer zoom</p>' : "") +
       '</div><div class="gyg-panel"><span class="gyg-badge">' +
       esc((v.status || "").toUpperCase()) +
       "</span><h2 style='margin:8px 0 0'>" +

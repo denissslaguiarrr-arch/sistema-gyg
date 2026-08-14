@@ -55,6 +55,8 @@ test("mapearVehiculo arma el objeto con el esquema del catálogo público", () =
   assert.equal(vehiculo.destacado, true);
   assert.deepEqual(vehiculo.equipamiento, ["Aire acondicionado", "Bluetooth"]);
   assert.deepEqual(vehiculo.fotos, ["https://a.com/1.jpg"]);
+  assert.deepEqual(vehiculo.videos, []);
+  assert.equal(vehiculo.media[0].tipo, "foto");
   assert.equal(vehiculo.ingreso, "2026-01-15");
   assert.equal(vehiculo.updatedAt, "2026-02-01T12:30:00.000Z");
   assert.equal(vehiculo.precio, 45000);
@@ -83,6 +85,26 @@ test("mapearVehiculo no publica fotos locales /uploads, solo links https públic
     ],
   });
   assert.deepEqual(vehiculo.fotos, ["https://ejemplo.com/hilux.jpg"]);
+});
+
+test("mapearVehiculo publica videos de YouTube aparte y conserva el orden en media", () => {
+  const vehiculo = mapearVehiculo({
+    id: 2, marca: "Ford", modelo: "Ranger", anio: 2022, kilometraje: 1,
+    precio: 8000, moneda: "USD", dominio: "X", estado: "Disponible",
+    equipamiento: [], created_at: "2026-01-01", updated_at: "2026-01-01",
+    imagenes_url: [
+      "https://ejemplo.com/frente.jpg",
+      "https://www.youtube.com/watch?v=abcdefghijk",
+      "https://ejemplo.com/interior.jpg",
+    ],
+  });
+  assert.deepEqual(vehiculo.fotos, [
+    "https://ejemplo.com/frente.jpg",
+    "https://ejemplo.com/interior.jpg",
+  ]);
+  assert.equal(vehiculo.videos.length, 1);
+  assert.equal(vehiculo.videos[0].url, "https://www.youtube.com/watch?v=abcdefghijk");
+  assert.deepEqual(vehiculo.media.map((item) => item.tipo), ["foto", "video", "foto"]);
 });
 
 test("mergeSiteConfig prioriza los valores locales, pero no pisa con vacíos", () => {

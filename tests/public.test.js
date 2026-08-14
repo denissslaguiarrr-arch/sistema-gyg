@@ -104,6 +104,9 @@ test("/ficha.html y /ficha.js son accesibles sin sesión", async () => {
   assert.equal(js.status, 200);
   const script = await js.text();
   assert.match(script, /abrirLightbox/);
+
+  const media = await fetch(`${baseUrl}/media.js`);
+  assert.equal(media.status, 200);
 });
 
 test("/catalogo.html y /catalogo.js son accesibles sin sesión", async () => {

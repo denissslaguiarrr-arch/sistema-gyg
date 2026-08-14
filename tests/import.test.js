@@ -169,3 +169,38 @@ test("POST /api/vehiculos/import requiere rol admin", async () => {
   });
   assert.equal(res.status, 403);
 });
+
+test("POST /api/vehiculos/import lee los links de fotos en el mismo orden que el export", async () => {
+  const csv = [
+    "marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,imagenes_url",
+    'Ford,Ka,2018,IMPFOT,40000,5000,USD,Disponible,"https://a.com/frente.jpg | https://a.com/lateral.jpg | https://youtu.be/abcdefghijk"',
+  ].join("\n");
+
+  const formData = new FormData();
+  formData.append("archivo", csvComoArchivo(csv));
+
+  const res = await fetch(`${baseUrl}/api/vehiculos/import`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formData,
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.creados, 1);
+  assert.equal(body.errores.length, 0);
+
+  const lista = await (
+    await fetch(`${baseUrl}/api/vehiculos?q=IMPFOT`, { headers: { Cookie: cookie } })
+  ).json();
+  assert.deepEqual(lista.items[0].imagenes_url, [
+    "https://a.com/frente.jpg",
+    "https://a.com/lateral.jpg",
+    "https://youtu.be/abcdefghijk",
+  ]);
+
+  const exportado = await fetch(`${baseUrl}/api/vehiculos/export.csv?q=IMPFOT`, {
+    headers: { Cookie: cookie },
+  });
+  const texto = await exportado.text();
+  assert.match(texto, /https:\/\/a\.com\/frente\.jpg \| https:\/\/a\.com\/lateral\.jpg \| https:\/\/youtu\.be\/abcdefghijk/);
+});

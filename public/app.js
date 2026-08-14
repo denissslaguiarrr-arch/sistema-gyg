@@ -89,6 +89,7 @@ const el = {
   dropzoneEstado: document.getElementById("dropzone-estado"),
   fImagenArchivo: document.getElementById("f-imagen-archivo"),
   fImagenUrl: document.getElementById("f-imagen-url"),
+  fEsVideo: document.getElementById("f-es-video"),
   btnAgregarUrl: document.getElementById("btn-agregar-url"),
   imagenesEstado: document.getElementById("imagenes-estado"),
 
@@ -737,7 +738,8 @@ function accionesPapelera(vehiculo) {
 }
 
 function miniatura(vehiculo) {
-  const primera = (vehiculo.imagenes_url || [])[0];
+  const media = window.GygMedia || {};
+  const primera = media.portadaDe ? media.portadaDe(vehiculo.imagenes_url || []) : (vehiculo.imagenes_url || [])[0];
   if (!primera) {
     return `<div class="w-10 h-10 rounded-lg bg-slate-100 flex items-center justify-center text-slate-300 text-lg">🚗</div>`;
   }
@@ -790,11 +792,17 @@ function renderTabla() {
 // ---------- Galería de imágenes del formulario ----------
 
 function esFotoLocal(url) {
+  if (window.GygMedia && window.GygMedia.esFotoLocal) return window.GygMedia.esFotoLocal(url);
   const texto = String(url || "").trim();
   return texto.startsWith("/uploads/") || /localhost|127\.0\.0\.1/i.test(texto);
 }
 
+function esVideoMedia(url) {
+  return !!(window.GygMedia && window.GygMedia.esVideo && window.GygMedia.esVideo(url));
+}
+
 function normalizarUrlFotoCliente(url) {
+  if (window.GygMedia && window.GygMedia.normalizarUrlFoto) return window.GygMedia.normalizarUrlFoto(url);
   const texto = String(url || "").trim();
   const drive = texto.match(/\/file\/d\/([a-zA-Z0-9_-]+)/) || texto.match(/[?&]id=([a-zA-Z0-9_-]+)/);
   if (/drive\.google\.com/i.test(texto) && drive) {
@@ -803,42 +811,95 @@ function normalizarUrlFotoCliente(url) {
   return texto;
 }
 
+function previewMediaHtml(url) {
+  const media = window.GygMedia || {};
+  const thumb = media.miniaturaDe ? media.miniaturaDe(url) : url;
+  if (esVideoMedia(url) && !thumb) {
+    return `<div class="w-24 h-24 rounded-lg bg-slate-900 text-white flex items-center justify-center text-xl border border-slate-200">▶</div>`;
+  }
+  if (esVideoMedia(url)) {
+    return `<div class="relative w-24 h-24">
+      <img src="${escapeHtml(thumb)}" class="w-24 h-24 rounded-lg object-cover border border-slate-200" onerror="this.style.opacity=0.3" />
+      <span class="absolute inset-0 flex items-center justify-center text-white text-lg drop-shadow">▶</span>
+    </div>`;
+  }
+  return `<img src="${escapeHtml(thumb || url)}" class="w-24 h-24 rounded-lg object-cover border border-slate-200" onerror="this.style.opacity=0.3" />`;
+}
+
 function renderGaleria() {
   if (state.formImagenes.length === 0) {
     el.galeriaImagenes.innerHTML = "";
-    el.imagenesEstado.textContent = "Todavía no agregaste fotos.";
+    el.imagenesEstado.textContent = "Todavía no agregaste fotos ni videos.";
     return;
   }
   const locales = state.formImagenes.filter(esFotoLocal).length;
-  el.imagenesEstado.textContent =
-    locales > 0
-      ? `${state.formImagenes.length} foto(s). ${locales} solo se ve(n) en este panel; para Blogger pegá un link https://.`
-      : `${state.formImagenes.length} foto(s) cargada(s).`;
+  const videos = state.formImagenes.filter(esVideoMedia).length;
+  const partes = [`${state.formImagenes.length} archivo(s)`];
+  if (videos) partes.push(`${videos} video(s)`);
+  if (locales) partes.push(`${locales} solo se ve(n) en este panel; para Blogger pegá un link https://`);
+  el.imagenesEstado.textContent = `${partes.join(". ")}. La estrella marca la portada.`;
   el.galeriaImagenes.innerHTML = state.formImagenes
     .map(
       (url, i) => `
-      <div class="relative w-16 h-16">
-        <img src="${escapeHtml(url)}" class="w-16 h-16 rounded-lg object-cover border border-slate-200" onerror="this.style.opacity=0.3" />
-        ${esFotoLocal(url) ? '<span class="absolute bottom-0 left-0 right-0 bg-amber-500/90 text-white text-[9px] leading-tight text-center px-0.5">solo panel</span>' : ""}
+      <div class="relative w-24">
+        ${previewMediaHtml(url)}
+        ${i === 0 ? '<span class="absolute top-0 left-0 bg-indigo-600 text-white text-[9px] font-semibold px-1 py-0.5 rounded-br-md rounded-tl-lg">Principal</span>' : ""}
+        ${esFotoLocal(url) ? '<span class="absolute bottom-7 left-0 right-0 bg-amber-500/90 text-white text-[9px] leading-tight text-center px-0.5">solo panel</span>' : ""}
+        ${esVideoMedia(url) && i !== 0 ? '<span class="absolute top-0 left-0 bg-slate-900/80 text-white text-[9px] font-semibold px-1 py-0.5 rounded-br-md rounded-tl-lg">Video</span>' : ""}
         <button type="button" data-quitar-imagen="${i}" class="absolute -top-1.5 -right-1.5 bg-red-500 hover:bg-red-600 text-white rounded-full w-5 h-5 text-xs leading-none flex items-center justify-center shadow">×</button>
+        <div class="flex justify-center gap-0.5 mt-1">
+          <button type="button" data-mover-imagen="${i}" data-dir="-1" class="text-[11px] px-1.5 py-0.5 rounded border border-slate-300 hover:bg-slate-50" ${i === 0 ? "disabled" : ""}>←</button>
+          <button type="button" data-principal-imagen="${i}" class="text-[11px] px-1.5 py-0.5 rounded border border-slate-300 hover:bg-indigo-50 ${i === 0 ? "text-indigo-700 font-semibold" : "text-slate-600"}" title="Usar como principal">★</button>
+          <button type="button" data-mover-imagen="${i}" data-dir="1" class="text-[11px] px-1.5 py-0.5 rounded border border-slate-300 hover:bg-slate-50" ${i === state.formImagenes.length - 1 ? "disabled" : ""}>→</button>
+        </div>
       </div>`
     )
     .join("");
 }
 
 el.galeriaImagenes.addEventListener("click", (evento) => {
-  const boton = evento.target.closest("button[data-quitar-imagen]");
-  if (!boton) return;
-  const indice = Number(boton.dataset.quitarImagen);
-  state.formImagenes.splice(indice, 1);
+  const quitar = evento.target.closest("button[data-quitar-imagen]");
+  if (quitar) {
+    const indice = Number(quitar.dataset.quitarImagen);
+    state.formImagenes.splice(indice, 1);
+    renderGaleria();
+    return;
+  }
+  const principal = evento.target.closest("button[data-principal-imagen]");
+  if (principal) {
+    const indice = Number(principal.dataset.principalImagen);
+    if (indice > 0) {
+      const [item] = state.formImagenes.splice(indice, 1);
+      state.formImagenes.unshift(item);
+      renderGaleria();
+    }
+    return;
+  }
+  const mover = evento.target.closest("button[data-mover-imagen]");
+  if (!mover) return;
+  const indice = Number(mover.dataset.moverImagen);
+  const dir = Number(mover.dataset.dir);
+  const destino = indice + dir;
+  if (destino < 0 || destino >= state.formImagenes.length) return;
+  const copia = state.formImagenes[indice];
+  state.formImagenes[indice] = state.formImagenes[destino];
+  state.formImagenes[destino] = copia;
   renderGaleria();
 });
 
 function agregarImagenUrl() {
-  const url = normalizarUrlFotoCliente(el.fImagenUrl.value.trim());
+  const crudo = el.fImagenUrl.value.trim();
+  if (!crudo) return;
+  const forzarVideo = !!(el.fEsVideo && el.fEsVideo.checked) || esVideoMedia(crudo);
+  const url = forzarVideo
+    ? (window.GygMedia && window.GygMedia.normalizarUrlVideo
+        ? window.GygMedia.normalizarUrlVideo(crudo)
+        : crudo)
+    : normalizarUrlFotoCliente(crudo);
   if (!url) return;
   state.formImagenes.push(url);
   el.fImagenUrl.value = "";
+  if (el.fEsVideo) el.fEsVideo.checked = false;
   renderGaleria();
 }
 
@@ -926,13 +987,15 @@ async function subirArchivoLocal(archivo) {
 
 async function subirArchivosAlCatalogo(archivos) {
   const imagenes = archivos.filter((archivo) => archivo && archivo.type && archivo.type.startsWith("image/"));
-  if (imagenes.length === 0) {
-    mostrarAlerta("Soltá un archivo de imagen (JPG, PNG, WEBP o GIF).");
+  const videos = archivos.filter((archivo) => archivo && archivo.type && archivo.type.startsWith("video/"));
+  if (imagenes.length === 0 && videos.length === 0) {
+    mostrarAlerta("Soltá una foto (JPG, PNG, WEBP o GIF) o un video (MP4, WEBM o MOV).");
     return;
   }
 
-  setDropzoneCargando(true, imagenes.length > 1 ? `Subiendo ${imagenes.length} imágenes...` : "Subiendo imagen...");
-  el.imagenesEstado.textContent = "Subiendo imagen...";
+  const total = imagenes.length + videos.length;
+  setDropzoneCargando(true, total > 1 ? `Subiendo ${total} archivos...` : "Subiendo archivo...");
+  el.imagenesEstado.textContent = "Subiendo...";
 
   let publicas = 0;
   let locales = 0;
@@ -956,6 +1019,17 @@ async function subirArchivosAlCatalogo(archivos) {
       renderGaleria();
     }
 
+    for (const archivo of videos) {
+      try {
+        const urlLocal = await subirArchivoLocal(archivo);
+        state.formImagenes.push(urlLocal);
+        locales += 1;
+      } catch (localErr) {
+        errores.push(localErr.message || "No se pudo guardar el video");
+      }
+      renderGaleria();
+    }
+
     if (publicas && !locales) {
       mostrarAlerta(
         publicas === 1 ? "Foto subida con URL pública para el sitio web." : `${publicas} fotos con URL pública.`,
@@ -963,7 +1037,7 @@ async function subirArchivosAlCatalogo(archivos) {
       );
     } else if (locales) {
       mostrarAlerta(
-        "Fotos guardadas en este panel. Imgur ya no da Client ID a apps nuevas. Para Blogger: subí la foto en imgur.com o Drive y pegá el link https abajo.",
+        "Archivos guardados en este panel. Para Blogger: pegá un link https de la foto (imgur/Drive) o un video de YouTube.",
         "ok"
       );
     }

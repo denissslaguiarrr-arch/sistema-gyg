@@ -762,11 +762,24 @@ textarea {
   border: 1px solid var(--line);
 }
 
-.gallery__main img {
+.gallery__main img,
+.gallery__main video {
   width: 100%;
   height: 100%;
   object-fit: contain;
   cursor: zoom-in;
+}
+
+.gallery__main video {
+  cursor: default;
+  background: #111;
+}
+
+.gallery__main iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #111;
 }
 
 .gallery__hint {
@@ -802,6 +815,23 @@ textarea {
   width: 100%;
   height: 100%;
   object-fit: cover;
+}
+
+.gallery__thumbs button.is-video {
+  position: relative;
+}
+
+.gallery__thumbs button.is-video::after {
+  content: "▶";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
 }
 
 .detail__info {

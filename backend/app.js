@@ -25,6 +25,7 @@ const RUTAS_PUBLICAS = new Set([
   "/ficha.js",
   "/catalogo.html",
   "/catalogo.js",
+  "/media.js",
   "/favicon.ico",
   "/favicon.png",
   "/apple-touch-icon.png",

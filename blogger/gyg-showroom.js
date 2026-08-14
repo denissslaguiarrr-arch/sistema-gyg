@@ -957,6 +957,60 @@ window.GYG_CONFIG = {
     });
   }
 
+  function youtubeId(url) {
+    const match = String(url || "").match(
+      /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    return match ? match[1] : null;
+  }
+
+  function vimeoId(url) {
+    const match = String(url || "").match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    return match ? match[1] : null;
+  }
+
+  function driveFileId(url) {
+    const match = String(url || "").match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : null;
+  }
+
+  function galleryItems(v) {
+    if (Array.isArray(v.media) && v.media.length) return v.media;
+    const fotos = v.fotos && v.fotos.length ? v.fotos : [];
+    const videos = Array.isArray(v.videos) ? v.videos : [];
+    const items = fotos.map((url) => ({ tipo: "foto", url, thumbnail: url }));
+    for (const vid of videos) {
+      if (typeof vid === "string") items.push({ tipo: "video", url: vid, thumbnail: "" });
+      else items.push({ tipo: "video", url: vid.url, thumbnail: vid.thumbnail || "", embed: vid.embed });
+    }
+    return items.length ? items : [{ tipo: "foto", url: placeholderImg(), thumbnail: placeholderImg() }];
+  }
+
+  function embedSrc(item) {
+    if (item.embed) return item.embed;
+    const yt = youtubeId(item.url);
+    if (yt) return `https://www.youtube.com/embed/${yt}`;
+    const vimeo = vimeoId(item.url);
+    if (vimeo) return `https://player.vimeo.com/video/${vimeo}`;
+    const drive = driveFileId(item.url);
+    if (drive && /preview|video/i.test(item.url || "")) {
+      return `https://drive.google.com/file/d/${drive}/preview`;
+    }
+    return item.url;
+  }
+
+  function mainMediaHtml(item, alt) {
+    if (!item) return "";
+    if (item.tipo === "video") {
+      const src = embedSrc(item);
+      if (/youtube\.com\/embed|vimeo\.com\/video|drive\.google\.com/.test(src)) {
+        return `<iframe id="mainPhoto" src="${escapeAttr(src)}" title="${escapeAttr(alt)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      }
+      return `<video id="mainPhoto" src="${escapeAttr(src)}" controls playsinline></video>`;
+    }
+    return `<img id="mainPhoto" src="${escapeAttr(item.url)}" alt="${escapeAttr(alt)}" />`;
+  }
+
   function renderDetail(id) {
     const v = GyGStock.findVehicle(data, id);
     if (!v || (v.status !== "disponible" && v.status !== "reservado")) {
@@ -969,7 +1023,7 @@ window.GYG_CONFIG = {
       return;
     }
 
-    const fotos = v.fotos && v.fotos.length ? v.fotos : [placeholderImg()];
+    const items = galleryItems(v);
     const specs = [
       ["Categoría", v.categoria],
       ["Año", v.anio],
@@ -991,16 +1045,16 @@ window.GYG_CONFIG = {
         <button type="button" class="btn btn--ghost detail__back" id="backBtn">← Volver</button>
         <div class="detail__layout">
           <div class="gallery">
-            <div class="gallery__main">
-              <img id="mainPhoto" src="${escapeAttr(fotos[0])}" alt="${escapeAttr(v.marca + " " + v.modelo)}" />
+            <div class="gallery__main" id="galleryMain">
+              ${mainMediaHtml(items[0], v.marca + " " + v.modelo)}
             </div>
-            <p class="gallery__hint">Tocá la foto para ampliar y hacer zoom</p>
+            <p class="gallery__hint">${items[0] && items[0].tipo === "video" ? "Reproducí el video o elegí otra miniatura" : "Tocá la foto para ampliar y hacer zoom"}</p>
             <div class="gallery__thumbs" id="thumbs">
-              ${fotos
+              ${items
                 .map(
-                  (f, i) => `
-                <button type="button" class="${i === 0 ? "is-active" : ""}" data-src="${escapeAttr(f)}">
-                  <img src="${escapeAttr(f)}" alt="" />
+                  (item, i) => `
+                <button type="button" class="${i === 0 ? "is-active" : ""} ${item.tipo === "video" ? "is-video" : ""}" data-i="${i}">
+                  <img src="${escapeAttr(item.thumbnail || item.url || placeholderImg())}" alt="" />
                 </button>`
                 )
                 .join("")}
@@ -1040,15 +1094,29 @@ window.GYG_CONFIG = {
       else location.hash = "#/stock";
     });
 
-    const main = document.getElementById("mainPhoto");
+    const galleryMain = document.getElementById("galleryMain");
+    const hint = document.querySelector(".gallery__hint");
     document.getElementById("thumbs")?.addEventListener("click", (e) => {
-      const btn = e.target.closest("button[data-src]");
-      if (!btn || !main) return;
-      main.src = btn.dataset.src;
+      const btn = e.target.closest("button[data-i]");
+      if (!btn || !galleryMain) return;
+      const idx = Number(btn.getAttribute("data-i"));
+      const item = items[idx];
+      if (!item) return;
+      galleryMain.innerHTML = mainMediaHtml(item, v.marca + " " + v.modelo);
+      if (hint) {
+        hint.textContent = item.tipo === "video" ? "Reproducí el video o elegí otra miniatura" : "Tocá la foto para ampliar y hacer zoom";
+      }
       document.querySelectorAll("#thumbs button").forEach((b) => b.classList.remove("is-active"));
       btn.classList.add("is-active");
+      const main = document.getElementById("mainPhoto");
+      if (main && main.tagName === "IMG") {
+        main.addEventListener("click", () => openLightbox(main.src));
+      }
     });
-    main?.addEventListener("click", () => openLightbox(main.src));
+    const main = document.getElementById("mainPhoto");
+    if (main && main.tagName === "IMG") {
+      main.addEventListener("click", () => openLightbox(main.src));
+    }
   }
 
   function renderGistSetup(err) {

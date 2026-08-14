@@ -3,7 +3,7 @@
 // y fusiona "site"; conserva "pages" tal cual estén en el Gist, ya que acá
 // no hay una pantalla para editar la estructura de páginas.
 
-const { fotosParaCatalogo } = require("../utils/fotos");
+const { fotosParaCatalogo, mediaParaCatalogo } = require("../utils/fotos");
 
 const ESTADO_A_STATUS = {
   Disponible: "disponible",
@@ -59,6 +59,11 @@ function mapearVehiculo(v) {
   const updatedAtIso = v.updated_at
     ? new Date(`${String(v.updated_at).replace(" ", "T")}Z`).toISOString()
     : new Date().toISOString();
+  const catalogo = mediaParaCatalogo(v.imagenes_url);
+  const fotos =
+    catalogo.fotos.length > 0
+      ? catalogo.fotos
+      : catalogo.videos.map((item) => item.thumbnail).filter(Boolean).slice(0, 1);
 
   return {
     id: `gyg-${String(v.id).padStart(3, "0")}`,
@@ -84,7 +89,9 @@ function mapearVehiculo(v) {
     destacado: !!v.destacado,
     descripcion: v.notas || "",
     equipamiento: Array.isArray(v.equipamiento) ? v.equipamiento : [],
-    fotos: fotosParaCatalogo(v.imagenes_url).fotos,
+    fotos,
+    videos: catalogo.videos,
+    media: catalogo.media,
     ingreso,
     updatedAt: updatedAtIso,
   };

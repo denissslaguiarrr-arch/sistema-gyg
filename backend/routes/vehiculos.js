@@ -208,7 +208,7 @@ router.get("/plantilla.csv", (_req, res) => {
   };
   const ejemplo = [
     "Toyota", "Hilux", "2024", "AB123CD", "0", "45000", "42000", "USD", "Disponible", "Único dueño",
-    "https://ejemplo.com/foto1.jpg", "SRX 4x4", "Diesel", "Automática", "4x4", 4, "Blanco",
+    "https://ejemplo.com/foto1.jpg | https://ejemplo.com/foto2.jpg", "SRX 4x4", "Diesel", "Automática", "4x4", 4, "Blanco",
     "2.8L", "204cv", "Pickup", "1", "Aire acondicionado, Bluetooth, Cámara de retroceso",
     "Compra", "40000", "2026-01-15",
   ];

@@ -3,8 +3,11 @@ const assert = require("node:assert/strict");
 const {
   esFotoLocal,
   esUrlPublica,
+  esVideo,
   normalizarUrlFoto,
   fotosParaCatalogo,
+  mediaParaCatalogo,
+  portadaDe,
 } = require("../backend/utils/fotos");
 
 test("esFotoLocal detecta /uploads y localhost", () => {
@@ -38,4 +41,40 @@ test("fotosParaCatalogo omite locales y deja los https públicos", () => {
     "https://drive.google.com/thumbnail?id=FILEID99&sz=w2000",
   ]);
   assert.equal(resultado.omitidasLocales, 1);
+});
+
+test("esVideo detecta YouTube, mp4 y Drive preview", () => {
+  assert.equal(esVideo("https://www.youtube.com/watch?v=abcdefghijk"), true);
+  assert.equal(esVideo("https://youtu.be/abcdefghijk"), true);
+  assert.equal(esVideo("/uploads/clip.mp4"), true);
+  assert.equal(esVideo("https://drive.google.com/file/d/ABC/preview"), true);
+  assert.equal(esVideo("https://cdn.ejemplo.com/foto.jpg"), false);
+});
+
+test("mediaParaCatalogo separa fotos y videos conservando el orden", () => {
+  const resultado = mediaParaCatalogo([
+    "https://cdn.ejemplo.com/frente.jpg",
+    "https://www.youtube.com/watch?v=abcdefghijk",
+    "https://cdn.ejemplo.com/lateral.jpg",
+    "/uploads/local.mp4",
+  ]);
+  assert.deepEqual(resultado.fotos, [
+    "https://cdn.ejemplo.com/frente.jpg",
+    "https://cdn.ejemplo.com/lateral.jpg",
+  ]);
+  assert.equal(resultado.videos.length, 1);
+  assert.equal(resultado.videos[0].url, "https://www.youtube.com/watch?v=abcdefghijk");
+  assert.deepEqual(
+    resultado.media.map((item) => item.tipo),
+    ["foto", "video", "foto"]
+  );
+  assert.equal(resultado.omitidasLocales, 1);
+});
+
+test("portadaDe usa la primera foto o la miniatura de YouTube", () => {
+  assert.equal(portadaDe(["https://a.com/1.jpg", "https://a.com/2.jpg"]), "https://a.com/1.jpg");
+  assert.equal(
+    portadaDe(["https://www.youtube.com/watch?v=abcdefghijk", "https://a.com/1.jpg"]),
+    "https://img.youtube.com/vi/abcdefghijk/hqdefault.jpg"
+  );
 });

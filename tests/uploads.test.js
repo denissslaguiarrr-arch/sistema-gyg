@@ -75,6 +75,20 @@ test("POST /api/uploads rechaza un archivo que no es imagen", async () => {
   assert.match(body.error, /JPG|imagen/i);
 });
 
+test("POST /api/uploads acepta un video mp4", async () => {
+  const formData = new FormData();
+  formData.append("imagenes", new File(["fake-mp4"], "recorrido.mp4", { type: "video/mp4" }));
+
+  const res = await fetch(`${baseUrl}/api/uploads`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formData,
+  });
+  assert.equal(res.status, 201);
+  const body = await res.json();
+  assert.match(body.urls[0], /^\/uploads\/.+\.mp4$/);
+});
+
 test("POST /api/vehiculos guarda un vehículo con foto por URL", async () => {
   const res = await fetch(`${baseUrl}/api/vehiculos`, {
     method: "POST",

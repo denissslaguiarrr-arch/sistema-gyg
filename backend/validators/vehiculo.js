@@ -1,4 +1,5 @@
 const { hoyIso, parseFechaIso } = require("../utils/fechas");
+const { parseListaUrls } = require("../utils/csv");
 
 const ESTADOS = ["Disponible", "Reservado", "Vendido"];
 const MONEDAS = ["ARS", "USD"];
@@ -177,10 +178,10 @@ function validateVehiculo(body = {}, { existente } = {}) {
     }
   }
 
-  const imagenes = parseListaTexto(body.imagenes_url);
+  const imagenes = parseListaUrls(body.imagenes_url);
   if (imagenes === null) {
     errors.push(
-      "imagenes_url debe ser texto separado por comas, JSON de arreglo, o vacío"
+      "imagenes_url debe ser texto separado por | o comas, JSON de arreglo, o vacío"
     );
   }
 

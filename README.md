@@ -22,7 +22,7 @@ backend/
     auth.js               Login, logout, usuario actual, cambio de contraseña
     usuarios.js            Gestión de usuarios y roles (solo admin)
     vehiculos.js          CRUD, papelera, historial, resumen KPI, export/import CSV, paginación
-    uploads.js            Subida de fotos (local + Imgur, solo admin)
+    uploads.js            Subida de fotos y videos (local + Imgur, solo admin)
     public.js              API pública de solo lectura para la ficha compartible
     config.js              Configuración del catálogo público (nombre, WhatsApp, redes, etc.)
     sync.js                 Endpoint que publica el stock en el Gist (fase 2)
@@ -32,7 +32,7 @@ backend/
     backup.js             Backup manual/programado de la base SQLite
   utils/
     csv.js                 Parser CSV (RFC 4180) reutilizado por export/import
-    fotos.js               URLs públicas vs locales para el catálogo web
+    fotos.js               URLs públicas, videos y orden de portada para el catálogo
     imgur.js               Subida a Imgur (Client-ID) para fotos del sitio
 
 db/
@@ -203,7 +203,7 @@ Hay dos roles:
 | PATCH  | `/api/vehiculos/:id/restaurar`    | Restaura un vehículo desde la papelera                  | admin |
 | DELETE | `/api/vehiculos/:id`              | Borrado lógico (va a la papelera)                       | admin |
 | DELETE | `/api/vehiculos/:id/permanente`   | Borra definitivamente (solo si ya está en la papelera)  | admin |
-| POST   | `/api/uploads`                    | Sube fotos locales (`/uploads/...`, solo el panel)       | admin |
+| POST   | `/api/uploads`                    | Sube fotos o videos locales (`/uploads/...`, solo el panel) | admin |
 | POST   | `/api/uploads/imgur`              | Sube fotos a Imgur y devuelve URLs públicas `https://`   | admin |
 
 `GET /api/vehiculos` devuelve `{ items, total, pagina, porPagina, totalPaginas }`.
@@ -250,6 +250,9 @@ Reglas de importación:
   obligatoria").
 - Cada alta o cambio de estado producido por la importación queda registrado
   en el historial del vehículo, igual que si se hiciera manualmente.
+- `imagenes_url` acepta varios links separados por ` | ` (como los deja
+  **Exportar CSV**) o por coma. El **primer link es la foto principal**.
+  También se puede pegar un video de YouTube en esa lista.
 
 ## Ficha pública (compartible)
 
@@ -328,21 +331,25 @@ explicando cuál falta configurar; el resto del sistema funciona igual.
 - Actualiza únicamente el archivo `stock.json` del Gist indicado; no toca
   nada más del sitio.
 
-Las fotos del panel se pueden **arrastrar** (quedan en este equipo) o **pegar
-como link https**. Blogger solo muestra links públicos (`https://i.imgur.com/...`
-o Google Drive). Imgur **ya no da Client ID** a aplicaciones nuevas, así que
-no hace falta API:
+Las fotos y videos del panel se pueden **arrastrar** (quedan en este equipo) o
+**pegar como link https**. En el formulario se reordenan con ← → y la
+**estrella** marca la foto principal (la que sale en el listado y en el sitio).
+Blogger solo muestra links públicos (`https://i.imgur.com/...`, Google Drive o
+YouTube). Imgur **ya no da Client ID** a aplicaciones nuevas, así que no hace
+falta API:
 
 1. Subí la foto en [imgur.com](https://imgur.com/upload) o Google Drive.
 2. Copiá el link y pegalo en el campo de URL del formulario.
-3. Guardá el vehículo. Al **Exportar CSV** esos links van en la columna
-   `imagenes_url`.
+3. Para un video, pegá el link de YouTube (o marcá “Es un video” si es Drive)
+   o arrastrá un MP4 al panel (el MP4 local no se publica en Blogger).
+4. Guardá el vehículo. Al **Exportar CSV** esos links van en `imagenes_url`
+   separados por ` | `, en el mismo orden; al importar vuelven igual.
 
 Si ya tenías un `GYG_IMGUR_CLIENT_ID` de antes, el arrastre sigue subiéndolas
 solas a Imgur. Si no, el arrastre guarda la foto solo en el panel local.
 
-Las fotos en `/uploads/...` **solo se ven en el panel local**. Al publicar,
-esas rutas se omiten y el panel avisa cuántas quedaron afuera.
+Las fotos y videos en `/uploads/...` **solo se ven en el panel local**. Al
+publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
 ### Fotos recortadas, celular y Contacto (Blogger)
 

@@ -59,11 +59,12 @@ function normalizarEncabezado(texto) {
 }
 
 // JSON de arreglo, texto suelto o lista: una sola celda CSV con links separados
-// por coma, para que Excel los muestre y el import los vuelva a leer.
+// por " | " para que Excel no parta las URLs y el import conserve el orden
+// (la primera es la foto principal). El import también acepta comas.
 function listaATextoCsv(valor) {
   if (valor == null || valor === "") return "";
   if (Array.isArray(valor)) {
-    return valor.map((item) => String(item).trim()).filter(Boolean).join(", ");
+    return valor.map((item) => String(item).trim()).filter(Boolean).join(" | ");
   }
   if (typeof valor === "string") {
     const texto = valor.trim();
@@ -71,7 +72,7 @@ function listaATextoCsv(valor) {
     try {
       const parsed = JSON.parse(texto);
       if (Array.isArray(parsed)) {
-        return parsed.map((item) => String(item).trim()).filter(Boolean).join(", ");
+        return parsed.map((item) => String(item).trim()).filter(Boolean).join(" | ");
       }
     } catch (_err) {
       // ya era texto plano
@@ -81,4 +82,40 @@ function listaATextoCsv(valor) {
   return String(valor);
 }
 
-module.exports = { parseCsv, normalizarEncabezado, listaATextoCsv };
+function parseListaUrls(value) {
+  if (value === undefined || value === null || value === "") return [];
+
+  if (Array.isArray(value)) {
+    return value.map((v) => String(v).trim()).filter(Boolean);
+  }
+
+  if (typeof value !== "string") return null;
+
+  const texto = value.trim();
+  if (!texto) return [];
+
+  try {
+    const parsed = JSON.parse(texto);
+    if (Array.isArray(parsed)) {
+      return parsed.map((v) => String(v).trim()).filter(Boolean);
+    }
+  } catch (_err) {
+    // No era JSON: se interpreta como lista.
+  }
+
+  if (texto.includes("|")) {
+    return texto.split("|").map((v) => v.trim()).filter(Boolean);
+  }
+  if (/[\r\n]/.test(texto)) {
+    return texto.split(/\r?\n/).map((v) => v.trim()).filter(Boolean);
+  }
+  if (/(https?:\/\/|\/uploads\/)/i.test(texto) && texto.includes(",")) {
+    return texto
+      .split(/\s*,\s*(?=(?:https?:\/\/|\/uploads\/))/i)
+      .map((v) => v.trim())
+      .filter(Boolean);
+  }
+  return texto.split(",").map((v) => v.trim()).filter(Boolean);
+}
+
+module.exports = { parseCsv, normalizarEncabezado, listaATextoCsv, parseListaUrls };

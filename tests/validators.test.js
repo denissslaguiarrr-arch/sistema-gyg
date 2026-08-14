@@ -117,6 +117,21 @@ test("imagenes_url acepta arreglo, CSV y JSON como string", () => {
     imagenes_url: ["a.jpg", "b.jpg"],
   });
   assert.deepEqual(JSON.parse(arr.imagenes_url), ["a.jpg", "b.jpg"]);
+
+  const pipes = validateVehiculo({
+    marca: "A",
+    modelo: "B",
+    anio: 2020,
+    dominio: "D4",
+    precio: 1,
+    moneda: "ARS",
+    imagenes_url: "https://a.com/frente.jpg | https://a.com/lateral.jpg | https://youtu.be/abcdefghijk",
+  });
+  assert.deepEqual(JSON.parse(pipes.imagenes_url), [
+    "https://a.com/frente.jpg",
+    "https://a.com/lateral.jpg",
+    "https://youtu.be/abcdefghijk",
+  ]);
 });
 
 test("validateEstado solo acepta los 3 valores permitidos", () => {
