@@ -58,4 +58,27 @@ function normalizarEncabezado(texto) {
   return quitarAcentos(String(texto ?? "").trim().toLowerCase());
 }
 
-module.exports = { parseCsv, normalizarEncabezado };
+// JSON de arreglo, texto suelto o lista: una sola celda CSV con links separados
+// por coma, para que Excel los muestre y el import los vuelva a leer.
+function listaATextoCsv(valor) {
+  if (valor == null || valor === "") return "";
+  if (Array.isArray(valor)) {
+    return valor.map((item) => String(item).trim()).filter(Boolean).join(", ");
+  }
+  if (typeof valor === "string") {
+    const texto = valor.trim();
+    if (!texto) return "";
+    try {
+      const parsed = JSON.parse(texto);
+      if (Array.isArray(parsed)) {
+        return parsed.map((item) => String(item).trim()).filter(Boolean).join(", ");
+      }
+    } catch (_err) {
+      // ya era texto plano
+    }
+    return texto;
+  }
+  return String(valor);
+}
+
+module.exports = { parseCsv, normalizarEncabezado, listaATextoCsv };

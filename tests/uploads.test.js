@@ -110,7 +110,7 @@ test("POST /api/uploads/imgur sin Client-ID configurado devuelve 400", async () 
 
   assert.equal(res.status, 400);
   const body = await res.json();
-  assert.match(body.error, /GYG_IMGUR_CLIENT_ID/);
+  assert.match(body.error, /Imgur ya no registra Client ID/);
 });
 
 test("POST /api/uploads/imgur devuelve el link público de Imgur", async () => {

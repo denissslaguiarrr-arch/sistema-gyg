@@ -3,7 +3,7 @@ const multer = require("multer");
 const { db } = require("../db");
 const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
 const requireRole = require("../middleware/requireRole");
-const { parseCsv, normalizarEncabezado } = require("../utils/csv");
+const { parseCsv, normalizarEncabezado, listaATextoCsv } = require("../utils/csv");
 const { diasDesde } = require("../utils/fechas");
 const erpRouter = require("./erp");
 
@@ -175,7 +175,7 @@ router.get("/export.csv", (req, res) => {
 
   const columnas = [
     "id", "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
-    "notas", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
+    "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color", "motor",
     "potencia", "carroceria", "destacado", "origen", "precio_compra", "fecha_ingreso",
     "created_at", "updated_at",
   ];
@@ -186,7 +186,14 @@ router.get("/export.csv", (req, res) => {
 
   const lineas = [columnas.join(",")];
   for (const row of rows) {
-    lineas.push(columnas.map((campo) => escaparCsv(row[campo])).join(","));
+    lineas.push(
+      columnas
+        .map((campo) => {
+          const valor = campo === "imagenes_url" ? listaATextoCsv(row.imagenes_url) : row[campo];
+          return escaparCsv(valor);
+        })
+        .join(",")
+    );
   }
 
   res.setHeader("Content-Type", "text/csv; charset=utf-8");

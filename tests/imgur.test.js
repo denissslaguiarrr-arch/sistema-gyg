@@ -8,7 +8,7 @@ test("subirBufferAImgur exige GYG_IMGUR_CLIENT_ID", async () => {
   try {
     await assert.rejects(
       () => subirBufferAImgur(Buffer.from("abc")),
-      /GYG_IMGUR_CLIENT_ID/
+      /Imgur ya no registra Client ID/
     );
   } finally {
     if (anterior === undefined) delete process.env.GYG_IMGUR_CLIENT_ID;

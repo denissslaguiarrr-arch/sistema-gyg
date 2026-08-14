@@ -340,10 +340,29 @@ test("DELETE /api/vehiculos/:id/permanente borra definitivamente solo desde la p
   assert.equal(papelera.find((v) => v.id === id), undefined);
 });
 
-test("GET /api/vehiculos/export.csv devuelve un CSV con encabezados", async () => {
+test("GET /api/vehiculos/export.csv incluye los links de las fotos", async () => {
+  const creado = await post("/api/vehiculos", {
+    marca: "VW",
+    modelo: "Gol",
+    anio: 2019,
+    dominio: "FOT999",
+    precio: 9000,
+    moneda: "USD",
+    imagenes_url: ["https://i.imgur.com/abc.jpg", "https://drive.google.com/file/d/xyz"],
+  });
+  assert.equal(creado.status, 201);
+
   const res = await get("/api/vehiculos/export.csv");
   assert.equal(res.status, 200);
   assert.match(res.headers.get("content-type") || "", /text\/csv/);
   const texto = await res.text();
-  assert.match(texto.split("\n")[0], /^id,marca,modelo,anio,dominio/);
+  const encabezado = texto.split("\n")[0];
+  assert.match(encabezado, /^id,marca,modelo,anio,dominio/);
+  assert.match(encabezado, /imagenes_url/);
+  assert.match(texto, /https:\/\/i\.imgur\.com\/abc\.jpg/);
+  assert.match(texto, /FOT999/);
+
+  const body = await creado.json();
+  await del(`/api/vehiculos/${body.id}`);
+  await del(`/api/vehiculos/${body.id}/permanente`);
 });

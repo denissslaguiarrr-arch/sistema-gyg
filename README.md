@@ -328,25 +328,21 @@ explicando cuál falta configurar; el resto del sistema funciona igual.
 - Actualiza únicamente el archivo `stock.json` del Gist indicado; no toca
   nada más del sitio.
 
-Las fotos que arrastrás a la dropzone del formulario se suben a **Imgur**
-y quedan con un link `https://i.imgur.com/...`, que Blogger sí puede
-mostrar. Para eso hace falta un Client-ID:
+Las fotos del panel se pueden **arrastrar** (quedan en este equipo) o **pegar
+como link https**. Blogger solo muestra links públicos (`https://i.imgur.com/...`
+o Google Drive). Imgur **ya no da Client ID** a aplicaciones nuevas, así que
+no hace falta API:
 
-1. Creá una app en [api.imgur.com/oauth2/addclient](https://api.imgur.com/oauth2/addclient)
-   (Anonymous usage, sin callback).
-2. Copiá el **Client ID**.
-3. Antes de `npm start`:
+1. Subí la foto en [imgur.com](https://imgur.com/upload) o Google Drive.
+2. Copiá el link y pegalo en el campo de URL del formulario.
+3. Guardá el vehículo. Al **Exportar CSV** esos links van en la columna
+   `imagenes_url`.
 
-```powershell
-$env:GYG_IMGUR_CLIENT_ID="TU_CLIENT_ID"
-npm start
-```
+Si ya tenías un `GYG_IMGUR_CLIENT_ID` de antes, el arrastre sigue subiéndolas
+solas a Imgur. Si no, el arrastre guarda la foto solo en el panel local.
 
-También podés pegar el Client ID en `public/app.js` (`IMGUR_CLIENT_ID`),
-pero la variable de entorno es más cómoda: no se pisa con `git pull`.
-
-Las fotos viejas en `/uploads/...` **solo se ven en el panel local**. Al
-publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
+Las fotos en `/uploads/...` **solo se ven en el panel local**. Al publicar,
+esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 
 ### Fotos recortadas, celular y Contacto (Blogger)
 

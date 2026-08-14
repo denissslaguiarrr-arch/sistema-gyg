@@ -14,7 +14,7 @@ async function subirBufferAImgur(buffer, { filename = "foto.jpg", fetchImpl = fe
   const clientId = clientIdImgur();
   if (!clientId) {
     const err = new Error(
-      "Falta configurar GYG_IMGUR_CLIENT_ID. Creá una app en https://api.imgur.com/oauth2/addclient (Anonymous usage sin callback) y definí la variable antes de npm start."
+      "Imgur ya no registra Client ID para apps nuevas. Pegá un link https de la foto (imgur.com o Google Drive) o dejá que se guarde en este panel."
     );
     err.status = 400;
     throw err;

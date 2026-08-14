@@ -1,8 +1,7 @@
 const API_BASE = "/api/vehiculos";
 
-// Pegá tu Client-ID de Imgur acá (https://api.imgur.com/oauth2/addclient,
-// tipo Anonymous, sin callback). Si lo dejás como está, el panel usa la
-// variable de entorno GYG_IMGUR_CLIENT_ID en el servidor.
+// Opcional: Client-ID de Imgur. Imgur ya no registra apps nuevas; si no tenés
+// uno, el panel guarda la foto local y podés pegar un link https para el sitio.
 const IMGUR_CLIENT_ID = "TU_IMGUR_CLIENT_ID";
 
 const state = {
@@ -910,6 +909,21 @@ function setDropzoneCargando(visible, texto = "Subiendo imagen...") {
   el.dropzoneEstado.classList.toggle("hidden", !visible);
 }
 
+async function subirArchivoLocal(archivo) {
+  const formData = new FormData();
+  formData.append("imagenes", archivo);
+  const res = await fetch("/api/uploads", { method: "POST", body: formData });
+  if (res.status === 401) {
+    window.location.href = "/login.html";
+    throw new Error("Sesión expirada");
+  }
+  const data = await res.json().catch(() => ({}));
+  if (!res.ok) throw new Error(data.error || "No se pudo guardar la foto en el panel");
+  const urls = data.urls || (data.url ? [data.url] : []);
+  if (!urls.length) throw new Error("No se recibió la URL de la foto");
+  return urls[0];
+}
+
 async function subirArchivosAlCatalogo(archivos) {
   const imagenes = archivos.filter((archivo) => archivo && archivo.type && archivo.type.startsWith("image/"));
   if (imagenes.length === 0) {
@@ -920,19 +934,40 @@ async function subirArchivosAlCatalogo(archivos) {
   setDropzoneCargando(true, imagenes.length > 1 ? `Subiendo ${imagenes.length} imágenes...` : "Subiendo imagen...");
   el.imagenesEstado.textContent = "Subiendo imagen...";
 
+  let publicas = 0;
+  let locales = 0;
+  const errores = [];
+
   try {
     for (const archivo of imagenes) {
-      const url = await subirArchivoAImgur(archivo);
-      state.formImagenes.push(url);
+      try {
+        const urlPublica = await subirArchivoAImgur(archivo);
+        state.formImagenes.push(urlPublica);
+        publicas += 1;
+      } catch (_imgurErr) {
+        try {
+          const urlLocal = await subirArchivoLocal(archivo);
+          state.formImagenes.push(urlLocal);
+          locales += 1;
+        } catch (localErr) {
+          errores.push(localErr.message || "No se pudo guardar la foto");
+        }
+      }
       renderGaleria();
     }
-    mostrarAlerta(
-      imagenes.length === 1 ? "Foto subida. Ya tiene URL pública para el sitio web." : `${imagenes.length} fotos subidas a Imgur.`,
-      "ok"
-    );
-  } catch (err) {
-    mostrarAlerta(err.message);
-    renderGaleria();
+
+    if (publicas && !locales) {
+      mostrarAlerta(
+        publicas === 1 ? "Foto subida con URL pública para el sitio web." : `${publicas} fotos con URL pública.`,
+        "ok"
+      );
+    } else if (locales) {
+      mostrarAlerta(
+        "Fotos guardadas en este panel. Imgur ya no da Client ID a apps nuevas. Para Blogger: subí la foto en imgur.com o Drive y pegá el link https abajo.",
+        "ok"
+      );
+    }
+    if (errores.length) mostrarAlerta(errores[0]);
   } finally {
     setDropzoneCargando(false);
   }
