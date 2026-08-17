@@ -134,6 +134,9 @@ test("GET /api/public/catalogo no requiere sesión y usa Contactanos", async () 
   assert.equal(body.site.contactoTitulo, "Contactanos");
   const contacto = body.pages.find((p) => p.id === "contacto");
   assert.equal(contacto.content.headline, "Contactanos");
+  assert.equal(body.github_token, undefined);
+  assert.equal(body.site.github_token, undefined);
+  assert.doesNotMatch(JSON.stringify(body), /github_token|ghp_/);
 });
 
 test("/uploads/ es accesible sin sesión (fotos públicas de la ficha)", async () => {

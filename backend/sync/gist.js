@@ -188,14 +188,14 @@ function construirStockJson({ gistActual, vehiculos, siteConfig }) {
 async function publicarEnGist({ gistId, token, vehiculos, siteConfig, fetchImpl = fetch }) {
   if (!gistId) {
     const err = new Error(
-      "Falta configurar GYG_GIST_ID en el servidor (variable de entorno o secreto)."
+      "Falta el ID del Gist. Pegalo en Configuración del sitio o en GYG_GIST_ID."
     );
     err.status = 400;
     throw err;
   }
   if (!token) {
     const err = new Error(
-      "Falta configurar GYG_GITHUB_TOKEN en el servidor (variable de entorno o secreto)."
+      "Falta el token de GitHub. Pegalo en Configuración del sitio (permiso gist) o en GYG_GITHUB_TOKEN."
     );
     err.status = 400;
     throw err;

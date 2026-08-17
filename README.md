@@ -121,8 +121,9 @@ copy env.example .env
 notepad .env
 ```
 
-Pegá `GYG_GITHUB_TOKEN` (permiso `gist`) y `GYG_IMGUR_CLIENT_ID`. El
-`GYG_GIST_ID` ya viene cargado. Guardá y cerrá el Bloc de notas.
+Pegá `GYG_GITHUB_TOKEN` (permiso `gist`). El `GYG_GIST_ID` ya viene
+cargado. También se puede pegar el token en **Configuración del sitio**
+sin armar el `.env`. Guardá y cerrá el Bloc de notas.
 
 5. Arranque:
 
@@ -303,18 +304,13 @@ la web"** (solo admin) hace esto manualmente, cuando vos lo decidís.
 ### Configuración necesaria (una sola vez)
 
 1. Generá un **Personal Access Token** de GitHub con permiso **`gist`**
-   únicamente: [github.com/settings/tokens](https://github.com/settings/tokens/new).
-2. Definí estas variables de entorno antes de arrancar el servidor (o
-   agregalas como secretos si corrés esto en Cursor Cloud Agents):
-   - `GYG_GIST_ID`: el ID del Gist que ya tiene (o va a tener) el `stock.json`.
-   - `GYG_GITHUB_TOKEN`: el token generado en el paso 1.
+   únicamente: [github.com/settings/tokens/new?scopes=gist](https://github.com/settings/tokens/new?scopes=gist).
+2. En el panel: **Configuración del sitio** → el ID del Gist de G&G ya viene
+   cargado (`74837d1c1f0a9a3a67e6dc5cc4fa5b6f`) → pegá el token → Guardar.
 
-```bash
-GYG_GIST_ID=xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx GYG_GITHUB_TOKEN=ghp_xxx npm start
-```
-
-Sin estas dos variables, el botón "Publicar en la web" devuelve un error
-explicando cuál falta configurar; el resto del sistema funciona igual.
+También se pueden poner en `.env` (`GYG_GIST_ID` y `GYG_GITHUB_TOKEN`); si
+están, pisan lo del panel. Sin el token, "Publicar en la web" avisa qué falta;
+el resto del sistema funciona igual.
 
 ### Qué hace "Publicar en la web"
 

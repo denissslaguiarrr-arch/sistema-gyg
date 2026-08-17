@@ -668,6 +668,22 @@
               y pegala acá para que el arrastre publique las fotos en el sitio.
             </p>
           </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">ID del Gist (catálogo web)</label>
+            <input id="c-gist" class="campo" placeholder="74837d1c1f0a9a3a67e6dc5cc4fa5b6f" />
+            <p id="c-gist-estado" class="text-[11px] text-slate-400 mt-1">
+              Ya viene el Gist de G&amp;G. Solo cambialo si usás otro.
+            </p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Token de GitHub (permiso gist)</label>
+            <input id="c-github-token" type="password" autocomplete="off" class="campo" placeholder="ghp_..." />
+            <p id="c-github-token-estado" class="text-[11px] text-slate-400 mt-1">
+              Creá un token en
+              <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">github.com/settings/tokens</a>
+              con permiso <code>gist</code> y pegalo acá. Sin esto no se puede publicar.
+            </p>
+          </div>
         </div>
 
         <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">

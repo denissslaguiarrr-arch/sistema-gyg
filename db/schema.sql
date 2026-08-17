@@ -98,6 +98,8 @@ CREATE TABLE IF NOT EXISTS ConfiguracionSitio (
   footer_text TEXT NOT NULL DEFAULT '',
   hero_image  TEXT NOT NULL DEFAULT '',
   imgbb_api_key TEXT NOT NULL DEFAULT '',
+  gist_id       TEXT NOT NULL DEFAULT '74837d1c1f0a9a3a67e6dc5cc4fa5b6f',
+  github_token  TEXT NOT NULL DEFAULT '',
   updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
 

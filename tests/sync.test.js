@@ -101,6 +101,8 @@ test("POST /api/sync/publicar requiere rol admin", async () => {
 test("POST /api/sync/publicar sin GYG_GIST_ID/GYG_GITHUB_TOKEN configurados devuelve 400", async () => {
   delete process.env.GYG_GIST_ID;
   delete process.env.GYG_GITHUB_TOKEN;
+  const { db } = require("../backend/db");
+  db.prepare("UPDATE ConfiguracionSitio SET github_token = '' WHERE id = 1").run();
 
   const res = await fetch(`${baseUrl}/api/sync/publicar`, {
     method: "POST",
@@ -109,6 +111,31 @@ test("POST /api/sync/publicar sin GYG_GIST_ID/GYG_GITHUB_TOKEN configurados devu
   assert.equal(res.status, 400);
   const body = await res.json();
   assert.match(body.error, /GYG_GIST_ID|GYG_GITHUB_TOKEN/);
+});
+
+test("POST /api/sync/publicar usa el token pegado en Configuración del sitio", async () => {
+  delete process.env.GYG_GIST_ID;
+  delete process.env.GYG_GITHUB_TOKEN;
+  mockFetchGitHub();
+
+  const guardar = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "G&G",
+      githubToken: "token-desde-el-panel",
+    }),
+  });
+  assert.equal(guardar.status, 200);
+
+  const res = await fetch(`${baseUrl}/api/sync/publicar`, {
+    method: "POST",
+    headers: { Cookie: cookieAdmin },
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.ok, true);
+  assert.equal(body.vehiculosPublicados, 1);
 });
 
 test("POST /api/sync/publicar publica el stock activo cuando está bien configurado", async () => {

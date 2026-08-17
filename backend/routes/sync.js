@@ -1,6 +1,7 @@
 const express = require("express");
 const { db } = require("../db");
 const { publicarEnGist } = require("../sync/gist");
+const { credencialesGist } = require("../utils/gistConfig");
 
 const router = express.Router();
 
@@ -42,9 +43,10 @@ router.post("/publicar", async (_req, res) => {
       .all()
       .map(serializeVehiculo);
 
+    const credenciales = credencialesGist();
     const resultado = await publicarEnGist({
-      gistId: process.env.GYG_GIST_ID,
-      token: process.env.GYG_GITHUB_TOKEN,
+      gistId: credenciales.gistId,
+      token: credenciales.token,
       vehiculos,
       siteConfig: obtenerConfigSitio(),
     });

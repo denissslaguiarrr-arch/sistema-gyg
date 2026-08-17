@@ -4,10 +4,12 @@ const requireRole = require("../middleware/requireRole");
 const { texto, normalizarInstagram, normalizarFacebook } = require("../utils/redes");
 const { imgurConfigurado } = require("../utils/imgur");
 const { imgbbConfigurado } = require("../utils/imgbb");
+const { credencialesGist, normalizarGistId, GIST_ID_DEFAULT } = require("../utils/gistConfig");
 
 const router = express.Router();
 
 function serialize(row) {
+  const gist = credencialesGist();
   return {
     nombre: row.nombre,
     tagline: row.tagline,
@@ -20,6 +22,9 @@ function serialize(row) {
     heroImage: row.hero_image,
     imgbbConfigurado: imgbbConfigurado() || Boolean(String((row && row.imgbb_api_key) || "").trim()),
     imgurConfigurado: imgurConfigurado(),
+    gistId: gist.gistId,
+    gistIdEnEnv: gist.gistIdEnEnv,
+    githubTokenConfigurado: gist.tokenConfigurado,
     updated_at: row.updated_at,
   };
 }
@@ -39,6 +44,14 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
     typeof body.imgbbApiKey === "string" && body.imgbbApiKey.trim()
       ? body.imgbbApiKey.trim()
       : actual.imgbb_api_key || "";
+  const gistIdNuevo =
+    typeof body.gistId === "string" && body.gistId.trim()
+      ? normalizarGistId(body.gistId)
+      : actual.gist_id || GIST_ID_DEFAULT;
+  const tokenNuevo =
+    typeof body.githubToken === "string" && body.githubToken.trim()
+      ? body.githubToken.trim()
+      : actual.github_token || "";
 
   db.prepare(
     `UPDATE ConfiguracionSitio SET
@@ -47,6 +60,8 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
        contacto_titulo = @contactoTitulo, contacto_texto = @contactoTexto,
        footer_text = @footerText, hero_image = @heroImage,
        imgbb_api_key = @imgbbApiKey,
+       gist_id = @gistId,
+       github_token = @githubToken,
        updated_at = datetime('now')
      WHERE id = 1`
   ).run({
@@ -60,6 +75,8 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
     footerText: texto(body.footerText),
     heroImage: texto(body.heroImage),
     imgbbApiKey: claveNueva,
+    gistId: gistIdNuevo,
+    githubToken: tokenNuevo,
   });
 
   res.json(serialize(obtenerConfig()));

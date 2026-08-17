@@ -159,6 +159,10 @@ const el = {
   cHero: document.getElementById("c-hero"),
   cImgbb: document.getElementById("c-imgbb"),
   cImgbbEstado: document.getElementById("c-imgbb-estado"),
+  cGist: document.getElementById("c-gist"),
+  cGistEstado: document.getElementById("c-gist-estado"),
+  cGithubToken: document.getElementById("c-github-token"),
+  cGithubTokenEstado: document.getElementById("c-github-token-estado"),
   btnCerrarConfig: document.getElementById("btn-cerrar-config"),
   btnCancelarConfig: document.getElementById("btn-cancelar-config"),
 };
@@ -473,6 +477,18 @@ el.btnConfigSitio.addEventListener("click", async () => {
         ? "Clave ImgBB cargada. Dejá el campo vacío para no cambiarla, o pegá otra para reemplazarla."
         : "Imgur ya no da API. Creá una clave gratis en api.imgbb.com y pegala acá para que el arrastre publique las fotos.";
     }
+    if (el.cGist) el.cGist.value = config.gistId || "";
+    if (el.cGistEstado) {
+      el.cGistEstado.textContent = config.gistIdEnEnv
+        ? "Este ID viene del archivo .env (GYG_GIST_ID). El valor del panel no lo pisa."
+        : "Ya viene el Gist de G&G. Solo cambialo si usás otro.";
+    }
+    if (el.cGithubToken) el.cGithubToken.value = "";
+    if (el.cGithubTokenEstado) {
+      el.cGithubTokenEstado.textContent = config.githubTokenConfigurado
+        ? "Token cargado. Dejá el campo vacío para no cambiarlo, o pegá otro para reemplazarlo."
+        : "Creá un token en github.com/settings/tokens con permiso gist y pegalo acá. Sin esto no se puede publicar.";
+    }
     el.modalConfigOverlay.classList.remove("hidden");
     el.modalConfig.classList.remove("hidden");
   } catch (err) {
@@ -499,6 +515,8 @@ el.formConfig.addEventListener("submit", async (evento) => {
         footerText: el.cFooter.value.trim(),
         heroImage: el.cHero.value.trim(),
         imgbbApiKey: el.cImgbb && el.cImgbb.value.trim() ? el.cImgbb.value.trim() : undefined,
+        gistId: el.cGist ? el.cGist.value.trim() : undefined,
+        githubToken: el.cGithubToken && el.cGithubToken.value.trim() ? el.cGithubToken.value.trim() : undefined,
       }),
     });
     mostrarAlerta("Configuración del sitio guardada.", "ok");

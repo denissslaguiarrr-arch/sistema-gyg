@@ -61,6 +61,9 @@ test("GET /api/config/sitio devuelve valores vacíos por defecto", async () => {
   assert.equal(body.contactoTitulo, "Contactanos");
   assert.equal(body.imgbbConfigurado, false);
   assert.equal(body.imgbbApiKey, undefined);
+  assert.equal(body.gistId, "74837d1c1f0a9a3a67e6dc5cc4fa5b6f");
+  assert.equal(body.githubTokenConfigurado, false);
+  assert.equal(body.githubToken, undefined);
 });
 
 test("GET /api/config/sitio requiere sesión, pero no rol admin", async () => {
@@ -123,4 +126,22 @@ test("PUT /api/config/sitio guarda la clave ImgBB sin devolverla", async () => {
   assert.equal(body.imgbbConfigurado, true);
   assert.equal(body.imgbbApiKey, undefined);
   assert.doesNotMatch(JSON.stringify(body), /clave-secreta-imgbb/);
+});
+
+test("PUT /api/config/sitio guarda el token de GitHub sin devolverlo", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "GyG",
+      gistId: "https://gist.github.com/alguien/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      githubToken: "ghp_token-secreto-de-prueba",
+    }),
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.gistId, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  assert.equal(body.githubTokenConfigurado, true);
+  assert.equal(body.githubToken, undefined);
+  assert.doesNotMatch(JSON.stringify(body), /ghp_token-secreto-de-prueba/);
 });
