@@ -76,12 +76,8 @@ npm test
 npm start   # http://localhost:3000
 ```
 
-En Windows, para una demo en otra PC, lo más simple es copiar `env.example`
-a `.env`, completar tokens y correr:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
-```
+En Windows, doble clic en `Iniciar.bat` (crea un acceso directo en el
+Escritorio). Guía para otra PC: `COMO-INSTALAR.txt`.
 
 Al arrancar por primera vez se crea un usuario administrador y se imprime la
 contraseña generada en la consola del servidor (usuario `admin`, contraseña
@@ -98,68 +94,20 @@ operativos.
 
 ## Preparar el sistema en otra PC (Windows)
 
-El stock **no viaja con Git**: `db/concesionaria.db` queda en cada máquina.
-Si querés mostrar los mismos autos, copiá ese archivo desde la PC original
-a `db\concesionaria.db` en esta (con el servidor parado).
+Paso a paso para alguien que no usa Cursor: ver `COMO-INSTALAR.txt`.
 
-1. Instalá [Git](https://git-scm.com/download/win) y **[Node.js 22 LTS](https://nodejs.org)**
-   (botón verde **LTS**, no Current/24).
-2. **Cerrá y volvé a abrir** PowerShell.
-3. Andá al Escritorio (no uses `C:\Windows\system32`):
+Resumen: copiá la carpeta (o bajá el ZIP de esta rama), instalá
+[Node.js 22 LTS](https://nodejs.org) (botón verde, no Current/24), doble
+clic en `Iniciar.bat`. Usuario `admin` / `admin123`. Tokens de ImgBB y
+GitHub se pegan en **Configuración del sitio**.
 
-```powershell
-cd $env:USERPROFILE\Desktop
-git clone https://github.com/denissslaguiarrr-arch/sistema-gyg.git
-cd sistema-gyg
-git checkout cursor/paso-1-schema-servidor-9f90
-```
+El stock **no viaja solo**: `db/concesionaria.db` queda en cada máquina.
+Si querés los mismos autos, copiá ese archivo con el servidor parado.
 
-4. Completá las claves una sola vez:
-
-```powershell
-copy env.example .env
-notepad .env
-```
-
-Pegá `GYG_GITHUB_TOKEN` (permiso `gist`). El `GYG_GIST_ID` ya viene
-cargado. También se puede pegar el token en **Configuración del sitio**
-sin armar el `.env`. Guardá y cerrá el Bloc de notas.
-
-5. Arranque:
-
-```powershell
-powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
-```
-
-6. En el navegador: http://localhost:3000  
-   Usuario `admin` / contraseña `admin123`.
-
-7. Para el cliente: cargá 1 o 2 autos con fotos (arrastrar a la dropzone),
-   **Configuración del sitio** (WhatsApp real), **Publicar en la web**, y
-   abrí https://gyg-automotores.blogspot.com/
-
-### Si `npm install` falla (better-sqlite3 / Visual Studio / express)
-
-Eso pasa sobre todo con **Node 24** (Current): `better-sqlite3` 11 no trae
-binarios listos y Windows intenta compilar C++ sin Visual Studio. El script
-igual seguía a `npm start` y terminaba en `Cannot find module 'express'`.
-
-En la PC de la demo:
-
-```powershell
-cd $env:USERPROFILE\Desktop\sistema-gyg
-git pull
-Remove-Item -Recurse -Force node_modules -ErrorAction SilentlyContinue
-powershell -ExecutionPolicy Bypass -File scripts\iniciar.ps1
-```
-
-Si sigue fallando, instalá Node **22 LTS** (desinstalá el 24 o dejá el 22
-primero en el PATH), cerrá PowerShell, borra `node_modules` y repetí el
-script. No hace falta instalar Visual Studio.
-
-Si ves `EPERM` en `tar-fs` (OneDrive), cerrá el Explorador sobre esa carpeta
-y borra `node_modules` de nuevo. Si persiste, copiá el proyecto fuera de
-OneDrive (por ejemplo `C:\sistema-gyg`).
+Si `npm install` falla (better-sqlite3 / Visual Studio / express) suele ser
+Node 24: instalá el 22, borra `node_modules` y volvé a abrir `Iniciar.bat`.
+No hace falta Visual Studio. Si ves `EPERM` (OneDrive), copiá el proyecto
+a `C:\sistema-gyg`.
 
 ## Autenticación y roles
 
