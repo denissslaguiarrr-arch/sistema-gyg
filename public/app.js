@@ -30,6 +30,7 @@ const el = {
   btnUsuarios: document.getElementById("btn-usuarios"),
   btnConfigSitio: document.getElementById("btn-config-sitio"),
   btnPublicar: document.getElementById("btn-publicar"),
+  btnTraer: document.getElementById("btn-traer"),
 
   kpiTotal: document.getElementById("kpi-total"),
   kpiDisponibles: document.getElementById("kpi-disponibles"),
@@ -317,6 +318,7 @@ async function cargarUsuario() {
     el.btnImportar.classList.toggle("hidden", !admin);
     el.btnConfigSitio.classList.toggle("hidden", !admin);
     el.btnPublicar.classList.toggle("hidden", !admin);
+    if (el.btnTraer) el.btnTraer.classList.toggle("hidden", !admin);
   } catch (_err) {
     // apiRequest ya redirige a /login.html si la sesión no es válida.
   }
@@ -557,6 +559,43 @@ el.btnPublicar.addEventListener("click", async () => {
     el.btnPublicar.textContent = textoOriginal;
   }
 });
+
+// ---------- Traer stock publicado en el Gist (solo admin) ----------
+
+if (el.btnTraer) {
+  el.btnTraer.addEventListener("click", async () => {
+    if (
+      !window.confirm(
+        "¿Traer el stock publicado en la web a este panel? Si un auto ya existe (misma patente), se actualiza. Los que no estén, se crean."
+      )
+    ) {
+      return;
+    }
+
+    el.btnTraer.disabled = true;
+    const textoOriginal = el.btnTraer.textContent;
+    el.btnTraer.textContent = "Trayendo...";
+
+    try {
+      const resultado = await apiRequest("/api/sync/traer", { method: "POST" });
+      const avisos = Array.isArray(resultado.avisos) ? resultado.avisos.length : 0;
+      const errores = Array.isArray(resultado.errores) ? resultado.errores.length : 0;
+      mostrarAlerta(
+        `Listo: ${resultado.creados} creado(s), ${resultado.actualizados} actualizado(s)` +
+          (avisos ? `, ${avisos} aviso(s)` : "") +
+          (errores ? `, ${errores} con error` : "") +
+          ".",
+        errores ? "error" : "ok"
+      );
+      await Promise.all([cargarVehiculos(), cargarResumen()]);
+    } catch (err) {
+      mostrarAlerta(err.message);
+    } finally {
+      el.btnTraer.disabled = false;
+      el.btnTraer.textContent = textoOriginal;
+    }
+  });
+}
 
 // ---------- Importar vehículos por CSV (solo admin) ----------
 

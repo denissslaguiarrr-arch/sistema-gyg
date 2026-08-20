@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const {
   mapearEstado,
   mapearVehiculo,
+  mapearVehiculoDesdeGist,
   mergeSiteConfig,
   mergePages,
   construirStockJson,
@@ -61,6 +62,45 @@ test("mapearVehiculo arma el objeto con el esquema del catálogo público", () =
   assert.equal(vehiculo.updatedAt, "2026-02-01T12:30:00.000Z");
   assert.equal(vehiculo.precio, 45000);
   assert.equal(vehiculo.precio_oferta, 42000);
+});
+
+test("mapearVehiculoDesdeGist reconstruye el vehículo local desde el catálogo", () => {
+  const publicado = mapearVehiculo({
+    id: 7,
+    marca: "Toyota",
+    modelo: "Hilux",
+    version: "SRX",
+    anio: 2024,
+    kilometraje: 0,
+    precio: 45000,
+    precio_oferta: 42000,
+    moneda: "USD",
+    combustible: "Diesel",
+    transmision: "Automática",
+    traccion: "4x4",
+    puertas: 4,
+    color: "Blanco",
+    motor: "2.8L",
+    potencia: "204cv",
+    carroceria: "Pickup",
+    dominio: "AB123CD",
+    destacado: true,
+    notas: "Único dueño",
+    equipamiento: ["Aire acondicionado"],
+    imagenes_url: ["https://a.com/1.jpg"],
+    estado: "Reservado",
+    created_at: "2026-01-15 10:00:00",
+    updated_at: "2026-02-01 12:30:00",
+  });
+  const local = mapearVehiculoDesdeGist(publicado);
+  assert.equal(local.marca, "Toyota");
+  assert.equal(local.modelo, "Hilux");
+  assert.equal(local.dominio, "AB123CD");
+  assert.equal(local.estado, "Reservado");
+  assert.equal(local.kilometraje, 0);
+  assert.equal(local.precio, 45000);
+  assert.equal(local.fecha_ingreso, "2026-01-15");
+  assert.deepEqual(local.imagenes_url, ["https://a.com/1.jpg"]);
 });
 
 test("mapearVehiculo marca categoria 'usado' cuando el kilometraje es mayor a 0", () => {

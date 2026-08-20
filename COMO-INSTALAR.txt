@@ -10,9 +10,10 @@ Opción A — la más simple (copiar la carpeta)
 1. En la PC que ya funciona, COPIÁ la carpeta del sistema (por ejemplo
    "sistema gyg" o "sistema-gyg") a un pendrive o al Escritorio de la otra PC.
    No copies la carpeta "node_modules" si pesa mucho: se regenera sola.
-   Tampoco copies "db\concesionaria.db" si querés empezar con stock vacío.
-   Si querés LOS MISMOS AUTOS, copiá también "db\concesionaria.db"
-   (con el sistema cerrado).
+   Tampoco copies "db\concesionaria.db" si querés empezar con stock vacío:
+   después, con el panel abierto, usá "Traer de la web" para bajar los autos
+   publicados. Si querés LOS MISMOS AUTOS con costos y gastos, copiá también
+   "db\concesionaria.db" (con el sistema cerrado).
 
 2. En la PC nueva instalá Node.js 22 LTS:
    https://nodejs.org
@@ -36,7 +37,11 @@ Opción A — la más simple (copiar la carpeta)
    - Token de GitHub (permiso gist): https://github.com/settings/tokens/new?scopes=gist
    El ID del Gist ya viene cargado. Guardar.
 
-7. Para usarlo todos los días: doble clic en "G&G Automotores" del Escritorio.
+7. Traer el stock publicado: botón "Traer de la web".
+   Eso baja los autos del Gist a este panel (por patente: crea o actualiza).
+   No trae precio de costo ni gastos: eso queda en cada PC.
+
+8. Para usarlo todos los días: doble clic en "G&G Automotores" del Escritorio.
    Dejá la ventana negra abierta. Para apagar el sistema, cerrala.
 
 

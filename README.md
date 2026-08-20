@@ -260,6 +260,13 @@ También se pueden poner en `.env` (`GYG_GIST_ID` y `GYG_GITHUB_TOKEN`); si
 están, pisan lo del panel. Sin el token, "Publicar en la web" avisa qué falta;
 el resto del sistema funciona igual.
 
+### Traer de la web (inicializar esta PC)
+
+El botón **"Traer de la web"** (solo admin) lee el `stock.json` del Gist y
+carga esos vehículos en el panel local (crea o actualiza por patente). Sirve
+para arrancar una PC nueva sin copiar `concesionaria.db`. No trae precio de
+costo, gastos ni papeles: eso queda en cada máquina.
+
 ### Qué hace "Publicar en la web"
 
 - Toma todos los vehículos activos (no eliminados) y los mapea al esquema

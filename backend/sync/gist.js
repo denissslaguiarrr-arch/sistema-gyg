@@ -140,6 +140,75 @@ function mergePages(gistPages, site) {
   });
 }
 
+const STATUS_A_ESTADO = {
+  disponible: "Disponible",
+  reservado: "Reservado",
+  vendido: "Vendido",
+};
+
+function mapearEstadoDesdeGist(status) {
+  const clave = String(status || "").trim().toLowerCase();
+  return STATUS_A_ESTADO[clave] || "Disponible";
+}
+
+function urlsDesdeGist(v) {
+  if (Array.isArray(v.media) && v.media.length) {
+    return v.media
+      .map((item) => (typeof item === "string" ? item : item && item.url))
+      .map((url) => String(url || "").trim())
+      .filter(Boolean);
+  }
+  const fotos = Array.isArray(v.fotos) ? v.fotos : [];
+  const videos = Array.isArray(v.videos)
+    ? v.videos.map((item) => (typeof item === "string" ? item : item && item.url))
+    : [];
+  return [...fotos, ...videos].map((url) => String(url || "").trim()).filter(Boolean);
+}
+
+function mapearVehiculoDesdeGist(v = {}) {
+  const moneda = String(v.moneda || "ARS").trim().toUpperCase() || "ARS";
+  return {
+    marca: String(v.marca || "").trim(),
+    modelo: String(v.modelo || "").trim(),
+    anio: v.anio,
+    dominio: String(v.patente || v.dominio || "").trim(),
+    kilometraje: v.km ?? v.kilometraje ?? 0,
+    precio: v.precio,
+    precio_oferta: v.precio_oferta,
+    moneda: moneda === "USD" ? "USD" : "ARS",
+    estado: mapearEstadoDesdeGist(v.status || v.estado),
+    notas: String(v.descripcion || v.notas || "").trim(),
+    imagenes_url: urlsDesdeGist(v),
+    version: String(v.version || "").trim(),
+    combustible: String(v.combustible || "").trim(),
+    transmision: String(v.transmision || "").trim(),
+    traccion: String(v.traccion || "").trim(),
+    puertas: v.puertas,
+    color: String(v.color || "").trim(),
+    motor: String(v.motor || "").trim(),
+    potencia: String(v.potencia || "").trim(),
+    carroceria: String(v.carroceria || "").trim(),
+    destacado: !!v.destacado,
+    equipamiento: Array.isArray(v.equipamiento) ? v.equipamiento : [],
+    fecha_ingreso: String(v.ingreso || v.fecha_ingreso || "").trim().slice(0, 10),
+  };
+}
+
+async function parsearArchivoStock(archivo, fetchImpl = fetch) {
+  if (!archivo) return {};
+  let texto = archivo.content || "";
+  if (archivo.truncated && archivo.raw_url) {
+    const raw = await fetchImpl(archivo.raw_url);
+    if (raw.ok) texto = await raw.text();
+  }
+  if (!texto) return {};
+  try {
+    return JSON.parse(texto);
+  } catch (_err) {
+    return {};
+  }
+}
+
 async function obtenerGistActual({ gistId, token, fetchImpl = fetch }) {
   const res = await fetchImpl(`https://api.github.com/gists/${gistId}`, {
     headers: {
@@ -160,14 +229,7 @@ async function obtenerGistActual({ gistId, token, fetchImpl = fetch }) {
   }
 
   const data = await res.json();
-  const archivo = data.files && data.files["stock.json"];
-  if (!archivo || !archivo.content) return {};
-
-  try {
-    return JSON.parse(archivo.content);
-  } catch (_err) {
-    return {};
-  }
+  return parsearArchivoStock(data.files && data.files["stock.json"], fetchImpl);
 }
 
 function construirStockJson({ gistActual, vehiculos, siteConfig }) {
@@ -245,9 +307,12 @@ async function publicarEnGist({ gistId, token, vehiculos, siteConfig, fetchImpl 
 
 module.exports = {
   ESTADO_A_STATUS,
+  STATUS_A_ESTADO,
   DEFAULT_PAGES,
   mapearEstado,
+  mapearEstadoDesdeGist,
   mapearVehiculo,
+  mapearVehiculoDesdeGist,
   mergeSiteConfig,
   mergePages,
   construirStockJson,

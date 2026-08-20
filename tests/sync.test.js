@@ -153,3 +153,73 @@ test("POST /api/sync/publicar publica el stock activo cuando está bien configur
   assert.equal(body.vehiculosPublicados, 1);
   assert.equal(body.url, "https://gist.github.com/x/abc");
 });
+
+test("POST /api/sync/traer requiere rol admin", async () => {
+  const res = await fetch(`${baseUrl}/api/sync/traer`, {
+    method: "POST",
+    headers: { Cookie: cookieVendedor },
+  });
+  assert.equal(res.status, 403);
+});
+
+test("POST /api/sync/traer carga el stock del Gist en el panel", async () => {
+  delete process.env.GYG_GIST_ID;
+  delete process.env.GYG_GITHUB_TOKEN;
+  global.fetch = async (url, opciones) => {
+    if (!String(url).includes("api.github.com")) {
+      return fetchOriginal(url, opciones);
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        files: {
+          "stock.json": {
+            content: JSON.stringify({
+              site: { name: "G&G Automotores", whatsapp: "5491112345678" },
+              vehicles: [
+                {
+                  marca: "Volkswagen",
+                  modelo: "Taos",
+                  anio: 2024,
+                  km: 57000,
+                  precio: 51500000,
+                  moneda: "ARS",
+                  status: "disponible",
+                  patente: "AG440IZ",
+                  fotos: ["https://i.ibb.co/foto.jpg"],
+                  equipamiento: [],
+                  ingreso: "2026-08-14",
+                },
+              ],
+            }),
+          },
+        },
+      }),
+    };
+  };
+
+  const res = await fetch(`${baseUrl}/api/sync/traer`, {
+    method: "POST",
+    headers: { Cookie: cookieAdmin },
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.creados, 1, JSON.stringify(body));
+  assert.equal(body.errores.length, 0);
+
+  const lista = await (
+    await fetch(`${baseUrl}/api/vehiculos?q=AG440IZ`, { headers: { Cookie: cookieAdmin } })
+  ).json();
+  assert.equal(lista.items[0].modelo, "Taos");
+  assert.equal(lista.items[0].kilometraje, 57000);
+  assert.deepEqual(lista.items[0].imagenes_url, ["https://i.ibb.co/foto.jpg"]);
+
+  const deNuevo = await fetch(`${baseUrl}/api/sync/traer`, {
+    method: "POST",
+    headers: { Cookie: cookieAdmin },
+  });
+  const body2 = await deNuevo.json();
+  assert.equal(body2.creados, 0);
+  assert.equal(body2.actualizados, 1);
+});
