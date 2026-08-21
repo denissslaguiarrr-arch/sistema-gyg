@@ -135,23 +135,26 @@ textarea {
 }
 
 .brand__name span,
-.home-hero__brand span,
-.brand-amp {
+.home-hero__brand span {
   color: var(--orange);
 }
 
-/* Syne dibuja un & industrial ilegible a tamaño hero; usamos serif clásico. */
-.home-hero__brand .brand-amp,
-.brand__name .brand-amp {
-  font-family: Georgia, "Palatino Linotype", Palatino, "Times New Roman", serif;
-  font-style: italic;
-  font-weight: 700;
-  font-size: 0.72em;
-  letter-spacing: 0;
-  line-height: 1;
+/* Sin & tipográfico: un bloque naranja entre las dos G. */
+.brand-sep {
   display: inline-block;
-  padding: 0 0.04em 0 0.08em;
-  transform: translateY(-0.08em);
+  width: 0.18em;
+  height: 0.18em;
+  margin: 0 0.12em;
+  background: var(--orange);
+  transform: translateY(-0.28em);
+  vertical-align: middle;
+}
+
+.home-hero__brand .brand-sep {
+  width: 0.14em;
+  height: 0.14em;
+  margin: 0 0.1em 0 0.08em;
+  transform: translateY(-0.42em);
 }
 
 @media (max-width: 640px) {
@@ -420,9 +423,11 @@ textarea {
 }
 
 .home-link__title {
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 1.25rem;
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
+  overflow-wrap: break-word;
 }
 
 .home-link__text {
@@ -546,10 +551,12 @@ textarea {
   margin: 0;
   font-family: var(--font-display);
   font-weight: 800;
-  font-size: clamp(2.2rem, 5vw, 3.6rem);
+  font-size: clamp(1.65rem, 6.5vw, 3.2rem);
   letter-spacing: -0.02em;
-  line-height: 1.05;
-  max-width: 12ch;
+  line-height: 1.08;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
 }
 
 .hero p {
@@ -574,7 +581,7 @@ textarea {
 }
 
 .hero--sell h1 {
-  max-width: 14ch;
+  max-width: min(16ch, 100%);
 }
 
 .hero__cta {
@@ -1693,6 +1700,10 @@ textarea {
 
   .home-hero__content {
     padding: 3rem 1.25rem 2.25rem;
+  }
+
+  .hero h1 {
+    font-size: clamp(1.5rem, 8vw, 2rem);
   }
 
   .sell-form__grid,

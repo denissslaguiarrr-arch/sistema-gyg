@@ -91,8 +91,8 @@ window.GYG_CONFIG = {
         content: {
           eyebrow: "Concesionaria",
           headline: "G\u0026G",
-          subtitle: "Stock 0km y usados.",
-          ctaPrimary: { label: "Ver 0km", href: "#/0km" },
+          subtitle: "Stock 0 km y usados.",
+          ctaPrimary: { label: "Ver 0 km", href: "#/0km" },
           ctaSecondary: { label: "Ver usados", href: "#/usados" },
           heroImage: "",
           highlights: [],
@@ -101,13 +101,13 @@ window.GYG_CONFIG = {
       {
         id: "0km",
         slug: "0km",
-        title: "0 kilómetros",
-        navLabel: "0km",
+        title: "0 km",
+        navLabel: "0 km",
         type: "stock",
         visible: true,
         order: 1,
         filter: { categoria: "0km" },
-        content: { eyebrow: "Catálogo", headline: "0 kilómetros", subtitle: "Unidades nuevas." },
+        content: { eyebrow: "Catálogo", headline: "0 km", subtitle: "Unidades nuevas." },
       },
       {
         id: "usados",
@@ -129,7 +129,7 @@ window.GYG_CONFIG = {
         visible: true,
         order: 3,
         filter: {},
-        content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0km y usados." },
+        content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0 km y usados." },
       },
       {
         id: "vender",
@@ -197,6 +197,38 @@ window.GYG_CONFIG = {
     return lista;
   }
 
+  function normalizePageCopy(page) {
+    const next = { ...page };
+    const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
+    const id = String(page.id || "");
+    const slug = String(page.slug || "");
+
+    if (id === "0km" || slug === "0km") {
+      next.title = "0 km";
+      next.navLabel = "0 km";
+      content.headline = "0 km";
+    }
+    if (id === "usados" || slug === "usados") {
+      if (!content.headline || /seleccion/i.test(String(content.headline))) {
+        content.headline = "Usados";
+      }
+    }
+    if ((id === "home" || slug === "" || page.type === "home") && Array.isArray(content.highlights)) {
+      content.highlights = content.highlights.map((h) => {
+        if (!h || typeof h !== "object") return h;
+        const title = String(h.title || "");
+        if (/0\s*kil/i.test(title) || /^0km$/i.test(title)) return { ...h, title: "0 km" };
+        if (/usados seleccion/i.test(title)) return { ...h, title: "Usados" };
+        return h;
+      });
+    }
+    if (content.ctaPrimary && /ver\s*0km/i.test(String(content.ctaPrimary.label || ""))) {
+      content.ctaPrimary = { ...content.ctaPrimary, label: "Ver 0 km" };
+    }
+    next.content = content;
+    return next;
+  }
+
   function normalizeData(data) {
     const raw = data && typeof data === "object" ? data : {};
     const site = { ...defaultSite(), ...(raw.site || {}) };
@@ -217,7 +249,7 @@ window.GYG_CONFIG = {
         content: p.content && typeof p.content === "object" ? p.content : {},
       }))
       .sort((a, b) => a.order - b.order);
-    pages = ensureVenderPage(pages);
+    pages = ensureVenderPage(pages).map(normalizePageCopy);
 
     const vehicles = Array.isArray(raw.vehicles)
       ? raw.vehicles.map((v) => ({
@@ -579,7 +611,7 @@ window.GYG_CONFIG = {
   function brandMarkup(value) {
     return escapeHtml(displayBrandName(value)).replace(
       /G\u0026amp;G/g,
-      "G<span class=\"brand-amp\">\u0026amp;</span>G"
+      "G<span class=\"brand-sep\" aria-hidden=\"true\"></span>G"
     );
   }
 

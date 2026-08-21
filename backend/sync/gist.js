@@ -23,9 +23,9 @@ const DEFAULT_PAGES = [
     },
   },
   {
-    id: "0km", slug: "0km", title: "0 kilómetros", navLabel: "0km", type: "stock",
+    id: "0km", slug: "0km", title: "0 km", navLabel: "0 km", type: "stock",
     visible: true, order: 1, filter: { categoria: "0km" },
-    content: { eyebrow: "Catálogo", headline: "0 kilómetros", subtitle: "Unidades nuevas." },
+    content: { eyebrow: "Catálogo", headline: "0 km", subtitle: "Unidades nuevas." },
   },
   {
     id: "usados", slug: "usados", title: "Usados", navLabel: "Usados", type: "stock",
@@ -35,7 +35,7 @@ const DEFAULT_PAGES = [
   {
     id: "stock", slug: "stock", title: "Stock", navLabel: "Stock", type: "stock",
     visible: true, order: 3, filter: {},
-    content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0km y usados." },
+    content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0 km y usados." },
   },
   {
     id: "vender", slug: "vender", title: "Vendé tu auto", navLabel: "Vendé tu auto", type: "vender",
@@ -156,6 +156,54 @@ function paginaVenderPorDefecto() {
   };
 }
 
+function esPaginaCeroKm(page) {
+  return page && (page.id === "0km" || page.slug === "0km");
+}
+
+function esPaginaUsados(page) {
+  return page && (page.id === "usados" || page.slug === "usados");
+}
+
+function esPaginaHome(page) {
+  return page && (page.id === "home" || page.slug === "" || page.type === "home");
+}
+
+function normalizarCopiaPagina(page) {
+  if (!page || typeof page !== "object") return page;
+  const next = { ...page };
+  const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
+
+  if (esPaginaCeroKm(next)) {
+    next.title = "0 km";
+    next.navLabel = "0 km";
+    content.headline = "0 km";
+  }
+
+  if (esPaginaUsados(next)) {
+    const largo = /seleccion/i.test(String(content.headline || next.title || ""));
+    if (largo || !content.headline) content.headline = "Usados";
+    next.navLabel = next.navLabel || "Usados";
+  }
+
+  if (esPaginaHome(next) && Array.isArray(content.highlights)) {
+    content.highlights = content.highlights.map((h) => {
+      if (!h || typeof h !== "object") return h;
+      const title = String(h.title || "");
+      if (/0\s*kil/i.test(title) || /^0\s*km$/i.test(title) || /^0km$/i.test(title)) {
+        return { ...h, title: "0 km" };
+      }
+      if (/usados seleccion/i.test(title)) return { ...h, title: "Usados" };
+      return h;
+    });
+  }
+  if (content.ctaPrimary && /ver\s*0km/i.test(String(content.ctaPrimary.label || ""))) {
+    content.ctaPrimary = { ...content.ctaPrimary, label: "Ver 0 km" };
+  }
+
+  next.content = content;
+  return next;
+}
+
 function insertarPaginaVender(pages) {
   const lista = Array.isArray(pages) ? pages.map((p) => ({ ...p })) : [];
   if (lista.some(esPaginaVender)) return lista;
@@ -179,12 +227,13 @@ function mergePages(gistPages, site) {
     Array.isArray(gistPages) && gistPages.length ? gistPages : DEFAULT_PAGES
   );
   return base.map((page) => {
-    if (!esPaginaContacto(page)) return page;
-    const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
+    const next = normalizarCopiaPagina(page);
+    if (!esPaginaContacto(next)) return next;
+    const content = next.content && typeof next.content === "object" ? { ...next.content } : {};
     content.headline = (site && site.contactoTitulo) || "Contactanos";
     if (site && site.contactoTexto) content.subtitle = site.contactoTexto;
     content.showWhatsapp = true;
-    return { ...page, content };
+    return { ...next, content };
   });
 }
 
@@ -364,6 +413,7 @@ module.exports = {
   mergeSiteConfig,
   mergePages,
   insertarPaginaVender,
+  normalizarCopiaPagina,
   construirStockJson,
   obtenerGistActual,
   publicarEnGist,

@@ -10,6 +10,7 @@ const {
   obtenerGistActual,
   publicarEnGist,
   DEFAULT_PAGES,
+  normalizarCopiaPagina,
 } = require("../backend/sync/gist");
 
 test("mapearEstado traduce Disponible/Reservado/Vendido a minúsculas", () => {
@@ -200,6 +201,42 @@ test("mergePages pone Contactanos en la página de contacto y deja las demás ig
   const contacto = pages.find((p) => p.id === "contacto");
   assert.equal(contacto.content.headline, "Contactanos");
   assert.equal(contacto.content.subtitle, "Escribinos.");
+});
+
+test("normalizarCopiaPagina acorta 0 km y Usados para que no se corten en el celular", () => {
+  const cero = normalizarCopiaPagina({
+    id: "0km",
+    slug: "0km",
+    title: "0 kilómetros",
+    navLabel: "0km",
+    content: { headline: "0 kilómetros" },
+  });
+  assert.equal(cero.title, "0 km");
+  assert.equal(cero.navLabel, "0 km");
+  assert.equal(cero.content.headline, "0 km");
+
+  const usados = normalizarCopiaPagina({
+    id: "usados",
+    slug: "usados",
+    content: { headline: "Usados seleccionados" },
+  });
+  assert.equal(usados.content.headline, "Usados");
+
+  const home = normalizarCopiaPagina({
+    id: "home",
+    slug: "",
+    type: "home",
+    content: {
+      ctaPrimary: { label: "Ver 0km", href: "#/0km" },
+      highlights: [
+        { title: "0 kilómetros", href: "#/0km" },
+        { title: "Usados seleccionados", href: "#/usados" },
+      ],
+    },
+  });
+  assert.equal(home.content.ctaPrimary.label, "Ver 0 km");
+  assert.equal(home.content.highlights[0].title, "0 km");
+  assert.equal(home.content.highlights[1].title, "Usados");
 });
 
 function fetchFalso(respuestas) {

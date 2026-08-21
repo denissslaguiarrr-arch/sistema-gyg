@@ -49,7 +49,7 @@ test("el nombre G&G está disponible en las dos partes del script de Blogger", (
   assert.match(partes[0], /displayBrandName,/);
   assert.match(partes[1], /function brandMarkup/);
   assert.match(partes[1], /GyGStock\.displayBrandName/);
-  assert.match(partes[1], /brand-amp/);
+  assert.match(partes[1], /brand-sep/);
 });
 
 test("el tema reproduce videos de YouTube en la galería", () => {
@@ -58,10 +58,22 @@ test("el tema reproduce videos de YouTube en la galería", () => {
   assert.match(tema, /is-video/);
 });
 
-test("el & del hero usa serif clásico, no el glifo de Syne", () => {
+test("el hero no usa un & tipográfico entre las G", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
-  assert.match(css, /\.brand-amp/);
-  assert.match(css, /Georgia/);
-  assert.match(tema, /brand-amp/);
-  assert.match(tema, /Georgia/);
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(css, /\.brand-sep/);
+  assert.match(js, /brand-sep/);
+  assert.match(tema, /brand-sep/);
+  assert.doesNotMatch(js, /brand-amp/);
+  assert.doesNotMatch(css, /brand-amp/);
+});
+
+test("los títulos 0 km y Usados caben en el celular", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(css, /overflow-wrap: break-word/);
+  assert.match(js, /function normalizePageCopy/);
+  assert.match(js, /headline = "0 km"/);
+  assert.match(js, /headline = "Usados"/);
+  assert.doesNotMatch(js, /0 kilómetros/);
 });
