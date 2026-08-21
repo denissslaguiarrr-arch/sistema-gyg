@@ -400,6 +400,20 @@ window.GYG_CONFIG = {
     });
   }
 
+  // Destacados primero; completa con el resto del stock público (hasta `limit`).
+  function pickCarouselVehicles(data, limit) {
+    const cap = Math.max(1, Math.min(24, Number(limit) || 8));
+    const list = publicVehicles(data, {});
+    const peso = (v) => {
+      if (v.destacado) return 2;
+      if (v.status === "disponible") return 1;
+      return 0;
+    };
+    return [...list]
+      .sort((a, b) => peso(b) - peso(a) || Number(b.anio) - Number(a.anio))
+      .slice(0, cap);
+  }
+
   function findVehicle(data, id) {
     return ((data && data.vehicles) || []).find((v) => v.id === id) || null;
   }
@@ -503,6 +517,7 @@ window.GYG_CONFIG = {
     findPageBySlug,
     pageHref,
     publicVehicles,
+    pickCarouselVehicles,
     findVehicle,
     whatsappPhone,
     whatsappUrl,
@@ -524,6 +539,8 @@ window.GYG_CONFIG = {
   let filters = blankFilters();
   let activeStockSlug = "stock";
   let lightboxZoom = 1;
+  let carouselTimer = null;
+  let carouselResize = null;
 
   function blankFilters() {
     return {
@@ -580,6 +597,7 @@ window.GYG_CONFIG = {
   }
 
   function route() {
+    stopCarousel();
     const r = parseRoute();
     if (r.kind === "auto") {
       renderDetail(r.id);
@@ -655,6 +673,187 @@ window.GYG_CONFIG = {
     );
   }
 
+  function stopCarousel() {
+    if (carouselTimer) {
+      clearInterval(carouselTimer);
+      carouselTimer = null;
+    }
+    if (carouselResize) {
+      window.removeEventListener("resize", carouselResize);
+      carouselResize = null;
+    }
+  }
+
+  function carouselPageSize() {
+    if (window.matchMedia("(max-width: 640px)").matches) return 1;
+    if (window.matchMedia("(max-width: 980px)").matches) return 2;
+    return 3;
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function carouselMarkup(vehicles) {
+    if (!vehicles.length) return "";
+    const hayDestacados = vehicles.some((v) => v.destacado);
+    const countClass =
+      vehicles.length === 1 ? " carousel--solo" : vehicles.length === 2 ? " carousel--duo" : "";
+    return `
+      <section class="carousel${countClass}" id="homeCarousel" aria-roledescription="carousel" aria-label="Vehículos en vitrina">
+        <div class="carousel__head">
+          <div>
+            <p class="carousel__eyebrow">${hayDestacados ? "Destacados" : "En vitrina"}</p>
+            <h2>Selección del showroom</h2>
+          </div>
+          <div class="carousel__toolbar">
+            <a class="btn btn--ghost btn--sm" href="#/stock">Ver stock</a>
+            <div class="carousel__controls">
+              <button type="button" class="carousel__nav" id="carouselPrev" aria-label="Vehículo anterior">‹</button>
+              <button type="button" class="carousel__nav" id="carouselNext" aria-label="Vehículo siguiente">›</button>
+            </div>
+          </div>
+        </div>
+        <div class="carousel__viewport" id="carouselViewport" tabindex="0">
+          <div class="carousel__track" id="carouselTrack">
+            ${vehicles.map((v) => `<div class="carousel__slide">${vehicleCard(v, false)}</div>`).join("")}
+          </div>
+        </div>
+        <div class="carousel__dots" id="carouselDots" role="tablist" aria-label="Elegir vehículo"></div>
+      </section>
+    `;
+  }
+
+  function bindCarousel(total) {
+    const track = document.getElementById("carouselTrack");
+    const viewport = document.getElementById("carouselViewport");
+    const prev = document.getElementById("carouselPrev");
+    const next = document.getElementById("carouselNext");
+    const dotsEl = document.getElementById("carouselDots");
+    if (!track || !viewport || total < 1) return;
+
+    let index = 0;
+
+    function maxIndex() {
+      return Math.max(0, total - Math.min(carouselPageSize(), total));
+    }
+
+    function stepPx() {
+      const slide = track.querySelector(".carousel__slide");
+      if (!slide) return 0;
+      const gap = parseFloat(getComputedStyle(track).gap) || 0;
+      return slide.getBoundingClientRect().width + gap;
+    }
+
+    function renderDots() {
+      if (!dotsEl) return;
+      const pages = maxIndex() + 1;
+      if (pages <= 1) {
+        dotsEl.innerHTML = "";
+        return;
+      }
+      dotsEl.innerHTML = Array.from({ length: pages }, (_, i) => {
+        const active = i === index ? " is-active" : "";
+        return `<button type="button" class="carousel__dot${active}" data-page="${i}" aria-label="Grupo ${i + 1} de ${pages}" ${i === index ? 'aria-current="true"' : ""}></button>`;
+      }).join("");
+    }
+
+    function apply() {
+      const max = maxIndex();
+      if (index > max) index = max;
+      track.style.transform = `translateX(-${index * stepPx()}px)`;
+      const hide = max < 1;
+      prev?.parentElement?.classList.toggle("hidden", hide);
+      dotsEl?.classList.toggle("hidden", hide);
+      renderDots();
+    }
+
+    function go(delta) {
+      const pages = maxIndex() + 1;
+      if (pages <= 1) return;
+      index = (index + delta + pages) % pages;
+      apply();
+    }
+
+    function startAutoplay() {
+      if (carouselTimer) clearInterval(carouselTimer);
+      if (prefersReducedMotion() || maxIndex() < 1) {
+        carouselTimer = null;
+        return;
+      }
+      carouselTimer = setInterval(() => go(1), 5200);
+    }
+
+    prev?.addEventListener("click", () => {
+      go(-1);
+      startAutoplay();
+    });
+    next?.addEventListener("click", () => {
+      go(1);
+      startAutoplay();
+    });
+    dotsEl?.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("[data-page]");
+      if (!btn) return;
+      index = Number(btn.getAttribute("data-page")) || 0;
+      apply();
+      startAutoplay();
+    });
+
+    viewport.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowLeft") {
+        ev.preventDefault();
+        go(-1);
+        startAutoplay();
+      }
+      if (ev.key === "ArrowRight") {
+        ev.preventDefault();
+        go(1);
+        startAutoplay();
+      }
+    });
+
+    let touchX = 0;
+    viewport.addEventListener(
+      "touchstart",
+      (ev) => {
+        touchX = ev.touches[0].clientX;
+      },
+      { passive: true }
+    );
+    viewport.addEventListener(
+      "touchend",
+      (ev) => {
+        const dx = ev.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) < 40) return;
+        go(dx > 0 ? -1 : 1);
+        startAutoplay();
+      },
+      { passive: true }
+    );
+
+    viewport.addEventListener("mouseenter", () => {
+      if (carouselTimer) {
+        clearInterval(carouselTimer);
+        carouselTimer = null;
+      }
+    });
+    viewport.addEventListener("mouseleave", startAutoplay);
+
+    track.addEventListener("click", onCardActivate);
+    track.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onCardActivate(e);
+      }
+    });
+
+    carouselResize = () => apply();
+    window.addEventListener("resize", carouselResize);
+    apply();
+    startAutoplay();
+  }
+
   function renderHome(page) {
     const c = page.content || {};
     const site = data.site || {};
@@ -662,6 +861,7 @@ window.GYG_CONFIG = {
     const primary = c.ctaPrimary || { label: "Ver stock", href: "#/stock" };
     const secondary = c.ctaSecondary || null;
     const highlights = Array.isArray(c.highlights) ? c.highlights : [];
+    const carouselVehicles = GyGStock.pickCarouselVehicles(data, 8);
 
     app.innerHTML = `
       <section class="home-hero" style="--hero-image: url('${escapeAttr(hero)}')">
@@ -681,6 +881,7 @@ window.GYG_CONFIG = {
           </div>
         </div>
       </section>
+      ${carouselMarkup(carouselVehicles)}
       <section class="sell-band" aria-label="Vendé tu auto">
         <div class="sell-band__copy">
           <p class="sell-band__eyebrow">Compra directa o consignación</p>
@@ -705,6 +906,7 @@ window.GYG_CONFIG = {
           : ""
       }
     `;
+    bindCarousel(carouselVehicles.length);
   }
 
   function unique(values) {

@@ -16,6 +16,15 @@ test("el tema de Blogger conserva el showroom G&G y no es el catálogo corto", (
   assert.doesNotMatch(tema, /id='gyg-root'/);
 });
 
+test("el inicio del showroom tiene un carrusel de vehículos", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(js, /function pickCarouselVehicles/);
+  assert.match(js, /homeCarousel/);
+  assert.match(js, /Selección del showroom/);
+  assert.match(tema, /carousel__track/);
+  assert.match(tema, /pickCarouselVehicles/);
+});
+
 test("el tema incluye zoom, Contactanos, Vendé tu auto y redes opcionales", () => {
   assert.match(tema, /gallery__main/);
   assert.match(tema, /object-fit: contain/);
