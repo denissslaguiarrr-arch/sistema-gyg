@@ -23,6 +23,9 @@ test("el tema incluye zoom, Contactanos, Vendé tu auto y redes opcionales", () 
   assert.match(tema, /Contactanos/);
   assert.match(tema, /Vendé tu auto/);
   assert.match(tema, /sell-form/);
+  assert.match(tema, /sell-modes/);
+  assert.match(tema, /sell-faq/);
+  assert.match(tema, /Cotizá tu usado/);
   assert.match(tema, /btn--instagram/);
   assert.match(tema, /safe-area-inset-bottom/);
   assert.match(tema, /CDATA/);

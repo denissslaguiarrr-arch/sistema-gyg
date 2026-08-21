@@ -895,6 +895,11 @@ window.GYG_CONFIG = {
     location.hash = `#/auto/${encodeURIComponent(card.dataset.id)}`;
   }
 
+  function scrollToSellForm(ev) {
+    ev.preventDefault();
+    document.getElementById("sell-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
   function renderVenderPage(page) {
     const c = page.content || {};
     const site = data.site || {};
@@ -903,28 +908,32 @@ window.GYG_CONFIG = {
       c.subtitle ||
       "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.";
     const anioMax = new Date().getFullYear() + 1;
+    const brand = displayBrandName(site.name || "G&G");
 
     app.innerHTML = `
-      <section class="hero">
+      <section class="hero hero--sell">
         <div class="hero__eyebrow">${escapeHtml(c.eyebrow || "Compra y consignación")}</div>
         <h1>${escapeHtml(titulo)}</h1>
         <p>${escapeHtml(texto)}</p>
+        <div class="hero__cta">
+          <button type="button" class="btn btn--primary" id="sell-hero-cta">Cotizá tu usado</button>
+        </div>
       </section>
       <section class="sell-page">
         <ol class="sell-steps">
           <li>
             <span class="sell-steps__n">01</span>
-            <h3>Completá los datos</h3>
+            <h3>Completá el formulario</h3>
             <p>Marca, modelo, año y kilómetros. En dos minutos armamos una primera idea de valor.</p>
           </li>
           <li>
             <span class="sell-steps__n">02</span>
-            <h3>Lo vemos en el showroom</h3>
+            <h3>Visitanos en el showroom</h3>
             <p>Coordinamos una visita. Revisamos el auto y te confirmamos la propuesta el mismo día.</p>
           </li>
           <li>
             <span class="sell-steps__n">03</span>
-            <h3>Cobrá o consigná</h3>
+            <h3>Recibí tu cotización</h3>
             <p>Compra directa si querés cerrar ya, o consignación si preferís que lo mostremos en el stock.</p>
           </li>
         </ol>
@@ -969,11 +978,96 @@ window.GYG_CONFIG = {
               <textarea name="comentario" rows="3" placeholder="Único dueño, service al día, permuta..."></textarea>
             </label>
           </div>
-          <button type="submit" class="btn btn--primary">Enviar por WhatsApp</button>
+          <label class="sell-form__check">
+            <input name="acepto" type="checkbox" required />
+            <span>Acepto que ${escapeHtml(brand)} me contacte por WhatsApp para esta cotización.</span>
+          </label>
+          <button type="submit" class="btn btn--primary">Enviar cotización</button>
           <p class="sell-form__hint">La cotización es orientativa. El valor final se confirma al ver el vehículo.</p>
         </form>
+        <section class="sell-block" aria-labelledby="sell-how-title">
+          <h2 class="sell-section-title" id="sell-how-title">¿Cómo vender tu auto en ${escapeHtml(brand)}?</h2>
+          <div class="sell-modes">
+            <button type="button" class="sell-mode" data-modalidad="Compra directa">
+              <span class="sell-mode__tag">Opción 1</span>
+              <h3>Compra directa</h3>
+              <p>Te lo compramos nosotros. Tasamos, acordamos el valor y cobrás sin esperar a que aparezca un comprador.</p>
+              <span class="sell-mode__cta">Elegir compra directa</span>
+            </button>
+            <button type="button" class="sell-mode" data-modalidad="Consignación">
+              <span class="sell-mode__tag">Opción 2</span>
+              <h3>Consignación</h3>
+              <p>Lo mostramos en el showroom y en la web. Vos seguís siendo el dueño hasta que se vende, con nuestra exposición.</p>
+              <span class="sell-mode__cta">Elegir consignación</span>
+            </button>
+          </div>
+        </section>
+        <section class="sell-block" aria-labelledby="sell-why-title">
+          <h2 class="sell-section-title" id="sell-why-title">¿Por qué vender en ${escapeHtml(brand)}?</h2>
+          <div class="sell-why">
+            <article>
+              <h3>Tasación en el showroom</h3>
+              <p>Vemos el auto en persona y te damos una propuesta el mismo día, sin formularios eternos.</p>
+            </article>
+            <article>
+              <h3>Dos formas de vender</h3>
+              <p>Compra directa si querés cerrar ya, o consignación si preferís apuntar a un mejor precio.</p>
+            </article>
+            <article>
+              <h3>Exposición real</h3>
+              <p>En consignación entra al stock, a la web y a las redes. No queda parado en un portón.</p>
+            </article>
+            <article>
+              <h3>Papeles y trámites</h3>
+              <p>Te orientamos con la documentación. El cierre se hace con todo en regla.</p>
+            </article>
+          </div>
+        </section>
+        <section class="sell-block" aria-labelledby="sell-faq-title">
+          <h2 class="sell-section-title" id="sell-faq-title">Preguntas frecuentes</h2>
+          <div class="sell-faq">
+            <details>
+              <summary>¿Cuánto tarda la cotización?</summary>
+              <p>Con el formulario te damos una primera idea por WhatsApp. El valor final se confirma cuando vemos el auto en el showroom, generalmente el mismo día de la visita.</p>
+            </details>
+            <details>
+              <summary>¿Tengo que dejar el auto?</summary>
+              <p>No. Coordinamos una visita, lo revisamos y te hacemos la propuesta. Si cerrás compra directa o consignación, ahí vemos la entrega.</p>
+            </details>
+            <details>
+              <summary>¿Qué diferencia hay entre compra directa y consignación?</summary>
+              <p>En compra directa te lo compramos nosotros y cobrás al cerrar. En consignación lo exhibimos hasta que aparece un comprador; el precio de venta lo acordamos juntos.</p>
+            </details>
+            <details>
+              <summary>¿Puedo permutar por otro auto del stock?</summary>
+              <p>Sí. Indicá en el comentario qué unidad te interesa o pedilo por WhatsApp. Tomamos tu usado como parte de pago.</p>
+            </details>
+            <details>
+              <summary>¿Qué documentación necesito?</summary>
+              <p>Título, cédula, DNI y, si aplica, informe de dominio o prenda. Si falta algo, te decimos cómo completarlo antes del cierre.</p>
+            </details>
+          </div>
+        </section>
+        <section class="sell-cta-end" aria-label="Cotizar ahora">
+          <div>
+            <h2>¿Listo para vender tu auto?</h2>
+            <p>Completá los datos y te respondemos por WhatsApp.</p>
+          </div>
+          <button type="button" class="btn btn--primary" id="sell-end-cta">Cotizá tu usado</button>
+        </section>
       </section>
     `;
+
+    document.getElementById("sell-hero-cta")?.addEventListener("click", scrollToSellForm);
+    document.getElementById("sell-end-cta")?.addEventListener("click", scrollToSellForm);
+    document.querySelectorAll(".sell-mode").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const sel = document.querySelector("#sell-form select[name='modalidad']");
+        if (sel) sel.value = btn.getAttribute("data-modalidad") || "No sé todavía";
+        document.getElementById("sell-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        sel?.focus();
+      });
+    });
 
     document.getElementById("sell-form")?.addEventListener("submit", (ev) => {
       ev.preventDefault();
@@ -989,14 +1083,17 @@ window.GYG_CONFIG = {
         toast("Completá marca, modelo, año, kilómetros, nombre y teléfono.", "error");
         return;
       }
+      if (!form.elements.acepto || !form.elements.acepto.checked) {
+        toast("Marcá que aceptás el contacto por WhatsApp.", "error");
+        return;
+      }
       const phone = GyGStock.whatsappPhone(data);
       if (!phone) {
         toast("Falta el WhatsApp de la concesionaria en Configuración del sitio.", "error");
         return;
       }
-      const nameBrand = displayBrandName(site.name || "G&G");
       const lineas = [
-        `Hola ${nameBrand}, quiero vender mi auto:`,
+        `Hola ${brand}, quiero vender mi auto:`,
         `${marca} ${modelo} ${anio}`,
         `Km: ${km}`,
         `Estado: ${val("estado")}`,
