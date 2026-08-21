@@ -5,6 +5,10 @@ const { reescribirMarca, reescribirMarcaEn } = require("../backend/utils/marca")
 test("reescribirMarca cambia GyG suelto a G&G y no toca handles", () => {
   assert.equal(reescribirMarca("GyG"), "G&G");
   assert.equal(reescribirMarca("Concesionaria GyG — stock"), "Concesionaria G&G — stock");
+  assert.equal(
+    reescribirMarca("Concesionaria GyG — stock en vivo desde la nube"),
+    "Concesionaria G&G — stock en vivo desde la nube"
+  );
   assert.equal(reescribirMarca("gyg"), "G&G");
   assert.equal(reescribirMarca("gyg-007"), "gyg-007");
   assert.equal(

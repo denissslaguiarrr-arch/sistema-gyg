@@ -683,19 +683,20 @@ window.GYG_CONFIG = {
   function updateChrome() {
     const site = data.site || {};
     const tag = document.getElementById("brandTag");
-    if (tag) tag.textContent = site.tagline || GYG_CONFIG.TAGLINE || "";
+    if (tag) tag.textContent = GyGStock.reescribirMarca(site.tagline || GYG_CONFIG.TAGLINE || "");
     const year = document.getElementById("year");
     if (year) year.textContent = String(new Date().getFullYear());
     const footer = document.getElementById("footerUpdated");
     if (footer) {
       const bits = [];
-      if (site.footerText) bits.push(site.footerText);
+      const pie = GyGStock.reescribirMarca(site.footerText || "");
+      if (pie) bits.push(pie);
       if (data.meta && data.meta.updatedAt) {
         bits.push(`Actualizado ${new Date(data.meta.updatedAt).toLocaleString("es-AR")}`);
       }
       footer.textContent = bits.join(" · ") || "Stock en vivo";
     }
-    document.title = `${displayBrandName(site.name)} — ${site.tagline || "Stock"}`;
+    document.title = `${displayBrandName(site.name)} — ${GyGStock.reescribirMarca(site.tagline || "Stock")}`;
     renderNav();
   }
 

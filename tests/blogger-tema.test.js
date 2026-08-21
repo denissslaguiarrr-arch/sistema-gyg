@@ -49,6 +49,7 @@ test("el nombre G&G está disponible en las dos partes del script de Blogger", (
   assert.match(partes[0], /displayBrandName,/);
   assert.match(partes[1], /function brandMarkup/);
   assert.match(partes[1], /GyGStock\.displayBrandName/);
+  assert.match(partes[1], /GyGStock\.reescribirMarca/);
   assert.match(partes[1], /brand-sep/);
 });
 
@@ -63,7 +64,7 @@ test("el hero no usa un & tipográfico entre las G", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(css, /\.brand-sep/);
   assert.match(js, /brand-sep/);
-  assert.match(js, /function reescribirMarca/);
+  assert.match(js, /reescribirMarca\(site\.footerText/);
   assert.match(js, /function isBrandWordmark/);
   assert.match(js, /Vendé tu auto<\/h2>/);
   assert.doesNotMatch(js, /Vendé tu auto con G/);
