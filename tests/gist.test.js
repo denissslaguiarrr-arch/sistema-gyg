@@ -152,13 +152,13 @@ test("mergeSiteConfig prioriza los valores locales, pero no pisa con vacíos", (
   const gistSite = { name: "GyG viejo", tagline: "Tagline viejo", whatsapp: "111", footerText: "pie", heroImage: "img.jpg" };
 
   const conDatosLocales = mergeSiteConfig(gistSite, { nombre: "GyG nuevo", tagline: "", whatsapp: "222" });
-  assert.equal(conDatosLocales.name, "GyG nuevo");
+  assert.equal(conDatosLocales.name, "G&G nuevo");
   assert.equal(conDatosLocales.tagline, "Tagline viejo"); // vacío local no pisa
   assert.equal(conDatosLocales.whatsapp, "222");
   assert.equal(conDatosLocales.footerText, "pie");
 
   const sinConfigLocal = mergeSiteConfig(gistSite, {});
-  assert.equal(sinConfigLocal.name, "GyG viejo");
+  assert.equal(sinConfigLocal.name, "G&G viejo");
   assert.equal(sinConfigLocal.instagram, "");
   assert.equal(sinConfigLocal.contactoTitulo, "Contactanos");
 });
@@ -182,8 +182,8 @@ test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si
   const sinGistPrevio = construirStockJson({ gistActual: null, vehiculos: [], siteConfig: { nombre: "GyG" } });
   assert.deepEqual(sinGistPrevio.pages, DEFAULT_PAGES);
   assert.ok(sinGistPrevio.pages.some((p) => p.id === "vender"));
-  assert.equal(sinGistPrevio.site.name, "GyG");
-  assert.equal(sinGistPrevio.meta.concesionaria, "GyG");
+  assert.equal(sinGistPrevio.site.name, "G&G");
+  assert.equal(sinGistPrevio.meta.concesionaria, "G&G");
   assert.ok(sinGistPrevio.meta.updatedAt);
 });
 
@@ -237,6 +237,16 @@ test("normalizarCopiaPagina acorta 0 km y Usados para que no se corten en el cel
   assert.equal(home.content.ctaPrimary.label, "Ver 0 km");
   assert.equal(home.content.highlights[0].title, "0 km");
   assert.equal(home.content.highlights[1].title, "Usados");
+});
+
+test("normalizarCopiaPagina cambia GyG a G&G en títulos visibles", () => {
+  const contacto = normalizarCopiaPagina({
+    id: "contacto",
+    slug: "contacto",
+    content: { eyebrow: "GyG", headline: "Contactanos", body: "Escribile a GyG." },
+  });
+  assert.equal(contacto.content.eyebrow, "G&G");
+  assert.equal(contacto.content.body, "Escribile a G&G.");
 });
 
 function fetchFalso(respuestas) {

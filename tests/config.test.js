@@ -99,7 +99,7 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
   });
   assert.equal(res.status, 200);
   const body = await res.json();
-  assert.equal(body.nombre, "GyG");
+  assert.equal(body.nombre, "G&G");
   assert.equal(body.whatsapp, "5491123456789");
   assert.equal(body.instagram, "https://www.instagram.com/gygautomotores");
   assert.equal(body.facebook, "");

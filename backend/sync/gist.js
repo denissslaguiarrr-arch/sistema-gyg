@@ -4,6 +4,7 @@
 // no hay una pantalla para editar la estructura de páginas.
 
 const { fotosParaCatalogo, mediaParaCatalogo } = require("../utils/fotos");
+const { reescribirMarca, reescribirMarcaEn } = require("../utils/marca");
 
 const ESTADO_A_STATUS = {
   Disponible: "disponible",
@@ -118,14 +119,14 @@ function mergeSiteConfig(gistSite, config) {
   const gs = gistSite && typeof gistSite === "object" ? gistSite : {};
   const cfg = config || {};
   return {
-    name: cfg.nombre || gs.name || "",
-    tagline: cfg.tagline || gs.tagline || "",
+    name: reescribirMarca(cfg.nombre || gs.name || ""),
+    tagline: reescribirMarca(cfg.tagline || gs.tagline || ""),
     whatsapp: cfg.whatsapp || gs.whatsapp || "",
     instagram: tiene(cfg, "instagram") ? cfg.instagram || "" : gs.instagram || "",
     facebook: tiene(cfg, "facebook") ? cfg.facebook || "" : gs.facebook || "",
-    contactoTitulo: cfg.contactoTitulo || gs.contactoTitulo || "Contactanos",
-    contactoTexto: cfg.contactoTexto || gs.contactoTexto || "",
-    footerText: cfg.footerText || gs.footerText || "",
+    contactoTitulo: reescribirMarca(cfg.contactoTitulo || gs.contactoTitulo || "Contactanos"),
+    contactoTexto: reescribirMarca(cfg.contactoTexto || gs.contactoTexto || ""),
+    footerText: reescribirMarca(cfg.footerText || gs.footerText || ""),
     heroImage: cfg.heroImage || gs.heroImage || "",
   };
 }
@@ -201,7 +202,7 @@ function normalizarCopiaPagina(page) {
   }
 
   next.content = content;
-  return next;
+  return reescribirMarcaEn(next);
 }
 
 function insertarPaginaVender(pages) {
@@ -414,6 +415,7 @@ module.exports = {
   mergePages,
   insertarPaginaVender,
   normalizarCopiaPagina,
+  reescribirMarca,
   construirStockJson,
   obtenerGistActual,
   publicarEnGist,

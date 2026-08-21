@@ -79,12 +79,40 @@
 
   function pages() {
     var list = (state.data && state.data.pages) || [];
-    return list.filter(function (p) { return p && p.visible !== false; })
-      .sort(function (a, b) { return (a.order || 0) - (b.order || 0); });
+    return list
+      .filter(function (p) { return p && p.visible !== false; })
+      .sort(function (a, b) { return (a.order || 0) - (b.order || 0); })
+      .map(function (p) {
+        var c = p.content && typeof p.content === "object" ? Object.assign({}, p.content) : {};
+        if (c.headline) c.headline = marca(c.headline);
+        if (c.subtitle) c.subtitle = marca(c.subtitle);
+        if (c.eyebrow) c.eyebrow = marca(c.eyebrow);
+        if (c.body) c.body = marca(c.body);
+        return Object.assign({}, p, {
+          title: marca(p.title || ""),
+          navLabel: marca(p.navLabel || p.title || ""),
+          content: c,
+        });
+      });
+  }
+
+  function marca(t) {
+    return String(t == null ? "" : t).replace(/\bg\s*y\s*g\b(?![\w-])/gi, "G&G");
   }
 
   function site() {
-    return (state.data && state.data.site) || {};
+    var s = (state.data && state.data.site) || {};
+    return {
+      name: marca(s.name || "G&G"),
+      tagline: marca(s.tagline || ""),
+      whatsapp: s.whatsapp || "",
+      instagram: s.instagram || "",
+      facebook: s.facebook || "",
+      contactoTitulo: marca(s.contactoTitulo || "Contactanos"),
+      contactoTexto: marca(s.contactoTexto || ""),
+      footerText: marca(s.footerText || ""),
+      heroImage: s.heroImage || "",
+    };
   }
 
   function vehiculos() {

@@ -5,20 +5,21 @@ const { texto, normalizarInstagram, normalizarFacebook } = require("../utils/red
 const { imgurConfigurado } = require("../utils/imgur");
 const { imgbbConfigurado } = require("../utils/imgbb");
 const { credencialesGist, normalizarGistId, GIST_ID_DEFAULT } = require("../utils/gistConfig");
+const { reescribirMarca } = require("../utils/marca");
 
 const router = express.Router();
 
 function serialize(row) {
   const gist = credencialesGist();
   return {
-    nombre: row.nombre,
-    tagline: row.tagline,
+    nombre: reescribirMarca(row.nombre),
+    tagline: reescribirMarca(row.tagline),
     whatsapp: row.whatsapp,
     instagram: row.instagram || "",
     facebook: row.facebook || "",
-    contactoTitulo: row.contacto_titulo || "Contactanos",
-    contactoTexto: row.contacto_texto || "",
-    footerText: row.footer_text,
+    contactoTitulo: reescribirMarca(row.contacto_titulo || "Contactanos"),
+    contactoTexto: reescribirMarca(row.contacto_texto || ""),
+    footerText: reescribirMarca(row.footer_text),
     heroImage: row.hero_image,
     imgbbConfigurado: imgbbConfigurado() || Boolean(String((row && row.imgbb_api_key) || "").trim()),
     imgurConfigurado: imgurConfigurado(),
@@ -65,14 +66,14 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
        updated_at = datetime('now')
      WHERE id = 1`
   ).run({
-    nombre: texto(body.nombre),
-    tagline: texto(body.tagline),
+    nombre: reescribirMarca(texto(body.nombre)),
+    tagline: reescribirMarca(texto(body.tagline)),
     whatsapp: texto(body.whatsapp),
     instagram: normalizarInstagram(body.instagram),
     facebook: normalizarFacebook(body.facebook),
-    contactoTitulo: texto(body.contactoTitulo) || "Contactanos",
-    contactoTexto: texto(body.contactoTexto),
-    footerText: texto(body.footerText),
+    contactoTitulo: reescribirMarca(texto(body.contactoTitulo)) || "Contactanos",
+    contactoTexto: reescribirMarca(texto(body.contactoTexto)),
+    footerText: reescribirMarca(texto(body.footerText)),
     heroImage: texto(body.heroImage),
     imgbbApiKey: claveNueva,
     gistId: gistIdNuevo,

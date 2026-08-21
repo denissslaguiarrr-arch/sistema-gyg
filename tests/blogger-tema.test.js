@@ -63,6 +63,7 @@ test("el hero no usa un & tipográfico entre las G", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(css, /\.brand-sep/);
   assert.match(js, /brand-sep/);
+  assert.match(js, /function reescribirMarca/);
   assert.match(js, /function isBrandWordmark/);
   assert.match(js, /Vendé tu auto<\/h2>/);
   assert.doesNotMatch(js, /Vendé tu auto con G/);

@@ -1833,10 +1833,29 @@ window.GYG_CONFIG = {
     return global.GYG_CONFIG || {};
   }
 
+  function reescribirMarca(texto) {
+    return String(texto == null ? "" : texto).replace(/\bg\s*y\s*g\b(?![\w-])/gi, "G\u0026G");
+  }
+
+  function reescribirMarcaEn(valor) {
+    const skip = { instagram: 1, facebook: 1, whatsapp: 1, heroImage: 1, href: 1, url: 1 };
+    if (valor == null) return valor;
+    if (typeof valor === "string") return reescribirMarca(valor);
+    if (Array.isArray(valor)) return valor.map(reescribirMarcaEn);
+    if (typeof valor === "object") {
+      const out = { ...valor };
+      Object.keys(valor).forEach((clave) => {
+        out[clave] = skip[clave] ? valor[clave] : reescribirMarcaEn(valor[clave]);
+      });
+      return out;
+    }
+    return valor;
+  }
+
   function displayBrandName(value) {
-    const n = String(value == null ? "" : value).trim();
+    const n = reescribirMarca(value).trim();
     if (!n) return "G\u0026G";
-    return n.replace(/\bg\s*y\s*g\b/gi, "G\u0026G");
+    return n;
   }
 
   function getToken() {
@@ -2037,12 +2056,12 @@ window.GYG_CONFIG = {
       content.ctaPrimary = { ...content.ctaPrimary, label: "Ver 0 km" };
     }
     next.content = content;
-    return next;
+    return reescribirMarcaEn(next);
   }
 
   function normalizeData(data) {
     const raw = data && typeof data === "object" ? data : {};
-    const site = { ...defaultSite(), ...(raw.site || {}) };
+    const site = reescribirMarcaEn({ ...defaultSite(), ...(raw.site || {}) });
     if (!site.whatsapp && cfg().WHATSAPP_NUMBER) site.whatsapp = cfg().WHATSAPP_NUMBER;
     if (!site.contactoTitulo) site.contactoTitulo = "Contactanos";
 
@@ -2370,6 +2389,7 @@ window.GYG_CONFIG = {
     defaultSite,
     defaultPages,
     displayBrandName,
+    reescribirMarca,
   };
 })(window);
 
