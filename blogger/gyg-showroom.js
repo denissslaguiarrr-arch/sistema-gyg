@@ -615,6 +615,14 @@ window.GYG_CONFIG = {
     );
   }
 
+  function isBrandWordmark(value) {
+    const n = String(value || "")
+      .replace(/\s/g, "")
+      .replace(/&amp;/gi, "&")
+      .toLowerCase();
+    return n === "g&g" || n === "gyg" || n === "g+g";
+  }
+
   function escapeAttr(str) {
     return escapeHtml(str).replace(/'/g, "&#39;");
   }
@@ -900,7 +908,11 @@ window.GYG_CONFIG = {
         <div class="home-hero__veil"></div>
         <div class="home-hero__content">
           <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
-          <h1 class="home-hero__brand">${brandMarkup(c.headline || site.name || "G\u0026G")}</h1>
+          ${
+            isBrandWordmark(c.headline || site.name)
+              ? `<h1 class="visually-hidden">${escapeHtml(displayBrandName(site.name || "G&G"))} Automotores</h1>`
+              : `<h1 class="home-hero__brand">${brandMarkup(c.headline || site.name || "G&G")}</h1>`
+          }
           <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
           <div class="home-hero__cta">
             <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>
@@ -917,7 +929,7 @@ window.GYG_CONFIG = {
       <section class="sell-band" aria-label="Vendé tu auto">
         <div class="sell-band__copy">
           <p class="sell-band__eyebrow">Compra directa o consignación</p>
-          <h2>Vendé tu auto con G&amp;G</h2>
+          <h2>Vendé tu auto</h2>
           <p>Completá los datos, lo vemos en el showroom y te hacemos una propuesta. Sin vueltas.</p>
         </div>
         <a class="btn btn--primary" href="#/vender">Cotizar mi auto</a>
@@ -1214,13 +1226,13 @@ window.GYG_CONFIG = {
           </div>
           <label class="sell-form__check">
             <input name="acepto" type="checkbox" required />
-            <span>Acepto que ${escapeHtml(brand)} me contacte por WhatsApp para esta cotización.</span>
+            <span>Acepto que me contacten por WhatsApp para esta cotización.</span>
           </label>
           <button type="submit" class="btn btn--primary">Enviar cotización</button>
           <p class="sell-form__hint">La cotización es orientativa. El valor final se confirma al ver el vehículo.</p>
         </form>
         <section class="sell-block" aria-labelledby="sell-how-title">
-          <h2 class="sell-section-title" id="sell-how-title">¿Cómo vender tu auto en ${escapeHtml(brand)}?</h2>
+          <h2 class="sell-section-title" id="sell-how-title">¿Cómo vender tu auto?</h2>
           <div class="sell-modes">
             <button type="button" class="sell-mode" data-modalidad="Compra directa">
               <span class="sell-mode__tag">Opción 1</span>
@@ -1237,7 +1249,7 @@ window.GYG_CONFIG = {
           </div>
         </section>
         <section class="sell-block" aria-labelledby="sell-why-title">
-          <h2 class="sell-section-title" id="sell-why-title">¿Por qué vender en ${escapeHtml(brand)}?</h2>
+          <h2 class="sell-section-title" id="sell-why-title">¿Por qué vender con nosotros?</h2>
           <div class="sell-why">
             <article>
               <h3>Tasación en el showroom</h3>
