@@ -175,10 +175,12 @@ test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si
     vehiculos: [],
     siteConfig: {},
   });
-  assert.deepEqual(conPaginasPropias.pages, [{ id: "custom", slug: "custom" }]);
+  assert.equal(conPaginasPropias.pages[0].id, "custom");
+  assert.ok(conPaginasPropias.pages.some((p) => p.id === "vender"));
 
   const sinGistPrevio = construirStockJson({ gistActual: null, vehiculos: [], siteConfig: { nombre: "GyG" } });
   assert.deepEqual(sinGistPrevio.pages, DEFAULT_PAGES);
+  assert.ok(sinGistPrevio.pages.some((p) => p.id === "vender"));
   assert.equal(sinGistPrevio.site.name, "GyG");
   assert.equal(sinGistPrevio.meta.concesionaria, "GyG");
   assert.ok(sinGistPrevio.meta.updatedAt);
@@ -193,8 +195,11 @@ test("mergePages pone Contactanos en la página de contacto y deja las demás ig
     { contactoTitulo: "Contactanos", contactoTexto: "Escribinos." }
   );
   assert.equal(pages[0].content.headline, "X");
-  assert.equal(pages[1].content.headline, "Contactanos");
-  assert.equal(pages[1].content.subtitle, "Escribinos.");
+  const vender = pages.find((p) => p.id === "vender");
+  assert.ok(vender);
+  const contacto = pages.find((p) => p.id === "contacto");
+  assert.equal(contacto.content.headline, "Contactanos");
+  assert.equal(contacto.content.subtitle, "Escribinos.");
 });
 
 function fetchFalso(respuestas) {

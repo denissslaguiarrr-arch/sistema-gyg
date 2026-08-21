@@ -16,11 +16,13 @@ test("el tema de Blogger conserva el showroom G&G y no es el catálogo corto", (
   assert.doesNotMatch(tema, /id='gyg-root'/);
 });
 
-test("el tema incluye zoom, Contactanos y redes opcionales", () => {
+test("el tema incluye zoom, Contactanos, Vendé tu auto y redes opcionales", () => {
   assert.match(tema, /gallery__main/);
   assert.match(tema, /object-fit: contain/);
   assert.match(tema, /openLightbox/);
   assert.match(tema, /Contactanos/);
+  assert.match(tema, /Vendé tu auto/);
+  assert.match(tema, /sell-form/);
   assert.match(tema, /btn--instagram/);
   assert.match(tema, /safe-area-inset-bottom/);
   assert.match(tema, /CDATA/);

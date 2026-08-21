@@ -132,13 +132,28 @@ window.GYG_CONFIG = {
         content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0km y usados." },
       },
       {
+        id: "vender",
+        slug: "vender",
+        title: "Vendé tu auto",
+        navLabel: "Vendé tu auto",
+        type: "vender",
+        visible: true,
+        order: 4,
+        filter: {},
+        content: {
+          eyebrow: "Compra y consignación",
+          headline: "Vendé tu auto",
+          subtitle: "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.",
+        },
+      },
+      {
         id: "contacto",
         slug: "contacto",
         title: "Contacto",
         navLabel: "Contacto",
         type: "content",
         visible: true,
-        order: 4,
+        order: 5,
         filter: {},
         content: {
           eyebrow: "Contacto",
@@ -148,6 +163,38 @@ window.GYG_CONFIG = {
         },
       },
     ];
+  }
+
+  function ensureVenderPage(pages) {
+    const lista = Array.isArray(pages) ? pages.slice() : [];
+    if (lista.some((p) => p.id === "vender" || p.slug === "vender")) return lista;
+    const page = {
+      id: "vender",
+      slug: "vender",
+      title: "Vendé tu auto",
+      navLabel: "Vendé tu auto",
+      type: "vender",
+      visible: true,
+      order: 4,
+      filter: {},
+      content: {
+        eyebrow: "Compra y consignación",
+        headline: "Vendé tu auto",
+        subtitle: "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.",
+      },
+    };
+    const idx = lista.findIndex((p) => p.id === "contacto" || p.slug === "contacto");
+    if (idx === -1) {
+      page.order = lista.length;
+      lista.push(page);
+      return lista;
+    }
+    page.order = Number(lista[idx].order) || idx;
+    lista.splice(idx, 0, page);
+    for (let i = idx + 1; i < lista.length; i += 1) {
+      lista[i] = { ...lista[i], order: Number(lista[i].order || i) + 1 };
+    }
+    return lista;
   }
 
   function normalizeData(data) {
@@ -170,6 +217,7 @@ window.GYG_CONFIG = {
         content: p.content && typeof p.content === "object" ? p.content : {},
       }))
       .sort((a, b) => a.order - b.order);
+    pages = ensureVenderPage(pages);
 
     const vehicles = Array.isArray(raw.vehicles)
       ? raw.vehicles.map((v) => ({
@@ -550,6 +598,7 @@ window.GYG_CONFIG = {
     updateNavActive(page.slug || "");
     if (page.type === "home") renderHome(page);
     else if (page.type === "stock") renderStockPage(page);
+    else if (page.type === "vender" || page.id === "vender" || page.slug === "vender") renderVenderPage(page);
     else renderContentPage(page);
   }
 
@@ -628,8 +677,17 @@ window.GYG_CONFIG = {
                 ? `<a class="btn btn--ghost home-hero__ghost" href="${escapeAttr(secondary.href || "#/")}">${escapeHtml(secondary.label)}</a>`
                 : ""
             }
+            <a class="btn btn--ghost home-hero__ghost" href="#/vender">Vendé tu auto</a>
           </div>
         </div>
+      </section>
+      <section class="sell-band" aria-label="Vendé tu auto">
+        <div class="sell-band__copy">
+          <p class="sell-band__eyebrow">Compra directa o consignación</p>
+          <h2>Vendé tu auto con G&amp;G</h2>
+          <p>Completá los datos, lo vemos en el showroom y te hacemos una propuesta. Sin vueltas.</p>
+        </div>
+        <a class="btn btn--primary" href="#/vender">Cotizar mi auto</a>
       </section>
       ${
         highlights.length
@@ -835,6 +893,121 @@ window.GYG_CONFIG = {
     const card = e.target.closest(".vehicle");
     if (!card) return;
     location.hash = `#/auto/${encodeURIComponent(card.dataset.id)}`;
+  }
+
+  function renderVenderPage(page) {
+    const c = page.content || {};
+    const site = data.site || {};
+    const titulo = c.headline || page.title || "Vendé tu auto";
+    const texto =
+      c.subtitle ||
+      "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.";
+    const anioMax = new Date().getFullYear() + 1;
+
+    app.innerHTML = `
+      <section class="hero">
+        <div class="hero__eyebrow">${escapeHtml(c.eyebrow || "Compra y consignación")}</div>
+        <h1>${escapeHtml(titulo)}</h1>
+        <p>${escapeHtml(texto)}</p>
+      </section>
+      <section class="sell-page">
+        <ol class="sell-steps">
+          <li>
+            <span class="sell-steps__n">01</span>
+            <h3>Completá los datos</h3>
+            <p>Marca, modelo, año y kilómetros. En dos minutos armamos una primera idea de valor.</p>
+          </li>
+          <li>
+            <span class="sell-steps__n">02</span>
+            <h3>Lo vemos en el showroom</h3>
+            <p>Coordinamos una visita. Revisamos el auto y te confirmamos la propuesta el mismo día.</p>
+          </li>
+          <li>
+            <span class="sell-steps__n">03</span>
+            <h3>Cobrá o consigná</h3>
+            <p>Compra directa si querés cerrar ya, o consignación si preferís que lo mostremos en el stock.</p>
+          </li>
+        </ol>
+        <form id="sell-form" class="sell-form" novalidate>
+          <h2>Cotizá tu vehículo</h2>
+          <p class="sell-form__lead">Te respondemos por WhatsApp con una estimación. Sin compromiso.</p>
+          <div class="sell-form__grid">
+            <label>Marca
+              <input name="marca" required placeholder="Toyota" autocomplete="off" />
+            </label>
+            <label>Modelo
+              <input name="modelo" required placeholder="Hilux" autocomplete="off" />
+            </label>
+            <label>Año
+              <input name="anio" type="number" required min="1990" max="${anioMax}" placeholder="2018" />
+            </label>
+            <label>Kilómetros
+              <input name="km" type="number" required min="0" step="1" placeholder="80000" />
+            </label>
+            <label>Estado general
+              <select name="estado">
+                <option value="Excelente">Excelente</option>
+                <option value="Muy bueno" selected>Muy bueno</option>
+                <option value="Bueno">Bueno</option>
+                <option value="Regular">Regular</option>
+              </select>
+            </label>
+            <label>¿Cómo preferís venderlo?
+              <select name="modalidad">
+                <option value="No sé todavía">No sé todavía</option>
+                <option value="Compra directa">Que me lo compren</option>
+                <option value="Consignación">Consignación (lo muestran ustedes)</option>
+              </select>
+            </label>
+            <label>Tu nombre
+              <input name="nombre" required placeholder="Nombre y apellido" autocomplete="name" />
+            </label>
+            <label>Teléfono
+              <input name="telefono" required placeholder="Ej. 3735..." autocomplete="tel" />
+            </label>
+            <label class="sell-form__full">Comentario (opcional)
+              <textarea name="comentario" rows="3" placeholder="Único dueño, service al día, permuta..."></textarea>
+            </label>
+          </div>
+          <button type="submit" class="btn btn--primary">Enviar por WhatsApp</button>
+          <p class="sell-form__hint">La cotización es orientativa. El valor final se confirma al ver el vehículo.</p>
+        </form>
+      </section>
+    `;
+
+    document.getElementById("sell-form")?.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const form = ev.currentTarget;
+      const val = (name) => String((form.elements[name] && form.elements[name].value) || "").trim();
+      const marca = val("marca");
+      const modelo = val("modelo");
+      const anio = val("anio");
+      const km = val("km");
+      const nombre = val("nombre");
+      const telefono = val("telefono");
+      if (!marca || !modelo || !anio || !km || !nombre || !telefono) {
+        toast("Completá marca, modelo, año, kilómetros, nombre y teléfono.", "error");
+        return;
+      }
+      const phone = GyGStock.whatsappPhone(data);
+      if (!phone) {
+        toast("Falta el WhatsApp de la concesionaria en Configuración del sitio.", "error");
+        return;
+      }
+      const nameBrand = displayBrandName(site.name || "G&G");
+      const lineas = [
+        `Hola ${nameBrand}, quiero vender mi auto:`,
+        `${marca} ${modelo} ${anio}`,
+        `Km: ${km}`,
+        `Estado: ${val("estado")}`,
+        `Modalidad: ${val("modalidad")}`,
+        `Nombre: ${nombre}`,
+        `Tel: ${telefono}`,
+      ];
+      if (val("comentario")) lineas.push(`Comentario: ${val("comentario")}`);
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(lineas.join("\n"))}`;
+      window.open(url, "_blank", "noopener");
+    });
   }
 
   function renderContentPage(page) {

@@ -322,6 +322,10 @@ hero), no sobre el catálogo corto de 477 líneas. El nombre visible es
 - En el celular hay margen inferior para que Contacto no se corte.
 - El título de Contacto es **Contactanos**. Instagram y Facebook se cargan
   en el panel; si el campo está vacío, esa red no aparece.
+- **Vendé tu auto**: en el menú y en el inicio hay un apartado para cotizar
+  (compra directa o consignación). El formulario abre WhatsApp con los datos
+  del vehículo. Tras pegar el tema nuevo, **Publicar en la web** deja la
+  página también en el Gist.
 
 Para actualizar el blog (hacé una copia de seguridad antes):
 

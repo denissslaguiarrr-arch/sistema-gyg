@@ -1176,6 +1176,159 @@ textarea {
   }
 }
 
+.sell-band {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.sell-band__copy {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 52ch;
+}
+
+.sell-band__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.sell-band h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+.sell-band p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.sell-page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4.5rem + var(--safe-bottom));
+  display: grid;
+  gap: 2rem;
+}
+
+.sell-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.sell-steps li {
+  padding: 1.25rem 1.1rem 1.35rem;
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+}
+
+.sell-steps__n {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  color: var(--orange);
+  margin-bottom: 0.55rem;
+}
+
+.sell-steps h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.sell-steps p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.sell-form {
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem 1.25rem 1.75rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.sell-form h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+}
+
+.sell-form__lead,
+.sell-form__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.sell-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 1rem;
+}
+
+.sell-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sell-form input,
+.sell-form select,
+.sell-form textarea {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.sell-form input:focus,
+.sell-form select:focus,
+.sell-form textarea:focus {
+  outline: 2px solid var(--orange-glow);
+  border-color: var(--orange);
+}
+
+.sell-form__full {
+  grid-column: 1 / -1;
+}
+
+.sell-form .btn {
+  justify-self: start;
+  margin-top: 0.25rem;
+}
+
 @media (max-width: 980px) {
   .filters__panel {
     grid-template-columns: 1fr 1fr;
@@ -1202,6 +1355,10 @@ textarea {
   .form-grid .span-3 {
     grid-column: span 2;
   }
+
+  .sell-steps {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 640px) {
@@ -1220,6 +1377,10 @@ textarea {
 
   .home-hero__content {
     padding: 3rem 1.25rem 2.25rem;
+  }
+
+  .sell-form__grid {
+    grid-template-columns: 1fr;
   }
 
   .filters__panel,
@@ -1254,6 +1415,7 @@ textarea {
   }
 
   .content-page,
+  .sell-page,
   .detail,
   .stock {
     padding-bottom: calc(5.5rem + var(--safe-bottom));

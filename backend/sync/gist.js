@@ -38,8 +38,17 @@ const DEFAULT_PAGES = [
     content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0km y usados." },
   },
   {
-    id: "contacto", slug: "contacto", title: "Contacto", navLabel: "Contacto", type: "content",
+    id: "vender", slug: "vender", title: "Vendé tu auto", navLabel: "Vendé tu auto", type: "vender",
     visible: true, order: 4, filter: {},
+    content: {
+      eyebrow: "Compra y consignación",
+      headline: "Vendé tu auto",
+      subtitle: "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.",
+    },
+  },
+  {
+    id: "contacto", slug: "contacto", title: "Contacto", navLabel: "Contacto", type: "content",
+    visible: true, order: 5, filter: {},
     content: {
       eyebrow: "Contacto", headline: "Contactanos",
       subtitle: "Consultá disponibilidad, financiación o una visita al showroom.",
@@ -125,11 +134,50 @@ function esPaginaContacto(page) {
   return page && (page.id === "contacto" || page.slug === "contacto");
 }
 
+function esPaginaVender(page) {
+  return page && (page.id === "vender" || page.slug === "vender");
+}
+
+function paginaVenderPorDefecto() {
+  return {
+    id: "vender",
+    slug: "vender",
+    title: "Vendé tu auto",
+    navLabel: "Vendé tu auto",
+    type: "vender",
+    visible: true,
+    order: 4,
+    filter: {},
+    content: {
+      eyebrow: "Compra y consignación",
+      headline: "Vendé tu auto",
+      subtitle: "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.",
+    },
+  };
+}
+
+function insertarPaginaVender(pages) {
+  const lista = Array.isArray(pages) ? pages.map((p) => ({ ...p })) : [];
+  if (lista.some(esPaginaVender)) return lista;
+  const page = paginaVenderPorDefecto();
+  const idx = lista.findIndex(esPaginaContacto);
+  if (idx === -1) {
+    page.order = lista.length;
+    lista.push(page);
+    return lista;
+  }
+  page.order = Number.isFinite(Number(lista[idx].order)) ? Number(lista[idx].order) : idx;
+  lista.splice(idx, 0, page);
+  for (let i = idx + 1; i < lista.length; i += 1) {
+    lista[i] = { ...lista[i], order: Number(lista[i].order || i) + 1 };
+  }
+  return lista;
+}
+
 function mergePages(gistPages, site) {
-  const base =
-    Array.isArray(gistPages) && gistPages.length
-      ? gistPages
-      : DEFAULT_PAGES;
+  const base = insertarPaginaVender(
+    Array.isArray(gistPages) && gistPages.length ? gistPages : DEFAULT_PAGES
+  );
   return base.map((page) => {
     if (!esPaginaContacto(page)) return page;
     const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
@@ -315,6 +363,7 @@ module.exports = {
   mapearVehiculoDesdeGist,
   mergeSiteConfig,
   mergePages,
+  insertarPaginaVender,
   construirStockJson,
   obtenerGistActual,
   publicarEnGist,
