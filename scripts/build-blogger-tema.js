@@ -42,6 +42,11 @@ ${css}
               <img alt='G&amp;G Automotores' class='brand__logo' src='${logoSrc}'/>
               <div class='brand__tag' id='brandTag'>Selección premium</div>
             </a>
+            <button aria-controls='navLinks' aria-expanded='false' aria-label='Abrir menú' class='nav-toggle' id='navToggle' type='button'>
+              <span class='nav-toggle__bar'></span>
+              <span class='nav-toggle__bar'></span>
+              <span class='nav-toggle__bar'></span>
+            </button>
             <nav aria-label='Secciones' class='nav-links' id='navLinks'/>
           </div>
         </header>

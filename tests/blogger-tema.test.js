@@ -73,6 +73,18 @@ test("el hero no usa un & tipográfico entre las G", () => {
   assert.doesNotMatch(css, /brand-amp/);
 });
 
+test("en el celular el menú es un botón y la foto de inicio es una imagen real", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(css, /\.nav-toggle/);
+  assert.match(css, /@media \(max-width: 920px\)/);
+  assert.match(js, /home-hero__photo/);
+  assert.match(js, /setupNavToggle/);
+  assert.match(tema, /nav-toggle/);
+  assert.match(tema, /home-hero__photo/);
+  assert.doesNotMatch(js, /--hero-image: url\(/);
+});
+
 test("los títulos 0 km y Usados caben en el celular", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");

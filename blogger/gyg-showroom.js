@@ -718,6 +718,32 @@ window.GYG_CONFIG = {
     });
   }
 
+  function cerrarMenu() {
+    const header = document.querySelector(".site-header");
+    const btn = document.getElementById("navToggle");
+    if (header) header.classList.remove("is-open");
+    if (btn) {
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-label", "Abrir menú");
+    }
+  }
+
+  function setupNavToggle() {
+    const header = document.querySelector(".site-header");
+    const btn = document.getElementById("navToggle");
+    if (!header || !btn || btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      const open = header.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+    });
+    navEl?.addEventListener("click", (ev) => {
+      if (ev.target.closest("a")) cerrarMenu();
+    });
+    window.addEventListener("hashchange", cerrarMenu);
+  }
+
   function placeholderImg() {
     return (
       "data:image/svg+xml," +
@@ -925,7 +951,8 @@ window.GYG_CONFIG = {
     const carouselVehicles = GyGStock.pickCarouselVehicles(data, 8);
 
     app.innerHTML = `
-      <section class="home-hero" style="--hero-image: url('${escapeAttr(hero)}')">
+      <section class="home-hero">
+        <img class="home-hero__photo" src="${escapeAttr(hero)}" alt="" />
         <div class="home-hero__veil"></div>
         <div class="home-hero__content">
           <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
@@ -1707,5 +1734,6 @@ window.GYG_CONFIG = {
   }
 
   window.addEventListener("hashchange", route);
+  setupNavToggle();
   init();
 })();
