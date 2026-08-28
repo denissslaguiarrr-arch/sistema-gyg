@@ -73,6 +73,19 @@ test("el hero no usa un & tipográfico entre las G", () => {
   assert.doesNotMatch(css, /brand-amp/);
 });
 
+test("al cambiar de página el scroll vuelve arriba y hay WhatsApp fijo y volver arriba", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  assert.match(js, /function scrollPaginaArriba/);
+  assert.match(js, /scrollPaginaArriba\(\);/);
+  assert.match(js, /actualizarWhatsappBar/);
+  assert.match(js, /setupBackTop/);
+  assert.match(css, /\.wa-bar/);
+  assert.match(css, /\.back-top/);
+  assert.match(tema, /id='waBar'/);
+  assert.match(tema, /id='backTop'/);
+});
+
 test("si el catálogo no carga, el visitante ve reintentar y no un formulario de Gist", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(js, /El catálogo no se pudo cargar/);

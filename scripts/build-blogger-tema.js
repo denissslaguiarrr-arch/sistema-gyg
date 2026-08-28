@@ -58,6 +58,8 @@ ${css}
           <div id='footerUpdated'>Stock en vivo</div>
         </footer>
       </div>
+      <a class='wa-bar hidden' id='waBar' rel='noopener' target='_blank'>WhatsApp</a>
+      <button aria-label='Volver arriba' class='back-top' id='backTop' type='button'>↑</button>
       <div aria-live='polite' class='toast' id='toast' role='status'/>
     </div>
 

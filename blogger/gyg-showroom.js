@@ -663,12 +663,50 @@ window.GYG_CONFIG = {
     return { kind: "page", slug: decodeURIComponent(path) };
   }
 
+  function scrollPaginaArriba() {
+    const ir = () => {
+      try {
+        window.scrollTo(0, 0);
+      } catch (_err) {}
+      document.documentElement.scrollTop = 0;
+      document.body.scrollTop = 0;
+      const root = document.getElementById("gyg-blogger-root");
+      if (root) root.scrollTop = 0;
+      const shell = document.querySelector(".app-shell");
+      if (shell) shell.scrollTop = 0;
+      const appEl = document.getElementById("app");
+      if (appEl) appEl.scrollTop = 0;
+    };
+    ir();
+    requestAnimationFrame(() => {
+      ir();
+      requestAnimationFrame(ir);
+    });
+  }
+
+  function actualizarWhatsappBar(vehicle) {
+    const wa = document.getElementById("waBar");
+    if (!wa) return;
+    const phone = GyGStock.whatsappPhone(data);
+    if (!phone) {
+      wa.classList.add("hidden");
+      document.body.classList.remove("has-wa-bar");
+      return;
+    }
+    wa.href = GyGStock.whatsappUrl(data, vehicle || null);
+    wa.classList.remove("hidden");
+    document.body.classList.add("has-wa-bar");
+  }
+
   function route() {
     stopCarousel();
+    scrollPaginaArriba();
     const r = parseRoute();
     if (r.kind === "auto") {
+      const v = GyGStock.findVehicle(data, r.id);
       renderDetail(r.id);
       updateNavActive("__auto__");
+      actualizarWhatsappBar(v);
       return;
     }
     const page = GyGStock.findPageBySlug(data, r.slug);
@@ -678,6 +716,7 @@ window.GYG_CONFIG = {
           <div class="empty-state">Página no encontrada. <a href="#/">Volver al inicio</a></div>
         </section>`;
       updateNavActive("");
+      actualizarWhatsappBar(null);
       return;
     }
     updateNavActive(page.slug || "");
@@ -685,6 +724,7 @@ window.GYG_CONFIG = {
     else if (page.type === "stock") renderStockPage(page);
     else if (page.type === "vender" || page.id === "vender" || page.slug === "vender") renderVenderPage(page);
     else renderContentPage(page);
+    actualizarWhatsappBar(null);
   }
 
   function updateChrome() {
@@ -705,6 +745,7 @@ window.GYG_CONFIG = {
     }
     document.title = `${displayBrandName(site.name)} — ${GyGStock.reescribirMarca(site.tagline || "Stock")}`;
     renderNav();
+    actualizarWhatsappBar(null);
   }
 
   function renderNav() {
@@ -749,6 +790,19 @@ window.GYG_CONFIG = {
       if (ev.target.closest("a")) cerrarMenu();
     });
     window.addEventListener("hashchange", cerrarMenu);
+  }
+
+  function setupBackTop() {
+    const btn = document.getElementById("backTop");
+    if (!btn || btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    const sync = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      btn.classList.toggle("is-visible", y > 420);
+    };
+    btn.addEventListener("click", () => scrollPaginaArriba());
+    window.addEventListener("scroll", sync, { passive: true });
+    sync();
   }
 
   function placeholderImg() {
@@ -1754,7 +1808,11 @@ window.GYG_CONFIG = {
     }
   }
 
+  try {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  } catch (_err) {}
   window.addEventListener("hashchange", route);
   setupNavToggle();
+  setupBackTop();
   init();
 })();
