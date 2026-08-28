@@ -95,6 +95,7 @@ CREATE TABLE IF NOT EXISTS ConfiguracionSitio (
   facebook    TEXT NOT NULL DEFAULT '',
   contacto_titulo TEXT NOT NULL DEFAULT 'Contactanos',
   contacto_texto  TEXT NOT NULL DEFAULT '',
+  direccion     TEXT NOT NULL DEFAULT '',
   footer_text TEXT NOT NULL DEFAULT '',
   hero_image  TEXT NOT NULL DEFAULT '',
   imgbb_api_key TEXT NOT NULL DEFAULT '',

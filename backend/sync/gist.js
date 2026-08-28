@@ -126,6 +126,7 @@ function mergeSiteConfig(gistSite, config) {
     facebook: tiene(cfg, "facebook") ? cfg.facebook || "" : gs.facebook || "",
     contactoTitulo: reescribirMarca(cfg.contactoTitulo || gs.contactoTitulo || "Contactanos"),
     contactoTexto: reescribirMarca(cfg.contactoTexto || gs.contactoTexto || ""),
+    direccion: tiene(cfg, "direccion") ? reescribirMarca(cfg.direccion || "") : reescribirMarca(gs.direccion || ""),
     footerText: reescribirMarca(cfg.footerText || gs.footerText || ""),
     heroImage: cfg.heroImage || gs.heroImage || "",
   };

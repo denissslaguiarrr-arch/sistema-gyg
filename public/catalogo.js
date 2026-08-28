@@ -110,6 +110,7 @@
       facebook: s.facebook || "",
       contactoTitulo: marca(s.contactoTitulo || "Contactanos"),
       contactoTexto: marca(s.contactoTexto || ""),
+      direccion: marca(s.direccion || ""),
       footerText: marca(s.footerText || ""),
       heroImage: s.heroImage || "",
     };
@@ -227,6 +228,9 @@
       '</h2><p class="gyg-muted">' +
       esc(texto) +
       "</p>";
+    if (s.direccion) {
+      html += '<p>' + esc(s.direccion) + "</p>";
+    }
     if (wa) {
       html +=
         '<a class="gyg-btn gyg-wa" href="https://wa.me/' +

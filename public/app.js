@@ -156,6 +156,7 @@ const el = {
   cFacebook: document.getElementById("c-facebook"),
   cContactoTitulo: document.getElementById("c-contacto-titulo"),
   cContactoTexto: document.getElementById("c-contacto-texto"),
+  cDireccion: document.getElementById("c-direccion"),
   cFooter: document.getElementById("c-footer"),
   cHero: document.getElementById("c-hero"),
   cHeroArchivo: document.getElementById("c-hero-archivo"),
@@ -477,6 +478,7 @@ el.btnConfigSitio.addEventListener("click", async () => {
     el.cFacebook.value = config.facebook || "";
     el.cContactoTitulo.value = config.contactoTitulo || "Contactanos";
     el.cContactoTexto.value = config.contactoTexto || "";
+    if (el.cDireccion) el.cDireccion.value = config.direccion || "";
     el.cFooter.value = config.footerText || "";
     el.cHero.value = config.heroImage || "";
     actualizarPreviewHero();
@@ -521,6 +523,7 @@ el.formConfig.addEventListener("submit", async (evento) => {
         facebook: el.cFacebook.value.trim(),
         contactoTitulo: el.cContactoTitulo.value.trim() || "Contactanos",
         contactoTexto: el.cContactoTexto.value.trim(),
+        direccion: el.cDireccion ? el.cDireccion.value.trim() : "",
         footerText: el.cFooter.value.trim(),
         heroImage: el.cHero.value.trim(),
         imgbbApiKey: el.cImgbb && el.cImgbb.value.trim() ? el.cImgbb.value.trim() : undefined,

@@ -93,6 +93,26 @@ test("si el catálogo no carga, el visitante ve reintentar y no un formulario de
   assert.match(js, /clearStoredGistId/);
 });
 
+test("Contacto tiene mapa, ficha con migas y similares, privacidad y carga con esqueleto", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  assert.match(js, /function mapsEmbedUrl/);
+  assert.match(js, /maps\.google\.com\/maps\?q=/);
+  assert.match(js, /function renderPrivacidad/);
+  assert.match(js, /slug === "privacidad"/);
+  assert.match(js, /function pickSimilarVehicles/);
+  assert.match(js, /También te puede interesar/);
+  assert.match(js, /class="crumbs"/);
+  assert.match(css, /\.contact-map/);
+  assert.match(css, /\.skeleton-page/);
+  assert.match(css, /\.crumbs/);
+  assert.match(tema, /href='#\/privacidad'/);
+  assert.match(tema, /Privacidad/);
+  assert.match(tema, /skeleton-page/);
+  assert.match(tema, /Sistema de gestión para concesionarias/);
+  assert.match(tema, /contact-map/);
+});
+
 test("en el celular el menú es un botón y la foto de inicio es una imagen real", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");

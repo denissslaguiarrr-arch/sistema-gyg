@@ -87,6 +87,7 @@ router.get("/catalogo", (_req, res) => {
       facebook: cfg.facebook || "",
       contactoTitulo: cfg.contacto_titulo || "Contactanos",
       contactoTexto: cfg.contacto_texto || "",
+      direccion: cfg.direccion || "",
       footerText: cfg.footer_text,
       heroImage: cfg.hero_image,
     },

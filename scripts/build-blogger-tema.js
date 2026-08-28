@@ -51,11 +51,24 @@ ${css}
           </div>
         </header>
         <main id='app'>
-          <div class='loading-state' style='margin:2rem 1.25rem'>Cargando sitio&#8230;</div>
+          <div aria-busy='true' aria-label='Cargando sitio' class='skeleton-page'>
+            <div class='skeleton skeleton--hero'></div>
+            <div class='stock-grid'>
+              <div class='skeleton skeleton--card'></div>
+              <div class='skeleton skeleton--card'></div>
+              <div class='skeleton skeleton--card'></div>
+            </div>
+          </div>
         </main>
         <footer class='site-footer'>
-          <div>G&amp;G Automotores <span id='year'/></div>
-          <div id='footerUpdated'>Stock en vivo</div>
+          <div class='site-footer__main'>
+            <div>G&amp;G Automotores <span id='year'/></div>
+            <div id='footerUpdated'>Stock en vivo</div>
+          </div>
+          <div class='site-footer__legal'>
+            <a href='#/privacidad'>Privacidad</a>
+            <span class='footer-credit'>Sistema de gestión para concesionarias</span>
+          </div>
         </footer>
       </div>
       <a class='wa-bar hidden' id='waBar' rel='noopener' target='_blank'>WhatsApp</a>

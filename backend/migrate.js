@@ -73,6 +73,7 @@ function migrate(db) {
         facebook    TEXT NOT NULL DEFAULT '',
         contacto_titulo TEXT NOT NULL DEFAULT 'Contactanos',
         contacto_texto  TEXT NOT NULL DEFAULT '',
+        direccion   TEXT NOT NULL DEFAULT '',
         footer_text TEXT NOT NULL DEFAULT '',
         hero_image  TEXT NOT NULL DEFAULT '',
         updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
@@ -85,6 +86,7 @@ function migrate(db) {
   ensureColumn(db, "ConfiguracionSitio", "facebook", "TEXT NOT NULL DEFAULT ''");
   ensureColumn(db, "ConfiguracionSitio", "contacto_titulo", "TEXT NOT NULL DEFAULT 'Contactanos'");
   ensureColumn(db, "ConfiguracionSitio", "contacto_texto", "TEXT NOT NULL DEFAULT ''");
+  ensureColumn(db, "ConfiguracionSitio", "direccion", "TEXT NOT NULL DEFAULT ''");
   ensureColumn(db, "ConfiguracionSitio", "imgbb_api_key", "TEXT NOT NULL DEFAULT ''");
   ensureColumn(db, "ConfiguracionSitio", "gist_id", "TEXT NOT NULL DEFAULT '74837d1c1f0a9a3a67e6dc5cc4fa5b6f'");
   ensureColumn(db, "ConfiguracionSitio", "github_token", "TEXT NOT NULL DEFAULT ''");

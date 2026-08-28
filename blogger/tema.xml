@@ -517,6 +517,105 @@ textarea {
   margin-top: 0.25rem;
 }
 
+.contact-address {
+  margin: 0 0 1rem;
+  font-size: 1.02rem;
+  color: var(--text);
+}
+
+.contact-address a {
+  color: var(--orange);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contact-map {
+  margin-top: 1.5rem;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--silver-soft);
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 280px;
+  border: 0;
+  display: block;
+}
+
+.privacy p {
+  max-width: 62ch;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+  font-size: 1.02rem;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.45rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+}
+
+.crumbs a {
+  color: var(--muted);
+}
+
+.crumbs a:hover {
+  color: var(--orange);
+}
+
+.crumbs__current {
+  color: var(--text);
+}
+
+.similar {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4rem + var(--safe-bottom));
+}
+
+.similar__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin: 0 0 1rem;
+}
+
+.skeleton-page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e8ecf1 0%, #f7f8fa 45%, #e8ecf1 90%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.15s ease-in-out infinite;
+}
+
+.skeleton--hero {
+  height: 220px;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton--card {
+  grid-column: span 4;
+  min-height: 220px;
+  aspect-ratio: 16 / 12;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
 .badge--cat {
   display: none;
 }
@@ -1364,9 +1463,35 @@ textarea {
   font-size: 0.85rem;
   border-top: 1px solid var(--line);
   display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.site-footer__main {
+  display: flex;
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.site-footer__legal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+
+.site-footer__legal a {
+  color: var(--muted);
+}
+
+.site-footer__legal a:hover {
+  color: var(--orange);
+}
+
+.footer-credit {
+  opacity: 0.72;
 }
 
 .wa-bar {
@@ -1915,8 +2040,13 @@ textarea {
   .content-page,
   .sell-page,
   .detail,
-  .stock {
+  .stock,
+  .similar {
     padding-bottom: calc(5.5rem + var(--safe-bottom));
+  }
+
+  .skeleton--card {
+    grid-column: span 12;
   }
 }
 
@@ -1943,11 +2073,24 @@ textarea {
           </div>
         </header>
         <main id='app'>
-          <div class='loading-state' style='margin:2rem 1.25rem'>Cargando sitio&#8230;</div>
+          <div aria-busy='true' aria-label='Cargando sitio' class='skeleton-page'>
+            <div class='skeleton skeleton--hero'></div>
+            <div class='stock-grid'>
+              <div class='skeleton skeleton--card'></div>
+              <div class='skeleton skeleton--card'></div>
+              <div class='skeleton skeleton--card'></div>
+            </div>
+          </div>
         </main>
         <footer class='site-footer'>
-          <div>G&amp;G Automotores <span id='year'/></div>
-          <div id='footerUpdated'>Stock en vivo</div>
+          <div class='site-footer__main'>
+            <div>G&amp;G Automotores <span id='year'/></div>
+            <div id='footerUpdated'>Stock en vivo</div>
+          </div>
+          <div class='site-footer__legal'>
+            <a href='#/privacidad'>Privacidad</a>
+            <span class='footer-credit'>Sistema de gestión para concesionarias</span>
+          </div>
         </footer>
       </div>
       <a class='wa-bar hidden' id='waBar' rel='noopener' target='_blank'>WhatsApp</a>
@@ -2057,6 +2200,7 @@ window.GYG_CONFIG = {
       facebook: "",
       contactoTitulo: "Contactanos",
       contactoTexto: "",
+      direccion: "",
       footerText: "G\u0026G Automotores",
       heroImage: "",
     };
@@ -2416,6 +2560,37 @@ window.GYG_CONFIG = {
     });
   }
 
+  function mapsEmbedUrl(direccion) {
+    const q = String(direccion || "").trim();
+    if (!q) return "";
+    return `https://maps.google.com/maps?q=${encodeURIComponent(q)}&hl=es&z=15&output=embed`;
+  }
+
+  function mapsSearchUrl(direccion) {
+    const q = String(direccion || "").trim();
+    if (!q) return "";
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  }
+
+  function pickSimilarVehicles(data, vehicle, limit) {
+    if (!vehicle) return [];
+    const cap = Math.max(1, Math.min(8, Number(limit) || 3));
+    const list = publicVehicles(data, {}).filter((v) => v && v.id !== vehicle.id);
+    const marca = String(vehicle.marca || "").toLowerCase();
+    const sameBrand = marca ? list.filter((v) => String(v.marca || "").toLowerCase() === marca) : [];
+    const pool = sameBrand.length ? sameBrand : list;
+    const precio = Number(vehicle.precio_oferta || vehicle.precio) || 0;
+    return [...pool]
+      .sort((a, b) => {
+        const catA = a.categoria === vehicle.categoria ? 0 : 1;
+        const catB = b.categoria === vehicle.categoria ? 0 : 1;
+        const pa = Math.abs((Number(a.precio_oferta || a.precio) || 0) - precio);
+        const pb = Math.abs((Number(b.precio_oferta || b.precio) || 0) - precio);
+        return catA - catB || pa - pb;
+      })
+      .slice(0, cap);
+  }
+
   // Destacados primero; completa con el resto del stock público (hasta `limit`).
   function pickCarouselVehicles(data, limit) {
     const cap = Math.max(1, Math.min(24, Number(limit) || 8));
@@ -2535,6 +2710,9 @@ window.GYG_CONFIG = {
     pageHref,
     publicVehicles,
     pickCarouselVehicles,
+    pickSimilarVehicles,
+    mapsEmbedUrl,
+    mapsSearchUrl,
     findVehicle,
     whatsappPhone,
     whatsappUrl,
@@ -2666,6 +2844,12 @@ window.GYG_CONFIG = {
       renderDetail(r.id);
       updateNavActive("__auto__");
       actualizarWhatsappBar(v);
+      return;
+    }
+    if (r.slug === "privacidad") {
+      renderPrivacidad();
+      updateNavActive("");
+      actualizarWhatsappBar(null);
       return;
     }
     const page = GyGStock.findPageBySlug(data, r.slug);
@@ -3432,6 +3616,9 @@ window.GYG_CONFIG = {
     const ig = (site.instagram || "").trim();
     const fb = (site.facebook || "").trim();
     const showWa = c.showWhatsapp || isContacto;
+    const direccion = isContacto ? String(site.direccion || "").trim() : "";
+    const mapa = direccion ? GyGStock.mapsEmbedUrl(direccion) : "";
+    const mapaLink = direccion ? GyGStock.mapsSearchUrl(direccion) : "";
 
     app.innerHTML = `
       <section class="hero">
@@ -3441,6 +3628,15 @@ window.GYG_CONFIG = {
       </section>
       <section class="content-page">
         ${c.body ? `<p class="content-page__body">${escapeHtml(c.body)}</p>` : ""}
+        ${
+          direccion
+            ? `<p class="contact-address">${escapeHtml(direccion)}${
+                mapaLink
+                  ? ` · <a href="${escapeAttr(mapaLink)}" target="_blank" rel="noopener">Abrir en Maps</a>`
+                  : ""
+              }</p>`
+            : ""
+        }
         <div class="detail__cta content-page__cta">
           ${
             showWa
@@ -3449,6 +3645,40 @@ window.GYG_CONFIG = {
           }
           ${ig ? `<a class="btn btn--instagram" target="_blank" rel="noopener" href="${escapeAttr(ig)}">Instagram</a>` : ""}
           ${fb ? `<a class="btn btn--facebook" target="_blank" rel="noopener" href="${escapeAttr(fb)}">Facebook</a>` : ""}
+        </div>
+        ${
+          mapa
+            ? `<div class="contact-map"><iframe title="Mapa del local" src="${escapeAttr(mapa)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>`
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  function renderPrivacidad() {
+    const site = data.site || {};
+    const marca = displayBrandName(site.name);
+    const phone = GyGStock.whatsappPhone(data);
+    document.title = `Privacidad — ${marca}`;
+    app.innerHTML = `
+      <section class="hero">
+        <div class="hero__eyebrow">Legal</div>
+        <h1>Privacidad</h1>
+        <p>Cómo usamos los datos en este sitio.</p>
+      </section>
+      <section class="content-page privacy">
+        <p>${escapeHtml(marca)} publica el stock de vehículos en este sitio y en un catálogo público en la nube.</p>
+        <p>Si nos escribís por WhatsApp o el formulario “Vendé tu auto”, el mensaje llega a nuestro WhatsApp. No guardamos ese formulario en una base de datos de internet.</p>
+        <p>En el navegador puede quedar un identificador técnico del catálogo para que el sitio cargue. No usamos publicidad de terceros.</p>
+        <p>Las fotos de los autos se alojan en el servicio de imágenes que usa la concesionaria.</p>
+        <p>Para consultas sobre tus datos, escribinos por WhatsApp.</p>
+        <div class="detail__cta content-page__cta">
+          <a class="btn btn--ghost" href="#/">Volver al inicio</a>
+          ${
+            phone
+              ? `<a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data))}">WhatsApp</a>`
+              : ""
+          }
         </div>
       </section>
     `;
@@ -3624,9 +3854,28 @@ window.GYG_CONFIG = {
       ["Referencia", v.id],
     ];
 
+    const similares = GyGStock.pickSimilarVehicles(data, v, 3);
+    const stockSlug =
+      String(v.categoria || "").toLowerCase() === "0km"
+        ? GyGStock.findPageBySlug(data, "0km")
+          ? "0km"
+          : "stock"
+        : GyGStock.findPageBySlug(data, "usados")
+          ? "usados"
+          : "stock";
+    const stockLabel = stockSlug === "0km" ? "0 km" : stockSlug === "usados" ? "Usados" : "Stock";
+    const stockHref = `#/${stockSlug}`;
+    const nombreAuto = `${v.marca} ${v.modelo}`.trim();
+
     app.innerHTML = `
       <section class="detail">
-        <button type="button" class="btn btn--ghost detail__back" id="backBtn">← Volver</button>
+        <nav class="crumbs" aria-label="Ubicación">
+          <a href="#/">Inicio</a>
+          <span class="crumbs__sep" aria-hidden="true">/</span>
+          <a href="${escapeAttr(stockHref)}">${escapeHtml(stockLabel)}</a>
+          <span class="crumbs__sep" aria-hidden="true">/</span>
+          <span class="crumbs__current">${escapeHtml(nombreAuto)}</span>
+        </nav>
         <div class="detail__layout">
           <div class="gallery">
             <div class="gallery__main" id="galleryMain">
@@ -3671,11 +3920,24 @@ window.GYG_CONFIG = {
           </aside>
         </div>
       </section>
+      ${
+        similares.length
+          ? `<section class="similar" aria-label="También te puede interesar">
+              <h2 class="similar__title">También te puede interesar</h2>
+              <div class="stock-grid" id="similarGrid">
+                ${similares.map((item) => vehicleCard(item, false)).join("")}
+              </div>
+            </section>`
+          : ""
+      }
     `;
 
-    document.getElementById("backBtn")?.addEventListener("click", () => {
-      if (history.length > 1) history.back();
-      else location.hash = "#/stock";
+    document.getElementById("similarGrid")?.addEventListener("click", onCardActivate);
+    document.getElementById("similarGrid")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onCardActivate(e);
+      }
     });
 
     const galleryMain = document.getElementById("galleryMain");

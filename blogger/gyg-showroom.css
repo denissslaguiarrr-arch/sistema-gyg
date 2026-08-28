@@ -506,6 +506,105 @@ textarea {
   margin-top: 0.25rem;
 }
 
+.contact-address {
+  margin: 0 0 1rem;
+  font-size: 1.02rem;
+  color: var(--text);
+}
+
+.contact-address a {
+  color: var(--orange);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contact-map {
+  margin-top: 1.5rem;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--silver-soft);
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 280px;
+  border: 0;
+  display: block;
+}
+
+.privacy p {
+  max-width: 62ch;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+  font-size: 1.02rem;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.45rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+}
+
+.crumbs a {
+  color: var(--muted);
+}
+
+.crumbs a:hover {
+  color: var(--orange);
+}
+
+.crumbs__current {
+  color: var(--text);
+}
+
+.similar {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4rem + var(--safe-bottom));
+}
+
+.similar__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin: 0 0 1rem;
+}
+
+.skeleton-page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e8ecf1 0%, #f7f8fa 45%, #e8ecf1 90%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.15s ease-in-out infinite;
+}
+
+.skeleton--hero {
+  height: 220px;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton--card {
+  grid-column: span 4;
+  min-height: 220px;
+  aspect-ratio: 16 / 12;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
 .badge--cat {
   display: none;
 }
@@ -1353,9 +1452,35 @@ textarea {
   font-size: 0.85rem;
   border-top: 1px solid var(--line);
   display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+.site-footer__main {
+  display: flex;
   justify-content: space-between;
   gap: 1rem;
   flex-wrap: wrap;
+}
+
+.site-footer__legal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+
+.site-footer__legal a {
+  color: var(--muted);
+}
+
+.site-footer__legal a:hover {
+  color: var(--orange);
+}
+
+.footer-credit {
+  opacity: 0.72;
 }
 
 .wa-bar {
@@ -1904,7 +2029,12 @@ textarea {
   .content-page,
   .sell-page,
   .detail,
-  .stock {
+  .stock,
+  .similar {
     padding-bottom: calc(5.5rem + var(--safe-bottom));
+  }
+
+  .skeleton--card {
+    grid-column: span 12;
   }
 }

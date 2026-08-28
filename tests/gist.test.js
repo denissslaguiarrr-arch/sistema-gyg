@@ -170,6 +170,15 @@ test("mergeSiteConfig puede vaciar Instagram/Facebook si el panel manda el campo
   assert.equal(limpio.facebook, "");
 });
 
+test("mergeSiteConfig publica la dirección para el mapa de Contacto", () => {
+  const conDir = mergeSiteConfig({}, { direccion: "Av. San Martín 100, Resistencia" });
+  assert.equal(conDir.direccion, "Av. San Martín 100, Resistencia");
+  const limpio = mergeSiteConfig({ direccion: "vieja" }, { direccion: "" });
+  assert.equal(limpio.direccion, "");
+  const gistGana = mergeSiteConfig({ direccion: "del gist" }, {});
+  assert.equal(gistGana.direccion, "del gist");
+});
+
 test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si no hay ninguna", () => {
   const conPaginasPropias = construirStockJson({
     gistActual: { site: {}, pages: [{ id: "custom", slug: "custom" }] },

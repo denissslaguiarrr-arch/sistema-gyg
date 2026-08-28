@@ -59,6 +59,7 @@ test("GET /api/config/sitio devuelve valores vacíos por defecto", async () => {
   assert.equal(body.instagram, "");
   assert.equal(body.facebook, "");
   assert.equal(body.contactoTitulo, "Contactanos");
+  assert.equal(body.direccion, "");
   assert.equal(body.imgbbConfigurado, false);
   assert.equal(body.imgbbApiKey, undefined);
   assert.equal(body.gistId, "74837d1c1f0a9a3a67e6dc5cc4fa5b6f");
@@ -93,6 +94,7 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
       facebook: "",
       contactoTitulo: "Contactanos",
       contactoTexto: "Escribinos por WhatsApp o Instagram.",
+      direccion: "Av. San Martín 123, Resistencia",
       footerText: "Concesionaria GyG",
       heroImage: "https://ejemplo.com/hero.jpg",
     }),
@@ -109,6 +111,7 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
     await fetch(`${baseUrl}/api/config/sitio`, { headers: { Cookie: cookieAdmin } })
   ).json();
   assert.equal(relectura.tagline, "Selección premium");
+  assert.equal(relectura.direccion, "Av. San Martín 123, Resistencia");
   assert.equal(relectura.heroImage, "https://ejemplo.com/hero.jpg");
 });
 

@@ -32,6 +32,7 @@ function obtenerConfigSitio() {
     facebook: row.facebook || "",
     contactoTitulo: row.contacto_titulo || "Contactanos",
     contactoTexto: row.contacto_texto || "",
+    direccion: row.direccion || "",
     footerText: row.footer_text,
     heroImage: row.hero_image,
   };
@@ -120,6 +121,7 @@ function completarConfigDesdeGist(site) {
        nombre = @nombre, tagline = @tagline, whatsapp = @whatsapp,
        instagram = @instagram, facebook = @facebook,
        contacto_titulo = @contactoTitulo, contacto_texto = @contactoTexto,
+       direccion = @direccion,
        footer_text = @footerText, hero_image = @heroImage,
        updated_at = datetime('now')
      WHERE id = 1`
@@ -133,6 +135,7 @@ function completarConfigDesdeGist(site) {
       ? String(site.contactoTitulo || actual.contacto_titulo || "Contactanos").trim()
       : actual.contacto_titulo,
     contactoTexto: vacio(actual.contacto_texto) ? String(site.contactoTexto || "").trim() : actual.contacto_texto,
+    direccion: vacio(actual.direccion) ? String(site.direccion || "").trim() : actual.direccion,
     footerText: vacio(actual.footer_text) ? String(site.footerText || "").trim() : actual.footer_text,
     heroImage: vacio(actual.hero_image) ? String(site.heroImage || "").trim() : actual.hero_image,
   });

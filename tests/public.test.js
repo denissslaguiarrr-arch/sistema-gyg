@@ -132,6 +132,7 @@ test("GET /api/public/catalogo no requiere sesión y usa Contactanos", async () 
   const body = await res.json();
   assert.ok(Array.isArray(body.vehicles));
   assert.equal(body.site.contactoTitulo, "Contactanos");
+  assert.equal(body.site.direccion, "");
   const contacto = body.pages.find((p) => p.id === "contacto");
   assert.equal(contacto.content.headline, "Contactanos");
   assert.equal(body.github_token, undefined);
