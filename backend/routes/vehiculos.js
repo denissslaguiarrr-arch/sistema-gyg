@@ -4,6 +4,7 @@ const { db } = require("../db");
 const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
 const requireRole = require("../middleware/requireRole");
 const { parseCsvFlexible, esFilaDeEncabezados, alinearColumnas, normalizarEncabezado, listaATextoCsv } = require("../utils/csv");
+const { esFotoLocal } = require("../utils/fotos");
 const { diasDesde } = require("../utils/fechas");
 const erpRouter = require("./erp");
 
@@ -245,7 +246,7 @@ router.get("/export.csv", (req, res) => {
 
   res.setHeader("Content-Type", "text/csv; charset=utf-8");
   res.setHeader("Content-Disposition", 'attachment; filename="stock.csv"');
-  res.send(lineas.join("\n"));
+  res.send(`\uFEFF${lineas.join("\n")}`);
 });
 
 router.get("/plantilla.csv", (_req, res) => {
@@ -396,6 +397,22 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
           fila: numeroFila,
           dominio: data.dominio,
           mensaje: avisoDominio,
+        });
+      }
+
+      let urlsFotos = [];
+      try {
+        urlsFotos = JSON.parse(data.imagenes_url || "[]");
+      } catch (_err) {
+        urlsFotos = [];
+      }
+      const soloLocales = urlsFotos.length > 0 && urlsFotos.every((u) => esFotoLocal(u));
+      if (soloLocales) {
+        resultado.avisos.push({
+          fila: numeroFila,
+          dominio: data.dominio,
+          mensaje:
+            "Las fotos son de la otra PC (/uploads/). Copiá la carpeta public\\uploads o subí las fotos de nuevo arrastrándolas (con ImgBB se guarda el link https).",
         });
       }
     } catch (err) {

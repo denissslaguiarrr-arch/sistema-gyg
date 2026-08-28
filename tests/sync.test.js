@@ -223,3 +223,35 @@ test("POST /api/sync/traer carga el stock del Gist en el panel", async () => {
   assert.equal(body2.creados, 0);
   assert.equal(body2.actualizados, 1);
 });
+
+test("POST /api/sync/publicar con token de GitHub inválido no cierra la sesión", async () => {
+  process.env.GYG_GIST_ID = "gist-de-prueba";
+  process.env.GYG_GITHUB_TOKEN = "token-de-prueba";
+  global.fetch = async (url, opciones) => {
+    if (!String(url).includes("api.github.com")) {
+      return fetchOriginal(url, opciones);
+    }
+    const method = opciones && opciones.method;
+    if (method === "PATCH") {
+      return { ok: false, status: 401, json: async () => ({}), text: async () => "{}" };
+    }
+    return {
+      ok: true,
+      status: 200,
+      json: async () => ({
+        files: { "stock.json": { content: JSON.stringify({ site: { name: "GyG" }, pages: [] }) } },
+      }),
+    };
+  };
+
+  const res = await fetch(`${baseUrl}/api/sync/publicar`, {
+    method: "POST",
+    headers: { Cookie: cookieAdmin },
+  });
+  assert.equal(res.status, 502);
+  const body = await res.json();
+  assert.match(body.error, /token de GitHub/i);
+
+  const me = await fetch(`${baseUrl}/api/auth/me`, { headers: { Cookie: cookieAdmin } });
+  assert.equal(me.status, 200);
+});

@@ -585,6 +585,7 @@
             Si la patente ya existe, se <strong>actualiza</strong> ese vehículo; si no, se crea uno nuevo.
             Si una fila viene sin patente, se le asigna una temporal (<code>SD-MODELO-AÑO</code>).
             Al actualizar, si <code>imagenes_url</code> viene vacío, se conservan las fotos que ya tenía el vehículo.
+            Las fotos subidas solo a la otra PC (<code>/uploads/</code>) no viajan en el CSV: copiá también la carpeta <code>public\uploads</code>, o volvé a arrastrar las fotos con ImgBB para generar el link https.
           </p>
           <a
             href="/api/vehiculos/plantilla.csv"
@@ -662,8 +663,18 @@
             <input id="c-footer" class="campo" placeholder="G&amp;G Automotores — stock en vivo desde la nube" />
           </div>
           <div>
-            <label class="block text-xs font-medium text-slate-600 mb-1">Imagen de portada (URL)</label>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Imagen de portada (inicio del sitio)</label>
             <input id="c-hero" class="campo" placeholder="https://..." />
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <input id="c-hero-archivo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" />
+              <button type="button" id="btn-hero-subir" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Subir foto del local
+              </button>
+            </div>
+            <img id="c-hero-preview" alt="Vista previa de la portada" class="hidden mt-2 rounded-lg max-h-36 object-cover w-full border border-slate-200" />
+            <p id="c-hero-estado" class="text-[11px] text-slate-400 mt-1">
+              Esta foto se ve en la pantalla de inicio. Subila acá (hace falta la clave ImgBB), Guardá, y después Publicar en la web.
+            </p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Clave ImgBB (fotos del sitio)</label>
@@ -685,9 +696,10 @@
             <label class="block text-xs font-medium text-slate-600 mb-1">Token de GitHub (permiso gist)</label>
             <input id="c-github-token" type="password" autocomplete="off" class="campo" placeholder="ghp_..." />
             <p id="c-github-token-estado" class="text-[11px] text-slate-400 mt-1">
-              Creá un token en
+              Creá un token <strong>classic</strong> en
               <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">github.com/settings/tokens</a>
-              con permiso <code>gist</code> y pegalo acá. Sin esto no se puede publicar.
+              con permiso <code>gist</code>, de la <strong>misma cuenta</strong> que creó el Gist, y pegalo acá.
+              Un token de otra cuenta no publica y antes parecía que se cerraba la sesión.
             </p>
           </div>
         </div>

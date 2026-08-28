@@ -67,3 +67,14 @@ Publicar en la web
 ------------------
 Con el panel abierto: botón "Publicar en la web".
 El sitio de los clientes es https://gyg-automotores.blogspot.com/
+
+El token de GitHub tiene que ser de la MISMA cuenta que creó el Gist
+(permiso gist, token classic). Si al publicar te manda al login, el token
+está mal o el archivo .env tiene "ghp_pegá_tu_token": borralo de .env,
+pegá el token real en Configuración y volvé a publicar.
+
+Fotos entre PCs
+---------------
+El CSV no copia los archivos de fotos. Si en la otra PC se subieron a
+public\uploads, copiá esa carpeta. Si no, arrastrá de nuevo las fotos
+con la clave ImgBB para que quede un link https (eso sí va a Blogger).

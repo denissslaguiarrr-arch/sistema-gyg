@@ -64,7 +64,9 @@ router.post("/publicar", async (_req, res) => {
       publicadoEn: new Date().toISOString(),
     });
   } catch (err) {
-    res.status(err.status || 500).json({ error: err.message || "No se pudo publicar" });
+    let status = err.status || 500;
+    if (status === 401 || status === 403) status = 502;
+    res.status(status).json({ error: err.message || "No se pudo publicar" });
   }
 });
 
@@ -233,7 +235,9 @@ router.post("/traer", async (req, res) => {
       vehiculosEnGist: vehiculosGist.length,
     });
   } catch (err) {
-    res.status(err.status || 500).json({ error: err.message || "No se pudo traer el stock del Gist" });
+    let status = err.status || 500;
+    if (status === 401 || status === 403) status = 502;
+    res.status(status).json({ error: err.message || "No se pudo traer el stock del Gist" });
   }
 });
 

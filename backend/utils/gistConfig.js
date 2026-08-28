@@ -1,6 +1,5 @@
-// Credenciales para publicar stock.json. El .env gana si está; si no, se
-// usan los valores pegados en Configuración del sitio. El Gist de G&G ya
-// existe, así que el ID viene por defecto y en la PC solo falta el token.
+// Credenciales para publicar stock.json. El .env gana si tiene un token
+// real; un valor de ejemplo no pisa lo pegado en Configuración del sitio.
 
 const GIST_ID_DEFAULT = "74837d1c1f0a9a3a67e6dc5cc4fa5b6f";
 
@@ -13,9 +12,24 @@ function normalizarGistId(valor) {
   return hex ? hex[0] : texto;
 }
 
+// Iniciar.bat copiaba env.example con "ghp_pegá_tu_token". GitHub lo rechaza
+// con 401 y, si el .env gana, pisa el token real pegado en el panel.
+function tokenGithubUsable(valor) {
+  const texto = String(valor || "").trim();
+  if (!texto) return false;
+  if (/peg[aá]|tu_token|your.?token|changeme|placeholder|xxxx+/i.test(texto)) return false;
+  return true;
+}
+
+function elegirToken(envToken, dbToken) {
+  if (tokenGithubUsable(envToken)) return String(envToken).trim();
+  if (tokenGithubUsable(dbToken)) return String(dbToken).trim();
+  return "";
+}
+
 function credencialesGist() {
   const envGist = normalizarGistId(process.env.GYG_GIST_ID);
-  const envToken = String(process.env.GYG_GITHUB_TOKEN || "").trim();
+  const envToken = elegirToken(process.env.GYG_GITHUB_TOKEN, "");
 
   let dbGist = "";
   let dbToken = "";
@@ -29,7 +43,7 @@ function credencialesGist() {
     dbToken = "";
   }
 
-  const token = envToken || dbToken;
+  const token = elegirToken(process.env.GYG_GITHUB_TOKEN, dbToken);
   return {
     gistId: envGist || dbGist || GIST_ID_DEFAULT,
     token,
@@ -42,5 +56,7 @@ function credencialesGist() {
 module.exports = {
   GIST_ID_DEFAULT,
   normalizarGistId,
+  tokenGithubUsable,
+  elegirToken,
   credencialesGist,
 };

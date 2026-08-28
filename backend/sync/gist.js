@@ -307,22 +307,40 @@ async function parsearArchivoStock(archivo, fetchImpl = fetch) {
   }
 }
 
-async function obtenerGistActual({ gistId, token, fetchImpl = fetch }) {
-  const res = await fetchImpl(`https://api.github.com/gists/${gistId}`, {
+function errorTokenGithub() {
+  const err = new Error(
+    "El token de GitHub es inválido o no tiene permiso 'gist'. Creá uno nuevo (classic, tilde en gist) en la MISMA cuenta que creó el Gist y pegalo en Configuración del sitio."
+  );
+  // 502: no es la sesión del panel. Un 401 acá hacía que el navegador te mande al login.
+  err.status = 502;
+  return err;
+}
+
+async function pedirGist({ gistId, token, fetchImpl }) {
+  return fetchImpl(`https://api.github.com/gists/${gistId}`, {
     headers: {
       Accept: "application/vnd.github+json",
       ...(token ? { Authorization: `Bearer ${token}` } : {}),
     },
   });
+}
+
+async function obtenerGistActual({ gistId, token, fetchImpl = fetch }) {
+  let res = await pedirGist({ gistId, token, fetchImpl });
+  // Un token de ejemplo o vencido hace que GitHub rechace hasta un Gist público.
+  if ((res.status === 401 || res.status === 403) && token) {
+    res = await pedirGist({ gistId, token: "", fetchImpl });
+    if (res.status === 401 || res.status === 403) throw errorTokenGithub();
+  }
 
   if (res.status === 404) {
-    const err = new Error("No se encontró el Gist. Revisá GYG_GIST_ID.");
+    const err = new Error("No se encontró el Gist. Revisá el ID en Configuración del sitio.");
     err.status = 404;
     throw err;
   }
   if (!res.ok) {
     const err = new Error(`No se pudo leer el Gist (código ${res.status})`);
-    err.status = res.status;
+    err.status = res.status === 401 || res.status === 403 ? 502 : res.status;
     throw err;
   }
 
@@ -377,8 +395,13 @@ async function publicarEnGist({ gistId, token, vehiculos, siteConfig, fetchImpl 
   });
 
   if (res.status === 401 || res.status === 403) {
-    const err = new Error("El token de GitHub es inválido o no tiene permiso 'gist'.");
-    err.status = 401;
+    throw errorTokenGithub();
+  }
+  if (res.status === 404) {
+    const err = new Error(
+      "GitHub no dejó editar el Gist. El token es de otra cuenta o el ID está mal. Tiene que ser de la misma cuenta que creó el Gist."
+    );
+    err.status = 502;
     throw err;
   }
   if (!res.ok) {
@@ -386,7 +409,7 @@ async function publicarEnGist({ gistId, token, vehiculos, siteConfig, fetchImpl 
     const err = new Error(
       `No se pudo publicar en el Gist (código ${res.status}): ${texto.slice(0, 200)}`
     );
-    err.status = res.status;
+    err.status = res.status === 401 || res.status === 403 ? 502 : res.status;
     throw err;
   }
 

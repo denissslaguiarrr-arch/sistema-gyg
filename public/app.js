@@ -158,6 +158,10 @@ const el = {
   cContactoTexto: document.getElementById("c-contacto-texto"),
   cFooter: document.getElementById("c-footer"),
   cHero: document.getElementById("c-hero"),
+  cHeroArchivo: document.getElementById("c-hero-archivo"),
+  cHeroPreview: document.getElementById("c-hero-preview"),
+  btnHeroSubir: document.getElementById("btn-hero-subir"),
+  cHeroEstado: document.getElementById("c-hero-estado"),
   cImgbb: document.getElementById("c-imgbb"),
   cImgbbEstado: document.getElementById("c-imgbb-estado"),
   cGist: document.getElementById("c-gist"),
@@ -280,14 +284,16 @@ async function apiRequest(path, options = {}) {
     ...options,
   });
 
-  if (res.status === 401) {
-    window.location.href = "/login.html";
-    throw new Error("Sesión expirada");
-  }
-
   if (res.status === 204) return null;
 
   const data = await res.json().catch(() => null);
+
+  // Solo el panel (cookie vencida) manda al login. Un 401 de GitHub/ImgBB
+  // no es la sesión: hay que mostrar el error y dejar seguir trabajando.
+  if (res.status === 401 && (path.startsWith("/api/auth") || (data && data.error === "No autenticado"))) {
+    window.location.href = "/login.html";
+    throw new Error("Sesión expirada");
+  }
 
   if (!res.ok) {
     const detalles = data && data.detalles ? ` (${data.detalles.join("; ")})` : "";
@@ -473,6 +479,7 @@ el.btnConfigSitio.addEventListener("click", async () => {
     el.cContactoTexto.value = config.contactoTexto || "";
     el.cFooter.value = config.footerText || "";
     el.cHero.value = config.heroImage || "";
+    actualizarPreviewHero();
     if (el.cImgbb) el.cImgbb.value = "";
     if (el.cImgbbEstado) {
       el.cImgbbEstado.textContent = config.imgbbConfigurado
@@ -488,8 +495,8 @@ el.btnConfigSitio.addEventListener("click", async () => {
     if (el.cGithubToken) el.cGithubToken.value = "";
     if (el.cGithubTokenEstado) {
       el.cGithubTokenEstado.textContent = config.githubTokenConfigurado
-        ? "Token cargado. Dejá el campo vacío para no cambiarlo, o pegá otro para reemplazarlo."
-        : "Creá un token en github.com/settings/tokens con permiso gist y pegalo acá. Sin esto no se puede publicar.";
+        ? "Token cargado. Dejá el campo vacío para no cambiarlo, o pegá otro para reemplazarlo. Tiene que ser de la misma cuenta de GitHub que creó el Gist."
+        : "Creá un token classic en github.com/settings/tokens (tilde en gist) con la MISMA cuenta que creó el Gist y pegalo acá. Sin esto no se puede publicar.";
     }
     el.modalConfigOverlay.classList.remove("hidden");
     el.modalConfig.classList.remove("hidden");
@@ -521,12 +528,50 @@ el.formConfig.addEventListener("submit", async (evento) => {
         githubToken: el.cGithubToken && el.cGithubToken.value.trim() ? el.cGithubToken.value.trim() : undefined,
       }),
     });
-    mostrarAlerta("Configuración del sitio guardada.", "ok");
+    mostrarAlerta("Configuración del sitio guardada. Para verla en Blogger, dale a Publicar en la web.", "ok");
     cerrarModalConfig();
   } catch (err) {
     mostrarAlerta(err.message);
   }
 });
+
+function actualizarPreviewHero() {
+  if (!el.cHeroPreview) return;
+  const url = el.cHero && el.cHero.value.trim();
+  if (!url) {
+    el.cHeroPreview.removeAttribute("src");
+    el.cHeroPreview.classList.add("hidden");
+    return;
+  }
+  el.cHeroPreview.src = url;
+  el.cHeroPreview.classList.remove("hidden");
+}
+
+if (el.cHero) {
+  el.cHero.addEventListener("input", actualizarPreviewHero);
+}
+
+if (el.btnHeroSubir && el.cHeroArchivo) {
+  el.btnHeroSubir.addEventListener("click", () => el.cHeroArchivo.click());
+  el.cHeroArchivo.addEventListener("change", async () => {
+    const archivo = el.cHeroArchivo.files && el.cHeroArchivo.files[0];
+    el.cHeroArchivo.value = "";
+    if (!archivo) return;
+    if (el.cHeroEstado) el.cHeroEstado.textContent = "Subiendo foto...";
+    try {
+      const url = await subirArchivoPublico(archivo);
+      el.cHero.value = url;
+      actualizarPreviewHero();
+      if (el.cHeroEstado) {
+        el.cHeroEstado.textContent = "Foto lista. Guardá la configuración y después dale a Publicar en la web.";
+      }
+      mostrarAlerta("Foto de portada subida. Guardá y publicá para verla en el sitio.", "ok");
+    } catch (err) {
+      if (el.cHeroEstado) el.cHeroEstado.textContent = err.message;
+      mostrarAlerta(err.message);
+    }
+  });
+}
 
 // ---------- Publicar en la web (solo admin) ----------
 

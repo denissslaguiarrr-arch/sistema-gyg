@@ -280,6 +280,15 @@ test("obtenerGistActual lanza un error claro si el Gist no existe (404)", async 
   );
 });
 
+test("obtenerGistActual reintenta sin token si GitHub rechaza las credenciales", async () => {
+  const fetchImpl = fetchFalso([
+    { status: 401, body: {} },
+    { status: 200, body: { files: { "stock.json": { content: JSON.stringify({ site: { name: "X" } }) } } } },
+  ]);
+  const data = await obtenerGistActual({ gistId: "abc", token: "token-falso", fetchImpl });
+  assert.equal(data.site.name, "X");
+});
+
 test("publicarEnGist exige gistId y token configurados", async () => {
   await assert.rejects(
     () => publicarEnGist({ gistId: "", token: "t", vehiculos: [], siteConfig: {} }),
@@ -332,6 +341,29 @@ test("publicarEnGist traduce un 401/403 de GitHub en un mensaje claro", async ()
         siteConfig: {},
         fetchImpl,
       }),
-    /token de GitHub es inválido/
+    (err) => {
+      assert.match(err.message, /token de GitHub es inválido/);
+      assert.equal(err.status, 502);
+      return true;
+    }
+  );
+});
+
+test("publicarEnGist traduce un 404 de GitHub al editar el Gist", async () => {
+  const fetchImpl = fetchFalso([
+    { status: 200, body: { files: {} } },
+    { status: 404, body: {} },
+  ]);
+
+  await assert.rejects(
+    () =>
+      publicarEnGist({
+        gistId: "abc",
+        token: "token-de-otra-cuenta",
+        vehiculos: [],
+        siteConfig: {},
+        fetchImpl,
+      }),
+    /misma cuenta/
   );
 });

@@ -292,3 +292,22 @@ test("POST /api/vehiculos/import no borra fotos al reimportar con imagenes_url v
     "https://a.com/fondo.jpg",
   ]);
 });
+
+test("POST /api/vehiculos/import avisa si las fotos son solo de /uploads/", async () => {
+  const csv = [
+    "marca,modelo,anio,dominio,kilometraje,precio,moneda,estado,imagenes_url",
+    "Fiat,Cronos,2020,IMPLOC,10000,8000,USD,Disponible,/uploads/foto-local.jpg | /uploads/otra.jpg",
+  ].join("\n");
+  const formData = new FormData();
+  formData.append("archivo", csvComoArchivo(csv));
+  const res = await fetch(`${baseUrl}/api/vehiculos/import`, {
+    method: "POST",
+    headers: { Cookie: cookie },
+    body: formData,
+  });
+  const body = await res.json();
+  assert.equal(res.status, 200);
+  assert.equal(body.creados, 1);
+  assert.equal(body.errores.length, 0);
+  assert.ok(body.avisos.some((aviso) => /uploads/i.test(aviso.mensaje)));
+});
