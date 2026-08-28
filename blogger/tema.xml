@@ -1965,6 +1965,12 @@ window.GYG_CONFIG = {
     if (global.GYG_CONFIG) global.GYG_CONFIG.GIST_ID = value;
   }
 
+  function clearStoredGistId() {
+    try {
+      localStorage.removeItem(GIST_KEY);
+    } catch (_) {}
+  }
+
   function defaultSite() {
     return {
       name: cfg().DEALERSHIP_NAME || "G\u0026G",
@@ -2439,6 +2445,7 @@ window.GYG_CONFIG = {
     clearToken,
     getGistId,
     setGistId,
+    clearStoredGistId,
     loadStock,
     saveStock,
     createGist,
@@ -3567,24 +3574,33 @@ window.GYG_CONFIG = {
 
   function renderGistSetup(err) {
     const missing = err && err.code === "MISSING_GIST_ID";
+    if (!missing) {
+      app.innerHTML = `
+        <section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">
+          <h1>El catálogo no se pudo cargar</h1>
+          <p>A veces tarda un momento. Recargá la página.</p>
+          <p>
+            <button type="button" class="btn btn--primary" id="gistRetryBtn">Reintentar</button>
+          </p>
+        </section>`;
+      document.getElementById("gistRetryBtn")?.addEventListener("click", () => {
+        GyGStock.clearStoredGistId();
+        location.reload();
+      });
+      return;
+    }
     const current = GyGStock.getGistId() || "";
     app.innerHTML = `
       <section class="hero" style="max-width:640px">
         <div class="hero__eyebrow">Configuración</div>
         <h1>Conectar Gist</h1>
-        <p>${
-          missing
-            ? "El tema está online, pero falta el GIST_ID. Pegá el ID del Gist donde está el stock.json."
-            : "No se pudo leer el Gist. Revisá el ID o que el archivo se llame stock.json y sea público."
-        }</p>
-        <p style="color:var(--muted);font-size:0.9rem">${escapeHtml(err && err.message && err.message !== "MISSING_GIST_ID" ? err.message : "")}</p>
+        <p>El tema está online, pero falta el GIST_ID. Pegá el ID del Gist donde está el stock.json.</p>
         <div class="field" style="margin:1rem 0">
           <label for="setupGistId">GIST_ID</label>
           <input id="setupGistId" type="text" value="${escapeAttr(current)}" placeholder="ej: a1b2c3d4e5f6..." style="width:100%;padding:0.7rem;border:1px solid var(--line)" />
         </div>
         <div class="detail__cta">
           <button type="button" class="btn btn--primary" id="setupSaveBtn">Guardar y cargar</button>
-          <a class="btn btn--ghost" href="https://gist.github.com" target="_blank" rel="noopener">Abrir Gists</a>
         </div>
       </section>
     `;
@@ -3611,7 +3627,12 @@ window.GYG_CONFIG = {
     } catch (err) {
       console.error(err);
       renderGistSetup(err);
-      toast(err.code === "MISSING_GIST_ID" ? "Falta configurar el Gist" : err.message || "Error al cargar", "error");
+      toast(
+        err.code === "MISSING_GIST_ID"
+          ? "Falta configurar el catálogo"
+          : "No se pudo cargar el catálogo. Recargá en un momento.",
+        "error"
+      );
     }
   }
 

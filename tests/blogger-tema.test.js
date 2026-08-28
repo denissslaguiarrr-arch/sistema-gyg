@@ -73,6 +73,13 @@ test("el hero no usa un & tipográfico entre las G", () => {
   assert.doesNotMatch(css, /brand-amp/);
 });
 
+test("si el catálogo no carga, el visitante ve reintentar y no un formulario de Gist", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(js, /El catálogo no se pudo cargar/);
+  assert.match(js, /gistRetryBtn/);
+  assert.match(js, /clearStoredGistId/);
+});
+
 test("en el celular el menú es un botón y la foto de inicio es una imagen real", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
