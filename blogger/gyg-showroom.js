@@ -698,24 +698,71 @@ window.GYG_CONFIG = {
     return { kind: "page", slug: decodeURIComponent(path) };
   }
 
-  function scrollPaginaArriba() {
-    const ir = () => {
+  let scrollArribaTimers = [];
+
+  function limpiarScrollArriba() {
+    for (let i = 0; i < scrollArribaTimers.length; i += 1) {
+      clearTimeout(scrollArribaTimers[i]);
+    }
+    scrollArribaTimers = [];
+  }
+
+  function forzarScrollCero() {
+    const html = document.documentElement;
+    html.style.setProperty("scroll-behavior", "auto", "important");
+    try {
+      window.scrollTo(0, 0);
+    } catch (_err) {}
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    } catch (_err) {
       try {
-        window.scrollTo(0, 0);
-      } catch (_err) {}
-      document.documentElement.scrollTop = 0;
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      } catch (_e2) {}
+    }
+    html.scrollTop = 0;
+    html.scrollLeft = 0;
+    if (document.body) {
       document.body.scrollTop = 0;
-      const root = document.getElementById("gyg-blogger-root");
-      if (root) root.scrollTop = 0;
-      const shell = document.querySelector(".app-shell");
-      if (shell) shell.scrollTop = 0;
-      const appEl = document.getElementById("app");
-      if (appEl) appEl.scrollTop = 0;
-    };
-    ir();
+      document.body.scrollLeft = 0;
+    }
+    const se = document.scrollingElement;
+    if (se) se.scrollTop = 0;
+    let node = document.getElementById("app") || document.body;
+    while (node) {
+      try {
+        node.scrollTop = 0;
+        node.scrollLeft = 0;
+      } catch (_err) {}
+      node = node.parentElement;
+    }
+    const ancla = document.getElementById("gygTop");
+    if (ancla && ancla.scrollIntoView) {
+      try {
+        ancla.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+      } catch (_err) {
+        ancla.scrollIntoView(true);
+      }
+    }
+  }
+
+  function scrollPaginaArriba() {
+    limpiarScrollArriba();
+    const html = document.documentElement;
+    html.style.overflowAnchor = "none";
+    if (document.body) document.body.style.overflowAnchor = "none";
+    if (document.activeElement && document.activeElement.blur) {
+      try {
+        document.activeElement.blur();
+      } catch (_err) {}
+    }
+    forzarScrollCero();
     requestAnimationFrame(() => {
-      ir();
-      requestAnimationFrame(ir);
+      forzarScrollCero();
+      requestAnimationFrame(forzarScrollCero);
+    });
+    [50, 120, 250, 450].forEach((ms) => {
+      scrollArribaTimers.push(setTimeout(forzarScrollCero, ms));
     });
   }
 
@@ -735,19 +782,20 @@ window.GYG_CONFIG = {
 
   function route() {
     stopCarousel();
-    scrollPaginaArriba();
     const r = parseRoute();
     if (r.kind === "auto") {
       const v = GyGStock.findVehicle(data, r.id);
       renderDetail(r.id);
       updateNavActive("__auto__");
       actualizarWhatsappBar(v);
+      scrollPaginaArriba();
       return;
     }
     if (r.slug === "privacidad") {
       renderPrivacidad();
       updateNavActive("");
       actualizarWhatsappBar(null);
+      scrollPaginaArriba();
       return;
     }
     const page = GyGStock.findPageBySlug(data, r.slug);
@@ -758,6 +806,7 @@ window.GYG_CONFIG = {
         </section>`;
       updateNavActive("");
       actualizarWhatsappBar(null);
+      scrollPaginaArriba();
       return;
     }
     updateNavActive(page.slug || "");
@@ -766,6 +815,7 @@ window.GYG_CONFIG = {
     else if (page.type === "vender" || page.id === "vender" || page.slug === "vender") renderVenderPage(page);
     else renderContentPage(page);
     actualizarWhatsappBar(null);
+    scrollPaginaArriba();
   }
 
   function updateChrome() {
@@ -1288,6 +1338,7 @@ window.GYG_CONFIG = {
   function onCardActivate(e) {
     const card = e.target.closest(".vehicle");
     if (!card) return;
+    scrollPaginaArriba();
     location.hash = `#/auto/${encodeURIComponent(card.dataset.id)}`;
   }
 

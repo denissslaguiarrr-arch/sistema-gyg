@@ -34,6 +34,7 @@ ${css}
     <b:section id='gyg-required-section' maxwidgets='0' name='G&amp;G' showaddelement='no'/>
 
     <div id='gyg-blogger-root'>
+      <div class='gyg-top-anchor' id='gygTop'></div>
       <div aria-hidden='true' class='atmosphere'/>
       <div class='app-shell'>
         <header class='site-header'>

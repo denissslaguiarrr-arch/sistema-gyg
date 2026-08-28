@@ -77,13 +77,18 @@ test("al cambiar de página el scroll vuelve arriba y hay WhatsApp fijo y volver
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   assert.match(js, /function scrollPaginaArriba/);
+  assert.match(js, /function forzarScrollCero/);
+  assert.match(js, /behavior: "instant"/);
   assert.match(js, /scrollPaginaArriba\(\);/);
   assert.match(js, /actualizarWhatsappBar/);
   assert.match(js, /setupBackTop/);
+  assert.match(css, /overflow-anchor: none/);
+  assert.doesNotMatch(css, /scroll-behavior:\s*smooth/);
   assert.match(css, /\.wa-bar/);
   assert.match(css, /\.back-top/);
   assert.match(tema, /id='waBar'/);
   assert.match(tema, /id='backTop'/);
+  assert.match(tema, /id='gygTop'/);
 });
 
 test("si el catálogo no carga, el visitante ve reintentar y no un formulario de Gist", () => {
