@@ -2729,7 +2729,7 @@ window.GYG_CONFIG = {
   function renderHome(page) {
     const c = page.content || {};
     const site = data.site || {};
-    const hero = c.heroImage || site.heroImage || placeholderImg();
+    const hero = site.heroImage || c.heroImage || placeholderImg();
     const primary = c.ctaPrimary || { label: "Ver stock", href: "#/stock" };
     const secondary = c.ctaSecondary || null;
     const highlights = Array.isArray(c.highlights) ? c.highlights : [];

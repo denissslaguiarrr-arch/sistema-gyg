@@ -188,7 +188,7 @@
   function homeHtml(page) {
     var s = site();
     var c = (page && page.content) || {};
-    var hero = c.heroImage || s.heroImage || "";
+    var hero = s.heroImage || c.heroImage || "";
     var dest = vehiculos().filter(function (v) { return v.destacado; });
     if (!dest.length) dest = vehiculos().slice(0, 6);
     return (

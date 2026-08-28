@@ -169,7 +169,7 @@ function esPaginaHome(page) {
   return page && (page.id === "home" || page.slug === "" || page.type === "home");
 }
 
-function normalizarCopiaPagina(page) {
+function normalizarCopiaPagina(page, site) {
   if (!page || typeof page !== "object") return page;
   const next = { ...page };
   const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
@@ -186,16 +186,22 @@ function normalizarCopiaPagina(page) {
     next.navLabel = next.navLabel || "Usados";
   }
 
-  if (esPaginaHome(next) && Array.isArray(content.highlights)) {
-    content.highlights = content.highlights.map((h) => {
-      if (!h || typeof h !== "object") return h;
-      const title = String(h.title || "");
-      if (/0\s*kil/i.test(title) || /^0\s*km$/i.test(title) || /^0km$/i.test(title)) {
-        return { ...h, title: "0 km" };
-      }
-      if (/usados seleccion/i.test(title)) return { ...h, title: "Usados" };
-      return h;
-    });
+  if (esPaginaHome(next)) {
+    // El panel guarda la portada en site.heroImage; el showroom lee primero
+    // pages.home.content.heroImage. Sin esto, una foto vieja del Gist no se pisa.
+    const hero = site && String(site.heroImage || "").trim();
+    if (hero) content.heroImage = hero;
+    if (Array.isArray(content.highlights)) {
+      content.highlights = content.highlights.map((h) => {
+        if (!h || typeof h !== "object") return h;
+        const title = String(h.title || "");
+        if (/0\s*kil/i.test(title) || /^0\s*km$/i.test(title) || /^0km$/i.test(title)) {
+          return { ...h, title: "0 km" };
+        }
+        if (/usados seleccion/i.test(title)) return { ...h, title: "Usados" };
+        return h;
+      });
+    }
   }
   if (content.ctaPrimary && /ver\s*0km/i.test(String(content.ctaPrimary.label || ""))) {
     content.ctaPrimary = { ...content.ctaPrimary, label: "Ver 0 km" };
@@ -228,7 +234,7 @@ function mergePages(gistPages, site) {
     Array.isArray(gistPages) && gistPages.length ? gistPages : DEFAULT_PAGES
   );
   return base.map((page) => {
-    const next = normalizarCopiaPagina(page);
+    const next = normalizarCopiaPagina(page, site);
     if (!esPaginaContacto(next)) return next;
     const content = next.content && typeof next.content === "object" ? { ...next.content } : {};
     content.headline = (site && site.contactoTitulo) || "Contactanos";

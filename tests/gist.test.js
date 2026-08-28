@@ -239,6 +239,27 @@ test("normalizarCopiaPagina acorta 0 km y Usados para que no se corten en el cel
   assert.equal(home.content.highlights[1].title, "Usados");
 });
 
+test("construirStockJson pisa la foto de inicio del Gist con la del panel", () => {
+  const publicado = construirStockJson({
+    gistActual: {
+      site: { heroImage: "https://images.unsplash.com/vieja.jpg" },
+      pages: [
+        {
+          id: "home",
+          slug: "",
+          type: "home",
+          content: { heroImage: "https://images.unsplash.com/vieja.jpg", headline: "G&G" },
+        },
+      ],
+    },
+    vehiculos: [],
+    siteConfig: { heroImage: "https://i.ibb.co/nueva.jpg", nombre: "G&G" },
+  });
+  const home = publicado.pages.find((p) => p.id === "home");
+  assert.equal(publicado.site.heroImage, "https://i.ibb.co/nueva.jpg");
+  assert.equal(home.content.heroImage, "https://i.ibb.co/nueva.jpg");
+});
+
 test("normalizarCopiaPagina cambia GyG a G&G en títulos visibles", () => {
   const contacto = normalizarCopiaPagina({
     id: "contacto",
