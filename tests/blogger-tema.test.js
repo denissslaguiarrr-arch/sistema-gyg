@@ -155,9 +155,14 @@ test("Contacto tiene mapa, ficha con migas y similares, privacidad y carga con e
 
 test("el showroom usa un poco de vidrio en header, tarjetas y filtros", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(css, /--glass:/);
   assert.match(css, /backdrop-filter: var\(--glass-blur\)/);
   assert.match(css, /prefers-reduced-transparency/);
+  assert.match(css, /body\.is-home \.site-header/);
+  assert.match(css, /home-hero__copy/);
+  assert.match(js, /function marcarInicio/);
+  assert.match(js, /home-hero__copy/);
   assert.match(tema, /--glass:/);
   assert.match(tema, /backdrop-filter: var\(--glass-blur\)/);
 });

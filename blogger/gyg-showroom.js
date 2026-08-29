@@ -879,6 +879,10 @@ window.GYG_CONFIG = {
     });
   }
 
+  function marcarInicio(esInicio) {
+    document.body.classList.toggle("is-home", !!esInicio);
+  }
+
   function actualizarWhatsappBar(vehicle) {
     const wa = document.getElementById("waBar");
     if (!wa) return;
@@ -897,6 +901,7 @@ window.GYG_CONFIG = {
     stopCarousel();
     const r = parseRoute();
     if (r.kind === "auto") {
+      marcarInicio(false);
       const v = GyGStock.findVehicle(data, r.id);
       renderDetail(r.id);
       updateNavActive("__auto__");
@@ -905,6 +910,7 @@ window.GYG_CONFIG = {
       return;
     }
     if (r.slug === "privacidad") {
+      marcarInicio(false);
       renderPrivacidad();
       updateNavActive("");
       actualizarWhatsappBar(null);
@@ -913,6 +919,7 @@ window.GYG_CONFIG = {
     }
     const page = GyGStock.findPageBySlug(data, r.slug);
     if (!page || page.visible === false) {
+      marcarInicio(false);
       app.innerHTML = `
         <section class="detail">
           <div class="empty-state">Página no encontrada. <a href="#/">Volver al inicio</a></div>
@@ -922,6 +929,7 @@ window.GYG_CONFIG = {
       scrollPaginaArriba();
       return;
     }
+    marcarInicio(page.type === "home");
     updateNavActive(page.slug || "");
     if (page.type === "home") renderHome(page);
     else if (page.type === "stock") renderStockPage(page);
@@ -1220,6 +1228,7 @@ window.GYG_CONFIG = {
         <img class="home-hero__photo" src="${escapeAttr(hero)}" alt="" />
         <div class="home-hero__veil"></div>
         <div class="home-hero__content">
+          <div class="home-hero__copy">
           <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
           ${
             isBrandWordmark(c.headline || site.name)
@@ -1235,6 +1244,7 @@ window.GYG_CONFIG = {
                 : ""
             }
             <a class="btn btn--ghost home-hero__ghost" href="#/vender">Vendé tu auto</a>
+          </div>
           </div>
         </div>
       </section>

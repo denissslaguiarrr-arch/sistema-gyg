@@ -116,6 +116,14 @@ textarea {
   padding-top: var(--safe-top);
 }
 
+body.is-home .site-header {
+  position: absolute;
+  left: 0;
+  right: 0;
+  background: rgba(255, 255, 255, 0.28);
+  border-bottom-color: rgba(255, 255, 255, 0.34);
+}
+
 .site-header__inner {
   max-width: var(--max);
   margin: 0 auto;
@@ -289,9 +297,19 @@ textarea {
   max-width: var(--max);
   width: 100%;
   margin: 0 auto;
-  padding: 4.5rem 1.25rem 3.25rem;
+  padding: 6.5rem 1.25rem 3.25rem;
   display: grid;
   gap: 0.85rem;
+}
+
+.home-hero__copy {
+  width: fit-content;
+  max-width: min(42rem, 100%);
+  padding: 1.1rem 1.2rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(14, 17, 22, 0.28);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
 }
 
 .home-hero__eyebrow {
@@ -1542,7 +1560,8 @@ textarea {
   .site-footer,
   .nav-toggle,
   .chip,
-  .home-hero__ghost {
+  .home-hero__ghost,
+  .home-hero__copy {
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
   }
