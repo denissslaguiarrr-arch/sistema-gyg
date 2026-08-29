@@ -5,7 +5,8 @@ const { validateVehiculo, validateEstado } = require("../validators/vehiculo");
 const requireRole = require("../middleware/requireRole");
 const { parseCsvFlexible, esFilaDeEncabezados, alinearColumnas, normalizarEncabezado, listaATextoCsv } = require("../utils/csv");
 const { esFotoLocal } = require("../utils/fotos");
-const { diasDesde } = require("../utils/fechas");
+const { diasDesde, diasHasta, hoyIso, masMeses } = require("../utils/fechas");
+const { marcarStockSucio, estadoPublicacion } = require("../utils/stockSync");
 const erpRouter = require("./erp");
 
 const router = express.Router();
@@ -213,6 +214,7 @@ router.get("/resumen", (_req, res) => {
     )
     .get();
 
+  const pub = estadoPublicacion();
   res.json({
     total: row.total || 0,
     disponibles: row.disponibles || 0,
@@ -220,6 +222,67 @@ router.get("/resumen", (_req, res) => {
     vendidos: row.vendidos || 0,
     valor_stock_ars: row.valor_stock_ars || 0,
     valor_stock_usd: row.valor_stock_usd || 0,
+    last_sync_at: pub.last_sync_at,
+    stock_sucio: pub.stock_sucio,
+  });
+});
+
+const DIAS_AVISO_PAPELES = 30;
+
+function itemAlertaPapel({ vehiculo, tipo, etiqueta, fecha }) {
+  const dias = diasHasta(fecha);
+  if (dias == null || dias > DIAS_AVISO_PAPELES) return null;
+  return {
+    vehiculo_id: vehiculo.id,
+    marca: vehiculo.marca,
+    modelo: vehiculo.modelo,
+    dominio: vehiculo.dominio,
+    anio: vehiculo.anio,
+    estado: vehiculo.estado,
+    tipo,
+    etiqueta,
+    fecha,
+    dias,
+    vencido: dias < 0,
+  };
+}
+
+router.get("/alertas-papeles", (_req, res) => {
+  const filas = db
+    .prepare(
+      `SELECT
+         v.id, v.marca, v.modelo, v.dominio, v.anio, v.estado,
+         d.vtv_vencimiento, d.verificacion_policial_vto
+       FROM Vehiculos v
+       INNER JOIN Documentacion d ON d.vehiculo_id = v.id
+       WHERE v.eliminado = 0 AND v.estado != 'Vendido'`
+    )
+    .all();
+
+  const items = [];
+  filas.forEach((row) => {
+    const vtv = itemAlertaPapel({
+      vehiculo: row,
+      tipo: "vtv",
+      etiqueta: "VTV",
+      fecha: row.vtv_vencimiento,
+    });
+    const policial = itemAlertaPapel({
+      vehiculo: row,
+      tipo: "policial",
+      etiqueta: "Verificación policial",
+      fecha: row.verificacion_policial_vto,
+    });
+    if (vtv) items.push(vtv);
+    if (policial) items.push(policial);
+  });
+
+  items.sort((a, b) => a.dias - b.dias || String(a.dominio).localeCompare(String(b.dominio)));
+  res.json({
+    items,
+    hoy: hoyIso(),
+    hasta: masMeses(hoyIso(), 1),
+    diasAviso: DIAS_AVISO_PAPELES,
   });
 });
 
@@ -428,6 +491,9 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
     }
   });
 
+  if ((resultado.creados || 0) + (resultado.actualizados || 0) > 0) {
+    marcarStockSucio();
+  }
   res.json(resultado);
 });
 
@@ -493,6 +559,7 @@ router.post("/", requireRole("admin"), (req, res, next) => {
       estadoNuevo: data.estado,
       usuarioId: req.usuario && req.usuario.id,
     });
+    marcarStockSucio();
 
     res.status(201).json(serialize(findById(result.lastInsertRowid)));
   } catch (err) {
@@ -519,6 +586,7 @@ router.put("/:id", requireRole("admin"), (req, res, next) => {
       estadoNuevo: data.estado,
       usuarioId: req.usuario && req.usuario.id,
     });
+    marcarStockSucio();
 
     res.json(serialize(findById(req.params.id)));
   } catch (err) {
@@ -544,6 +612,7 @@ router.patch("/:id/estado", (req, res, next) => {
       estadoNuevo: estado,
       usuarioId: req.usuario && req.usuario.id,
     });
+    marcarStockSucio();
 
     res.json(serialize(findById(req.params.id)));
   } catch (err) {
@@ -561,6 +630,7 @@ router.patch("/:id/restaurar", requireRole("admin"), (req, res, next) => {
     db.prepare(
       "UPDATE Vehiculos SET eliminado = 0, eliminado_en = NULL, updated_at = datetime('now') WHERE id = ?"
     ).run(req.params.id);
+    marcarStockSucio();
 
     res.json(serialize(findById(req.params.id)));
   } catch (err) {
@@ -588,6 +658,7 @@ router.delete("/:id", requireRole("admin"), (req, res) => {
   db.prepare(
     "UPDATE Vehiculos SET eliminado = 1, eliminado_en = datetime('now'), updated_at = datetime('now') WHERE id = ?"
   ).run(req.params.id);
+  marcarStockSucio();
 
   res.status(204).send();
 });

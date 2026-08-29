@@ -1028,6 +1028,18 @@ textarea {
   color: var(--orange);
 }
 
+.vehicle__price-antes {
+  display: block;
+  font-size: 0.72em;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.vehicle__price-ahora {
+  display: block;
+}
+
 .vehicle__price--consulta {
   display: inline-flex;
   align-items: center;
@@ -1178,6 +1190,18 @@ textarea {
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--orange);
+}
+
+.detail__price-antes {
+  display: block;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.detail__price-ahora {
+  display: block;
 }
 
 .detail__price--consulta {

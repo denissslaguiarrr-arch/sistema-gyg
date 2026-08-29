@@ -499,6 +499,16 @@ window.GYG_CONFIG = {
     return v.mostrarPrecio === true || v.mostrar_precio === true;
   }
 
+  function tienePrecioOferta(v) {
+    return (
+      !!v &&
+      v.precio_oferta != null &&
+      Number.isFinite(Number(v.precio_oferta)) &&
+      Number(v.precio_oferta) > 0 &&
+      Number(v.precio_oferta) < Number(v.precio)
+    );
+  }
+
   function formatPrice(precio, moneda) {
     const m = moneda || "ARS";
     try {
@@ -689,6 +699,7 @@ window.GYG_CONFIG = {
     normalizeData,
     formatPrice,
     muestraPrecio,
+    tienePrecioOferta,
     formatKm,
     navPages,
     findPageBySlug,
@@ -751,6 +762,21 @@ window.GYG_CONFIG = {
       .replace(/</g, "&lt;")
       .replace(/>/g, "&gt;")
       .replace(/"/g, "&quot;");
+  }
+
+  function markupPrecio(v, clase) {
+    if (!GyGStock.muestraPrecio(v)) {
+      const texto = clase.indexOf("detail") === 0 ? "Precio a consultar" : "Consultar";
+      return `<div class="${clase} ${clase}--consulta">${texto}</div>`;
+    }
+    if (GyGStock.tienePrecioOferta(v)) {
+      return `<div class="${clase} ${clase}--oferta"><span class="${clase}-antes">${escapeHtml(
+        GyGStock.formatPrice(v.precio, v.moneda)
+      )}</span><span class="${clase}-ahora">${escapeHtml(
+        GyGStock.formatPrice(v.precio_oferta, v.moneda)
+      )}</span></div>`;
+    }
+    return `<div class="${clase}">${escapeHtml(GyGStock.formatPrice(v.precio, v.moneda))}</div>`;
   }
 
   function displayBrandName(value) {
@@ -1310,11 +1336,7 @@ window.GYG_CONFIG = {
             <span>${escapeHtml(v.transmision || "")}</span>
             <span>${escapeHtml(v.carroceria || "")}</span>
           </div>
-          ${
-            GyGStock.muestraPrecio(v)
-              ? `<div class="vehicle__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>`
-              : `<div class="vehicle__price vehicle__price--consulta">Consultar</div>`
-          }
+          ${markupPrecio(v, "vehicle__price")}
         </div>
       </article>
     `;
@@ -1871,7 +1893,7 @@ window.GYG_CONFIG = {
       app.innerHTML = `
         <section class="detail">
           <button type="button" class="btn btn--ghost detail__back" id="backBtn">← Volver</button>
-          <div class="empty-state">Este vehículo no está disponible.</div>
+          <div class="empty-state">Este vehículo ya no está disponible.</div>
         </section>`;
       document.getElementById("backBtn")?.addEventListener("click", () => history.back());
       return;
@@ -1937,11 +1959,7 @@ window.GYG_CONFIG = {
             <div class="detail__status is-${escapeAttr(v.status)}">${escapeHtml(v.status)}</div>
             <h1>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</h1>
             <div class="vehicle__version">${escapeHtml(v.version || "")} · ${escapeHtml(String(v.anio))} · ${escapeHtml(v.categoria || "")}</div>
-            ${
-              GyGStock.muestraPrecio(v)
-                ? `<div class="detail__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>`
-                : `<div class="detail__price detail__price--consulta">Precio a consultar</div>`
-            }
+            ${markupPrecio(v, "detail__price")}
             <p class="detail__desc">${escapeHtml(v.descripcion || "")}</p>
             <table class="specs-table">
               <tbody>

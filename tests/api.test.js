@@ -171,6 +171,8 @@ test("GET /api/vehiculos/resumen calcula KPIs sobre los vehículos activos", asy
   assert.equal(resumen.vendidos, 0);
   assert.equal(resumen.valor_stock_usd, 45000);
   assert.equal(resumen.valor_stock_ars, 8000000);
+  assert.equal(resumen.stock_sucio, true);
+  assert.equal(resumen.last_sync_at, null);
 });
 
 test("POST /api/vehiculos guarda y limpia un precio_oferta", async () => {

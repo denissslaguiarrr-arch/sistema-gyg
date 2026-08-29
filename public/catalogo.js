@@ -182,7 +182,12 @@
       esc([v.version, v.anio, v.categoria].filter(Boolean).join(" · ")) +
       '</p><p class="gyg-price">' +
       (v.mostrarPrecio || v.mostrar_precio
-        ? esc(dinero(v.precio_oferta || v.precio, v.moneda))
+        ? v.precio_oferta != null && Number(v.precio_oferta) > 0 && Number(v.precio_oferta) < Number(v.precio)
+          ? '<span style="text-decoration:line-through;color:#64748b;display:block;font-size:0.85em">' +
+            esc(dinero(v.precio, v.moneda)) +
+            "</span>" +
+            esc(dinero(v.precio_oferta, v.moneda))
+          : esc(dinero(v.precio, v.moneda))
         : "Consultar") +
       "</p></div></a>"
     );
@@ -347,7 +352,12 @@
       esc([v.version, v.anio, v.categoria].filter(Boolean).join(" · ")) +
       '</p><p class="gyg-price">' +
       (v.mostrarPrecio || v.mostrar_precio
-        ? esc(dinero(v.precio_oferta || v.precio, v.moneda))
+        ? v.precio_oferta != null && Number(v.precio_oferta) > 0 && Number(v.precio_oferta) < Number(v.precio)
+          ? '<span style="text-decoration:line-through;color:#64748b;display:block;font-size:0.85em">' +
+            esc(dinero(v.precio, v.moneda)) +
+            "</span>" +
+            esc(dinero(v.precio_oferta, v.moneda))
+          : esc(dinero(v.precio, v.moneda))
         : "Precio a consultar") +
       "</p>" +
       specs(v) +

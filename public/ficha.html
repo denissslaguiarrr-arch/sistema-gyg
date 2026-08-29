@@ -11,7 +11,14 @@
 <body class="bg-slate-100 min-h-screen text-slate-800">
   <div class="max-w-2xl mx-auto px-4 py-6">
     <div id="contenido" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-      <button type="button" id="marco-foto" class="block w-full bg-slate-900 cursor-zoom-in">
+      <div class="flex items-center gap-3 px-6 pt-5 ficha-marca">
+        <img src="/brand/logo-gg-automotores.png" alt="G&amp;G Automotores" class="h-10 w-auto" />
+        <p class="text-sm font-medium text-slate-500">G&amp;G Automotores</p>
+      </div>
+      <p id="aviso-vendido" class="hidden mx-6 mt-4 rounded-lg bg-slate-100 border border-slate-200 px-3 py-2 text-sm text-slate-700">
+        Este vehículo ya está vendido. No se muestra en el sitio.
+      </p>
+      <button type="button" id="marco-foto" class="block w-full bg-slate-900 cursor-zoom-in mt-4">
         <img id="foto-principal" class="w-full max-h-[32rem] object-contain bg-slate-900" alt="Foto del vehículo" />
       </button>
       <div id="miniaturas" class="flex gap-2 p-3 overflow-x-auto no-imprimir"></div>
@@ -53,6 +60,9 @@
         </div>
 
         <div class="flex flex-wrap gap-2 mt-6 no-imprimir">
+          <a id="btn-consultar" class="hidden flex-1 min-w-[140px] text-center bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg text-sm" target="_blank" rel="noopener">
+            Consultar por WhatsApp
+          </a>
           <button id="btn-whatsapp" class="flex-1 min-w-[140px] bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg text-sm">
             Compartir por WhatsApp
           </button>
@@ -75,8 +85,10 @@
     @media print {
       body { background: white; }
       .no-imprimir { display: none !important; }
+      #aviso-vendido { display: none !important; }
       #marco-foto { background: white; cursor: default; }
       #foto-principal { max-height: none; background: white; }
+      .ficha-marca { margin-bottom: 0.5rem; }
     }
   </style>
 

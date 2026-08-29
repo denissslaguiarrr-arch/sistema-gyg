@@ -4,6 +4,10 @@ const { construirStockJson } = require("../sync/gist");
 
 const router = express.Router();
 
+function cfgSitio() {
+  return db.prepare("SELECT * FROM ConfiguracionSitio WHERE id = 1").get() || {};
+}
+
 // Solo se expone información apta para un comprador: nada de auditoría interna
 // (sin patente, sin fechas internas, sin datos de usuarios).
 function serializePublico(row) {
@@ -21,6 +25,7 @@ function serializePublico(row) {
   }
   return {
     id: row.id,
+    whatsapp: cfgSitio().whatsapp || "",
     marca: row.marca,
     modelo: row.modelo,
     anio: row.anio,

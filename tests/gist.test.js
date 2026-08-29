@@ -7,6 +7,7 @@ const {
   mergeSiteConfig,
   mergePages,
   construirStockJson,
+  vehiculosParaCatalogo,
   obtenerGistActual,
   publicarEnGist,
   DEFAULT_PAGES,
@@ -193,6 +194,23 @@ test("mergeSiteConfig publica la dirección para el mapa de Contacto", () => {
   assert.equal(limpio.direccion, "");
   const gistGana = mergeSiteConfig({ direccion: "del gist" }, {});
   assert.equal(gistGana.direccion, "del gist");
+});
+
+test("construirStockJson no publica los vehículos vendidos", () => {
+  const stock = construirStockJson({
+    gistActual: null,
+    vehiculos: [
+      { id: 1, marca: "A", modelo: "Uno", anio: 2020, kilometraje: 1, precio: 1, moneda: "ARS", dominio: "AA", estado: "Disponible" },
+      { id: 2, marca: "B", modelo: "Dos", anio: 2020, kilometraje: 1, precio: 1, moneda: "ARS", dominio: "BB", estado: "Vendido" },
+      { id: 3, marca: "C", modelo: "Tres", anio: 2020, kilometraje: 1, precio: 1, moneda: "ARS", dominio: "CC", estado: "Reservado" },
+    ],
+    siteConfig: { nombre: "GyG" },
+  });
+  assert.deepEqual(stock.vehicles.map((v) => v.id), ["gyg-001", "gyg-003"]);
+  assert.deepEqual(
+    vehiculosParaCatalogo([{ estado: "Vendido" }, { status: "vendido" }, { estado: "Disponible" }]).map((v) => v.estado || "ok"),
+    ["Disponible"]
+  );
 });
 
 test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si no hay ninguna", () => {

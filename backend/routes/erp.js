@@ -2,6 +2,7 @@ const express = require("express");
 const { db } = require("../db");
 const requireRole = require("../middleware/requireRole");
 const { diasDesde } = require("../utils/fechas");
+const { marcarStockSucio } = require("../utils/stockSync");
 const {
   validateGasto,
   validateDocumentacion,
@@ -251,6 +252,7 @@ router.post("/:id/venta", (req, res, next) => {
     });
 
     const ventaId = registrar();
+    marcarStockSucio();
     res.status(201).json(serializeVenta(db.prepare("SELECT * FROM Ventas WHERE id = ?").get(ventaId)));
   } catch (err) {
     next(err);

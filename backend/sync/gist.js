@@ -357,6 +357,16 @@ async function obtenerGistActual({ gistId, token, fetchImpl = fetch }) {
   return parsearArchivoStock(data.files && data.files["stock.json"], fetchImpl);
 }
 
+function vehiculoVisibleEnCatalogo(v) {
+  if (!v) return false;
+  const estado = v.estado || v.status;
+  return estado !== "Vendido" && estado !== "vendido";
+}
+
+function vehiculosParaCatalogo(vehiculos) {
+  return (Array.isArray(vehiculos) ? vehiculos : []).filter(vehiculoVisibleEnCatalogo);
+}
+
 function construirStockJson({ gistActual, vehiculos, siteConfig }) {
   const actual = gistActual && typeof gistActual === "object" ? gistActual : {};
   const site = mergeSiteConfig(actual.site, siteConfig);
@@ -368,7 +378,7 @@ function construirStockJson({ gistActual, vehiculos, siteConfig }) {
     },
     site,
     pages: mergePages(actual.pages, site),
-    vehicles: vehiculos.map(mapearVehiculo),
+    vehicles: vehiculosParaCatalogo(vehiculos).map(mapearVehiculo),
   };
 }
 
@@ -423,7 +433,7 @@ async function publicarEnGist({ gistId, token, vehiculos, siteConfig, fetchImpl 
   }
 
   const data = await res.json();
-  const fotosLocalesOmitidas = vehiculos.reduce(
+  const fotosLocalesOmitidas = vehiculosParaCatalogo(vehiculos).reduce(
     (total, v) => total + fotosParaCatalogo(v.imagenes_url).omitidasLocales,
     0
   );
@@ -449,6 +459,8 @@ module.exports = {
   normalizarCopiaPagina,
   reescribirMarca,
   construirStockJson,
+  vehiculosParaCatalogo,
+  vehiculoVisibleEnCatalogo,
   obtenerGistActual,
   publicarEnGist,
 };

@@ -65,6 +65,16 @@
       </div>
     </header>
 
+    <div id="aviso-web-vieja" class="hidden mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <p id="aviso-web-vieja-texto" class="text-sm text-amber-950">El sitio web tiene stock viejo.</p>
+      <div class="flex flex-wrap items-center gap-2">
+        <span id="aviso-web-ultima" class="text-xs text-amber-800"></span>
+        <button type="button" id="btn-publicar-aviso" class="hidden text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg">
+          Publicar ahora
+        </button>
+      </div>
+    </div>
+
     <!-- KPIs -->
     <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
       <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
@@ -89,6 +99,12 @@
         <p id="kpi-valor-usd" class="text-sm font-semibold text-slate-900">USD —</p>
       </div>
     </div>
+
+    <section id="alertas-papeles" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
+      <h2 class="text-sm font-semibold text-slate-800">Papeles por vencer</h2>
+      <p class="text-xs text-slate-500 mt-0.5 mb-2">VTV y verificación policial de los autos en stock (vencidos o dentro de 30 días).</p>
+      <ul id="alertas-papeles-lista" class="divide-y divide-slate-100"></ul>
+    </section>
 
     <!-- Toolbar: búsqueda y filtros -->
     <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap gap-3 items-end">

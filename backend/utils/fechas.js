@@ -42,9 +42,18 @@ function diasDesde(fechaIso) {
   return Math.max(0, Math.round((hoy - inicio) / 86400000));
 }
 
+function diasHasta(fechaIso) {
+  const parsed = parseFechaIso(fechaIso);
+  if (!parsed.valor) return null;
+  const fin = Date.parse(`${parsed.valor}T00:00:00Z`);
+  const hoy = Date.parse(`${hoyIso()}T00:00:00Z`);
+  return Math.round((fin - hoy) / 86400000);
+}
+
 module.exports = {
   hoyIso,
   parseFechaIso,
   masMeses,
   diasDesde,
+  diasHasta,
 };

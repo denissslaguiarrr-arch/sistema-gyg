@@ -41,7 +41,7 @@ function obtenerConfigSitio() {
 router.post("/publicar", async (_req, res) => {
   try {
     const vehiculos = db
-      .prepare("SELECT * FROM Vehiculos WHERE eliminado = 0 ORDER BY created_at DESC")
+      .prepare("SELECT * FROM Vehiculos WHERE eliminado = 0 AND estado != 'Vendido' ORDER BY created_at DESC")
       .all()
       .map(serializeVehiculo);
 

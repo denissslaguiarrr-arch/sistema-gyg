@@ -30,6 +30,12 @@ const el = {
   btnUsuarios: document.getElementById("btn-usuarios"),
   btnConfigSitio: document.getElementById("btn-config-sitio"),
   btnPublicar: document.getElementById("btn-publicar"),
+  btnPublicarAviso: document.getElementById("btn-publicar-aviso"),
+  avisoWebVieja: document.getElementById("aviso-web-vieja"),
+  avisoWebTexto: document.getElementById("aviso-web-vieja-texto"),
+  avisoWebUltima: document.getElementById("aviso-web-ultima"),
+  alertasPapeles: document.getElementById("alertas-papeles"),
+  alertasPapelesLista: document.getElementById("alertas-papeles-lista"),
   btnTraer: document.getElementById("btn-traer"),
 
   kpiTotal: document.getElementById("kpi-total"),
@@ -330,6 +336,7 @@ async function cargarUsuario() {
     el.btnImportar.classList.toggle("hidden", !admin);
     el.btnConfigSitio.classList.toggle("hidden", !admin);
     el.btnPublicar.classList.toggle("hidden", !admin);
+    if (el.btnPublicarAviso) el.btnPublicarAviso.classList.toggle("hidden", !admin);
     if (el.btnTraer) el.btnTraer.classList.toggle("hidden", !admin);
   } catch (_err) {
     // apiRequest ya redirige a /login.html si la sesión no es válida.
@@ -538,6 +545,7 @@ el.formConfig.addEventListener("submit", async (evento) => {
     });
     mostrarAlerta("Configuración del sitio guardada. Para verla en Blogger, dale a Publicar en la web.", "ok");
     cerrarModalConfig();
+    await refrescarAvisoWeb();
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -583,35 +591,152 @@ if (el.btnHeroSubir && el.cHeroArchivo) {
 
 // ---------- Publicar en la web (solo admin) ----------
 
-el.btnPublicar.addEventListener("click", async () => {
+function formatearFechaCorta(iso) {
+  if (!iso) return "";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return String(iso).slice(0, 10);
+  return d.toLocaleString("es-AR", { dateStyle: "short", timeStyle: "short" });
+}
+
+function formatearFechaDia(iso) {
+  const texto = String(iso || "").slice(0, 10);
+  const m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(texto);
+  return m ? `${m[3]}/${m[2]}/${m[1]}` : texto;
+}
+
+async function publicarEnLaWeb({ confirmar = true, avisar = true } = {}) {
+  if (!esAdmin()) return { ok: false, omitido: true };
   if (
+    confirmar &&
     !window.confirm(
       "¿Publicar el stock actual en el sitio web? Esto actualiza el catálogo que ven tus clientes."
     )
   ) {
-    return;
+    return { ok: false, cancelado: true };
   }
 
-  el.btnPublicar.disabled = true;
-  const textoOriginal = el.btnPublicar.textContent;
-  el.btnPublicar.textContent = "Publicando...";
+  if (el.btnPublicar) {
+    el.btnPublicar.disabled = true;
+    el.btnPublicar.textContent = "Publicando...";
+  }
+  if (el.btnPublicarAviso) el.btnPublicarAviso.disabled = true;
 
   try {
     const resultado = await apiRequest("/api/sync/publicar", { method: "POST" });
     const omitidas = resultado.fotosLocalesOmitidas || 0;
-    mostrarAlerta(
-      omitidas
-        ? `Se publicaron ${resultado.vehiculosPublicados} vehículo(s). ${omitidas} foto(s) subida(s) desde la PC no se ven en el sitio: pegá un link https:// y volvé a publicar.`
-        : `Se publicaron ${resultado.vehiculosPublicados} vehículo(s) en el sitio web.`,
-      omitidas ? "error" : "ok"
-    );
+    if (avisar) {
+      mostrarAlerta(
+        omitidas
+          ? `Se publicaron ${resultado.vehiculosPublicados} vehículo(s). ${omitidas} foto(s) subida(s) desde la PC no se ven en el sitio: pegá un link https:// y volvé a publicar.`
+          : `Se publicaron ${resultado.vehiculosPublicados} vehículo(s) en el sitio web.`,
+        omitidas ? "error" : "ok"
+      );
+    }
+    await refrescarAvisoWeb();
+    return { ok: true, resultado, omitidas };
   } catch (err) {
-    mostrarAlerta(err.message);
+    if (avisar) mostrarAlerta(err.message);
+    await refrescarAvisoWeb();
+    return { ok: false, error: err };
   } finally {
-    el.btnPublicar.disabled = false;
-    el.btnPublicar.textContent = textoOriginal;
+    if (el.btnPublicar) {
+      el.btnPublicar.disabled = false;
+      el.btnPublicar.textContent = "Publicar en la web";
+    }
+    if (el.btnPublicarAviso) el.btnPublicarAviso.disabled = false;
   }
-});
+}
+
+async function despuesDeCambioPublico(mensajeOk) {
+  if (esAdmin()) {
+    const pub = await publicarEnLaWeb({ confirmar: false, avisar: false });
+    if (pub.ok) {
+      const omitidas = pub.omitidas || 0;
+      mostrarAlerta(
+        omitidas
+          ? `${mensajeOk} El sitio se actualizó, pero ${omitidas} foto(s) local(es) no se ven en la web.`
+          : `${mensajeOk} El sitio ya está actualizado.`,
+        omitidas ? "error" : "ok"
+      );
+    } else {
+      mostrarAlerta(
+        `${mensajeOk} El sitio no se actualizó. Tocá Publicar en la web.`,
+        "error"
+      );
+    }
+  } else {
+    mostrarAlerta(`${mensajeOk} El sitio no se actualizó: pedile al admin que publique.`, "ok");
+    await refrescarAvisoWeb();
+  }
+}
+
+async function refrescarAvisoWeb() {
+  if (!el.avisoWebVieja) return;
+  try {
+    const resumen = await apiRequest(`${API_BASE}/resumen`);
+    const sucio = !!resumen.stock_sucio;
+    el.avisoWebVieja.classList.toggle("hidden", !sucio);
+    if (el.avisoWebTexto) {
+      el.avisoWebTexto.textContent = esAdmin()
+        ? "El sitio web tiene stock viejo. Publicá para que los clientes vean lo mismo que el panel."
+        : "El sitio web tiene stock viejo. Pedile al admin que publique.";
+    }
+    if (el.avisoWebUltima) {
+      el.avisoWebUltima.textContent = resumen.last_sync_at
+        ? `Última publicación: ${formatearFechaCorta(resumen.last_sync_at)}`
+        : "Todavía no se publicó desde este panel.";
+    }
+    if (el.btnPublicarAviso) el.btnPublicarAviso.classList.toggle("hidden", !sucio || !esAdmin());
+  } catch (_err) {
+    // El aviso queda como estaba.
+  }
+}
+
+async function cargarAlertasPapeles() {
+  if (!el.alertasPapeles || !el.alertasPapelesLista) return;
+  try {
+    const data = await apiRequest(`${API_BASE}/alertas-papeles`);
+    const items = Array.isArray(data.items) ? data.items : [];
+    if (!items.length) {
+      el.alertasPapeles.classList.add("hidden");
+      el.alertasPapelesLista.innerHTML = "";
+      return;
+    }
+    el.alertasPapeles.classList.remove("hidden");
+    el.alertasPapelesLista.innerHTML = items
+      .map((item) => {
+        const tono = item.vencido ? "text-red-700" : "text-amber-800";
+        const cuando = item.vencido
+          ? `vencida el ${formatearFechaDia(item.fecha)}`
+          : item.dias === 0
+            ? "vence hoy"
+            : `vence el ${formatearFechaDia(item.fecha)}`;
+        return `<li class="py-2 flex flex-wrap items-center justify-between gap-2">
+          <div>
+            <button type="button" data-papel-id="${item.vehiculo_id}" class="text-sm font-medium text-slate-800 hover:underline">
+              ${escapeHtml(item.marca)} ${escapeHtml(item.modelo)}
+            </button>
+            <p class="text-xs text-slate-500">${escapeHtml(item.dominio)} · ${escapeHtml(item.etiqueta)}</p>
+          </div>
+          <span class="text-xs font-medium ${tono}">${cuando}</span>
+        </li>`;
+      })
+      .join("");
+  } catch (_err) {
+    el.alertasPapeles.classList.add("hidden");
+  }
+}
+
+el.btnPublicar.addEventListener("click", () => publicarEnLaWeb({ confirmar: true, avisar: true }));
+if (el.btnPublicarAviso) {
+  el.btnPublicarAviso.addEventListener("click", () => publicarEnLaWeb({ confirmar: true, avisar: true }));
+}
+if (el.alertasPapelesLista) {
+  el.alertasPapelesLista.addEventListener("click", (evento) => {
+    const boton = evento.target.closest("[data-papel-id]");
+    if (boton) abrirGestion(boton.dataset.papelId);
+  });
+}
 
 // ---------- Traer stock publicado en el Gist (solo admin) ----------
 
@@ -709,7 +834,7 @@ el.formImportar.addEventListener("submit", async (evento) => {
       `Importación completa: ${data.creados} creado(s), ${data.actualizados} actualizado(s).`,
       "ok"
     );
-    await Promise.all([cargarVehiculos(), cargarResumen()]);
+    await Promise.all([cargarVehiculos(), cargarResumen(), refrescarAvisoWeb(), cargarAlertasPapeles()]);
   } catch (err) {
     mostrarAlerta(err.message);
   } finally {
@@ -1304,17 +1429,23 @@ async function manejarSubmit(evento) {
   evento.preventDefault();
   const datos = leerFormulario();
   const id = el.fId.value;
+  const existente = id ? state.vehiculos.find((item) => item.id === Number(id)) : null;
+  const estadoAnterior = existente ? existente.estado : null;
 
   try {
     if (id) {
       await apiRequest(`${API_BASE}/${id}`, { method: "PUT", body: JSON.stringify(datos) });
-      mostrarAlerta("Vehículo actualizado correctamente.", "ok");
     } else {
       await apiRequest(API_BASE, { method: "POST", body: JSON.stringify(datos) });
-      mostrarAlerta("Vehículo creado correctamente.", "ok");
     }
     cerrarModal();
-    await Promise.all([cargarVehiculos(), cargarResumen()]);
+    await Promise.all([cargarVehiculos(), cargarResumen(), cargarAlertasPapeles()]);
+    if (id && estadoAnterior && estadoAnterior !== datos.estado) {
+      await despuesDeCambioPublico("Vehículo actualizado.");
+    } else {
+      mostrarAlerta(id ? "Vehículo actualizado correctamente." : "Vehículo creado correctamente.", "ok");
+      await refrescarAvisoWeb();
+    }
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -1326,8 +1457,8 @@ async function cambiarEstado(id, estado) {
       method: "PATCH",
       body: JSON.stringify({ estado }),
     });
-    mostrarAlerta(`Estado actualizado a "${estado}".`, "ok");
-    await Promise.all([cargarVehiculos(), cargarResumen()]);
+    await Promise.all([cargarVehiculos(), cargarResumen(), cargarAlertasPapeles()]);
+    await despuesDeCambioPublico(`Estado actualizado a "${estado}".`);
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -1341,8 +1472,8 @@ async function eliminarVehiculo(id) {
   }
   try {
     await apiRequest(`${API_BASE}/${id}`, { method: "DELETE" });
-    mostrarAlerta("Vehículo enviado a la papelera.", "ok");
-    await Promise.all([cargarVehiculos(), cargarResumen()]);
+    await Promise.all([cargarVehiculos(), cargarResumen(), cargarAlertasPapeles()]);
+    await despuesDeCambioPublico("Vehículo enviado a la papelera.");
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -1351,8 +1482,8 @@ async function eliminarVehiculo(id) {
 async function restaurarVehiculo(id) {
   try {
     await apiRequest(`${API_BASE}/${id}/restaurar`, { method: "PATCH" });
-    mostrarAlerta("Vehículo restaurado.", "ok");
-    await Promise.all([cargarVehiculos(), cargarResumen()]);
+    await Promise.all([cargarVehiculos(), cargarResumen(), cargarAlertasPapeles()]);
+    await despuesDeCambioPublico("Vehículo restaurado.");
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -1564,6 +1695,7 @@ async function guardarDocumentacion() {
       }),
     });
     await abrirGestion(state.gestionId);
+    await cargarAlertasPapeles();
     mostrarAlerta("Documentación actualizada.", "ok");
   } catch (err) {
     mostrarAlerta(err.message);
@@ -1606,8 +1738,8 @@ async function manejarSubmitVenta(evento) {
     });
     cerrarVenta();
     if (state.gestionId) await abrirGestion(state.gestionId);
-    mostrarAlerta("Venta registrada. El vehículo pasó a Vendido.", "ok");
-    await Promise.all([cargarVehiculos(), cargarResumen()]);
+    await Promise.all([cargarVehiculos(), cargarResumen(), cargarAlertasPapeles()]);
+    await despuesDeCambioPublico("Venta registrada. El vehículo pasó a Vendido.");
   } catch (err) {
     mostrarAlerta(err.message);
   }
@@ -1743,5 +1875,5 @@ document.addEventListener("keydown", (evento) => {
 
 (async function iniciar() {
   await cargarUsuario();
-  await Promise.all([cargarResumen(), cargarVehiculos()]);
+  await Promise.all([cargarResumen(), cargarVehiculos(), refrescarAvisoWeb(), cargarAlertasPapeles()]);
 })();

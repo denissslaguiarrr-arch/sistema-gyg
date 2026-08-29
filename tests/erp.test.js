@@ -150,6 +150,34 @@ test("documentación: checklist y vencimiento de VTV", async () => {
   assert.equal(body.verificacion_policial_vto, null);
 });
 
+test("GET /api/vehiculos/alertas-papeles lista VTV y policial vencidos o por vencer", async () => {
+  const alta = await post("/api/vehiculos", {
+    marca: "VW",
+    modelo: "Gol",
+    anio: 2016,
+    dominio: "ERPDOC1",
+    precio: 4000,
+    moneda: "USD",
+  });
+  assert.equal(alta.status, 201);
+  const id = (await alta.json()).id;
+  const docs = await put(`/api/vehiculos/${id}/documentacion`, {
+    tiene_08: true,
+    tiene_titulo: true,
+    vtv_vencimiento: "2020-01-01",
+    verificacion_policial_vto: hoyIso(),
+  });
+  assert.equal(docs.status, 200);
+
+  const res = await get("/api/vehiculos/alertas-papeles");
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  const deEste = (body.items || []).filter((item) => item.vehiculo_id === id);
+  assert.equal(deEste.length, 2);
+  assert.ok(deEste.some((item) => item.tipo === "vtv" && item.vencido === true));
+  assert.ok(deEste.some((item) => item.tipo === "policial" && item.vencido === false));
+});
+
 test("venta: registra cliente, pasa a Vendido y calcula garantía a 3 meses", async () => {
   const res = await post(`/api/vehiculos/${vehiculoId}/venta`, {
     cliente_nombre: "Ana Pérez",

@@ -40,6 +40,8 @@ async function iniciar() {
     const badge = document.getElementById("badge-estado");
     badge.textContent = v.estado;
     badge.className = `shrink-0 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold ${ESTADO_BADGE[v.estado] || ESTADO_BADGE.Disponible}`;
+    const avisoVendido = document.getElementById("aviso-vendido");
+    if (avisoVendido && v.estado === "Vendido") avisoVendido.classList.remove("hidden");
 
     const precioEl = document.getElementById("precio");
     const precioAnteriorEl = document.getElementById("precio-anterior");
@@ -248,8 +250,24 @@ async function iniciar() {
         ? `${formatoMoneda(v.precio_oferta, v.moneda)} (antes ${formatoMoneda(v.precio, v.moneda)})`
         : formatoMoneda(v.precio, v.moneda);
     const textoWhatsapp = `${v.marca} ${v.modelo} ${v.anio} — ${textoPrecio}${v.es_0km ? " (0KM)" : ""}\n${window.location.href}`;
+    const telefono = String(v.whatsapp || "").replace(/\D/g, "");
+    const btnConsultar = document.getElementById("btn-consultar");
+    const btnWhatsapp = document.getElementById("btn-whatsapp");
+    if (btnConsultar && telefono && v.estado !== "Vendido") {
+      btnConsultar.href = `https://wa.me/${telefono}?text=${encodeURIComponent(
+        `Hola G&G, consulto por el ${v.marca} ${v.modelo} ${v.anio}. ¿Sigue disponible?`
+      )}`;
+      btnConsultar.classList.remove("hidden");
+      if (btnWhatsapp) {
+        btnWhatsapp.classList.remove("bg-green-600", "hover:bg-green-700", "text-white");
+        btnWhatsapp.classList.add("border", "border-slate-300", "hover:bg-slate-50", "text-slate-700");
+      }
+    }
     document.getElementById("btn-whatsapp").addEventListener("click", () => {
-      window.open(`https://wa.me/?text=${encodeURIComponent(textoWhatsapp)}`, "_blank");
+      const destino = telefono
+        ? `https://wa.me/${telefono}?text=${encodeURIComponent(textoWhatsapp)}`
+        : `https://wa.me/?text=${encodeURIComponent(textoWhatsapp)}`;
+      window.open(destino, "_blank");
     });
     document.getElementById("btn-copiar").addEventListener("click", async () => {
       await navigator.clipboard.writeText(window.location.href);

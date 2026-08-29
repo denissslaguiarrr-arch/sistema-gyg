@@ -84,6 +84,7 @@ test("GET /api/public/vehiculos/:id no requiere sesión y expone los datos del v
   assert.equal(body.dominio, undefined); // no expone la patente públicamente
   assert.equal(body.precio_compra, undefined); // costo interno, no va al catálogo
   assert.equal(body.origen, undefined);
+  assert.equal(typeof body.whatsapp, "string");
 });
 
 test("GET /api/public/vehiculos/:id devuelve 404 para un vehículo eliminado o inexistente", async () => {
@@ -105,6 +106,10 @@ test("/ficha.html y /ficha.js son accesibles sin sesión", async () => {
   assert.equal(js.status, 200);
   const script = await js.text();
   assert.match(script, /abrirLightbox/);
+  assert.match(script, /btn-consultar/);
+  assert.match(script, /wa\.me\/\$\{telefono\}/);
+  assert.match(markup, /aviso-vendido/);
+  assert.match(markup, /btn-consultar/);
 
   const media = await fetch(`${baseUrl}/media.js`);
   assert.equal(media.status, 200);
@@ -139,6 +144,35 @@ test("GET /api/public/catalogo no requiere sesión y usa Contactanos", async () 
   assert.equal(body.github_token, undefined);
   assert.equal(body.site.github_token, undefined);
   assert.doesNotMatch(JSON.stringify(body), /github_token|ghp_/);
+});
+
+test("GET /api/public/catalogo no incluye vehículos vendidos", async () => {
+  const crear = await fetch(`${baseUrl}/api/vehiculos`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({
+      marca: "Fiat", modelo: "Cronos", anio: 2022, dominio: "PUBVEND", precio: 15000, moneda: "USD",
+    }),
+  });
+  const vendido = await crear.json();
+  await fetch(`${baseUrl}/api/vehiculos/${vendido.id}/estado`, {
+    method: "PATCH",
+    headers: { "Content-Type": "application/json", Cookie: cookie },
+    body: JSON.stringify({ estado: "Vendido" }),
+  });
+
+  const res = await fetch(`${baseUrl}/api/public/catalogo`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  const idPublico = `gyg-${String(vendido.id).padStart(3, "0")}`;
+  assert.equal(
+    body.vehicles.some((v) => v.id === idPublico || v.patente === "PUBVEND"),
+    false
+  );
+
+  const ficha = await fetch(`${baseUrl}/api/public/vehiculos/${vendido.id}`);
+  assert.equal(ficha.status, 200);
+  assert.equal((await ficha.json()).estado, "Vendido");
 });
 
 test("/uploads/ es accesible sin sesión (fotos públicas de la ficha)", async () => {

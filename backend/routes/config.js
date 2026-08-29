@@ -6,6 +6,7 @@ const { imgurConfigurado } = require("../utils/imgur");
 const { imgbbConfigurado } = require("../utils/imgbb");
 const { credencialesGist, normalizarGistId, GIST_ID_DEFAULT } = require("../utils/gistConfig");
 const { reescribirMarca } = require("../utils/marca");
+const { marcarStockSucio } = require("../utils/stockSync");
 
 const router = express.Router();
 
@@ -83,6 +84,7 @@ router.put("/sitio", requireRole("admin"), (req, res) => {
     githubToken: tokenNuevo,
   });
 
+  marcarStockSucio();
   res.json(serialize(obtenerConfig()));
 });
 
