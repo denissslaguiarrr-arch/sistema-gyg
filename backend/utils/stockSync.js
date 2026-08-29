@@ -14,8 +14,8 @@ function marcarStockSucio() {
 }
 
 function estadoPublicacion() {
-  const lastSync = leerMeta("last_sync_at");
-  const changed = leerMeta("stock_changed_at");
+  const lastSync = leerMeta("last_sync_at") || null;
+  const changed = leerMeta("stock_changed_at") || null;
   return {
     last_sync_at: lastSync,
     stock_changed_at: changed,

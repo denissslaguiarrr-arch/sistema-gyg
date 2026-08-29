@@ -118,7 +118,7 @@ test("el precio no se muestra si no está tildado y hay botón de consulta", () 
   assert.match(js, /function muestraPrecio/);
   assert.match(js, /Precio a consultar/);
   assert.match(js, /Consultar este vehículo/);
-  assert.match(js, /vehicle__price--consulta/);
+  assert.match(js, /\$\{clase\}--consulta/);
 });
 
 test("si hay oferta se tacha el precio de lista y un vendido no se muestra", () => {
@@ -126,7 +126,7 @@ test("si hay oferta se tacha el precio de lista y un vendido no se muestra", () 
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   assert.match(js, /function tienePrecioOferta/);
   assert.match(js, /function markupPrecio/);
-  assert.match(js, /price-antes/);
+  assert.match(js, /\$\{clase\}-antes/);
   assert.match(js, /ya no está disponible/);
   assert.match(css, /text-decoration: line-through/);
   assert.match(tema, /vehicle__price-antes/);
