@@ -23,7 +23,7 @@ const PAGINA_TAMANIO_MAX = 100;
 const COLUMNAS_VEHICULO = [
   "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "imagenes_url", "notas", "version", "combustible", "transmision", "traccion",
-  "puertas", "color", "motor", "potencia", "carroceria", "destacado", "equipamiento",
+  "puertas", "color", "motor", "potencia", "carroceria", "destacado", "mostrar_precio", "equipamiento",
   "origen", "precio_compra", "fecha_ingreso",
 ];
 
@@ -52,6 +52,7 @@ const ALIAS_COLUMNAS = {
   potencia: ["potencia"],
   carroceria: ["carroceria", "carrocería"],
   destacado: ["destacado"],
+  mostrar_precio: ["mostrar_precio", "mostrarprecio", "mostrar precio", "publicaprecio"],
   equipamiento: ["equipamiento", "equipo", "extras"],
   origen: ["origen"],
   precio_compra: ["precio_compra", "preciocompra", "precio compra", "costo", "precio costo"],
@@ -68,7 +69,7 @@ const COLUMNAS_EXPORT = [
 const COLUMNAS_PLANTILLA = [
   "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "notas", "imagenes_url", "version", "combustible", "transmision", "traccion", "puertas", "color",
-  "motor", "potencia", "carroceria", "destacado", "equipamiento", "origen", "precio_compra", "fecha_ingreso",
+  "motor", "potencia", "carroceria", "destacado", "mostrar_precio", "equipamiento", "origen", "precio_compra", "fecha_ingreso",
 ];
 
 function indiceDesdeEncabezados(encabezados) {
@@ -134,6 +135,7 @@ function serialize(row) {
     imagenes_url: imagenes,
     equipamiento,
     destacado: !!row.destacado,
+    mostrar_precio: !!row.mostrar_precio,
     es_0km: row.kilometraje === 0,
     eliminado: !!row.eliminado,
     origen: row.origen || "Compra",
@@ -358,6 +360,7 @@ router.post("/import", requireRole("admin"), importUpload.single("archivo"), (re
         origen: obtener("origen"),
         precio_compra: obtener("precio_compra"),
         fecha_ingreso: obtener("fecha_ingreso"),
+        ...(indice.mostrar_precio !== undefined ? { mostrar_precio: obtener("mostrar_precio") } : {}),
       }, { existente });
 
       if (existente) {

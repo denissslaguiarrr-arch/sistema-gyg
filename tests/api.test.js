@@ -90,6 +90,7 @@ test("POST /api/vehiculos crea un vehículo y aparece en el listado", async () =
   assert.equal(creado.estado, "Disponible");
   assert.equal(creado.es_0km, true);
   assert.equal(creado.precio_oferta, null);
+  assert.equal(creado.mostrar_precio, false);
 
   const lista = await listar("/api/vehiculos");
   assert.equal(lista.total, 1);

@@ -74,7 +74,7 @@ router.post("/publicar", async (_req, res) => {
 const COLUMNAS_VEHICULO = [
   "marca", "modelo", "anio", "dominio", "kilometraje", "precio", "precio_oferta", "moneda", "estado",
   "imagenes_url", "notas", "version", "combustible", "transmision", "traccion",
-  "puertas", "color", "motor", "potencia", "carroceria", "destacado", "equipamiento",
+  "puertas", "color", "motor", "potencia", "carroceria", "destacado", "mostrar_precio", "equipamiento",
   "origen", "precio_compra", "fecha_ingreso",
 ];
 

@@ -38,6 +38,7 @@ test("migrate agrega las columnas nuevas a una base vieja y permite guardar foto
     assert.ok(columnas.includes("version"));
     assert.ok(columnas.includes("precio_oferta"));
     assert.ok(columnas.includes("destacado"));
+    assert.ok(columnas.includes("mostrar_precio"));
     assert.ok(columnas.includes("equipamiento"));
     assert.ok(columnas.includes("eliminado"));
     assert.ok(columnas.includes("origen"));

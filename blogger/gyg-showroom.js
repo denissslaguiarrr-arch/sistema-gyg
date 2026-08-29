@@ -281,6 +281,7 @@ window.GYG_CONFIG = {
       ? raw.vehicles.map((v) => ({
           ...v,
           categoria: v.categoria || (Number(v.km) <= 100 ? "0km" : "usado"),
+          mostrarPrecio: v.mostrarPrecio === true || v.mostrar_precio === true,
         }))
       : [];
 
@@ -417,6 +418,11 @@ window.GYG_CONFIG = {
     URL.revokeObjectURL(url);
   }
 
+  function muestraPrecio(v) {
+    if (!v) return false;
+    return v.mostrarPrecio === true || v.mostrar_precio === true;
+  }
+
   function formatPrice(precio, moneda) {
     const m = moneda || "ARS";
     try {
@@ -512,15 +518,18 @@ window.GYG_CONFIG = {
     return String(fromSite || cfg().WHATSAPP_NUMBER || "").replace(/\D/g, "");
   }
 
-  function whatsappUrl(data, vehicle) {
+  function whatsappUrl(data, vehicle, opts) {
     const phone = whatsappPhone(data);
     const nameBrand = displayBrandName(
       (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "G\u0026G"
     );
     if (vehicle) {
       const name = `${vehicle.marca} ${vehicle.modelo} ${vehicle.version || ""} ${vehicle.anio}`.trim();
+      const consultarPrecio = opts && opts.consultarPrecio;
       const text = encodeURIComponent(
-        `Hola ${nameBrand}, consulto por el ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
+        consultarPrecio
+          ? `Hola ${nameBrand}, consulto el precio del ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
+          : `Hola ${nameBrand}, consulto por el ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
       );
       return `https://wa.me/${phone}?text=${text}`;
     }
@@ -557,6 +566,7 @@ window.GYG_CONFIG = {
       carroceria: "Sedán",
       patente: "",
       destacado: false,
+      mostrarPrecio: false,
       descripcion: "",
       equipamiento: [],
       fotos: [],
@@ -602,6 +612,7 @@ window.GYG_CONFIG = {
     downloadBackup,
     normalizeData,
     formatPrice,
+    muestraPrecio,
     formatKm,
     navPages,
     findPageBySlug,
@@ -1223,7 +1234,11 @@ window.GYG_CONFIG = {
             <span>${escapeHtml(v.transmision || "")}</span>
             <span>${escapeHtml(v.carroceria || "")}</span>
           </div>
-          <div class="vehicle__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>
+          ${
+            GyGStock.muestraPrecio(v)
+              ? `<div class="vehicle__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>`
+              : `<div class="vehicle__price vehicle__price--consulta">Consultar</div>`
+          }
         </div>
       </article>
     `;
@@ -1846,7 +1861,11 @@ window.GYG_CONFIG = {
             <div class="detail__status is-${escapeAttr(v.status)}">${escapeHtml(v.status)}</div>
             <h1>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</h1>
             <div class="vehicle__version">${escapeHtml(v.version || "")} · ${escapeHtml(String(v.anio))} · ${escapeHtml(v.categoria || "")}</div>
-            <div class="detail__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>
+            ${
+              GyGStock.muestraPrecio(v)
+                ? `<div class="detail__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>`
+                : `<div class="detail__price detail__price--consulta">Precio a consultar</div>`
+            }
             <p class="detail__desc">${escapeHtml(v.descripcion || "")}</p>
             <table class="specs-table">
               <tbody>
@@ -1862,8 +1881,8 @@ window.GYG_CONFIG = {
                 : ""
             }
             <div class="detail__cta">
-              <a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data, v))}">
-                Consultar por WhatsApp
+              <a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data, v, { consultarPrecio: !GyGStock.muestraPrecio(v) }))}">
+                ${GyGStock.muestraPrecio(v) ? "Consultar por WhatsApp" : "Consultar este vehículo"}
               </a>
             </div>
           </aside>

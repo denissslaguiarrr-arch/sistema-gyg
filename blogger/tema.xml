@@ -1039,6 +1039,21 @@ textarea {
   color: var(--orange);
 }
 
+.vehicle__price--consulta {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #25d366;
+  border-radius: 999px;
+}
+
 .empty-state,
 .loading-state,
 .error-state {
@@ -1174,6 +1189,11 @@ textarea {
   font-size: 1.8rem;
   font-weight: 800;
   color: var(--orange);
+}
+
+.detail__price--consulta {
+  font-size: 1.15rem;
+  color: var(--blue);
 }
 
 .detail__status {
@@ -1509,19 +1529,29 @@ textarea {
 .wa-bar {
   position: fixed;
   z-index: 46;
+  right: 1.1rem;
+  bottom: calc(1.1rem + var(--safe-bottom));
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  background: #1f7a4c;
+  background: #25d366;
   color: #fff;
-  font-weight: 700;
-  letter-spacing: 0.04em;
   text-decoration: none;
-  box-shadow: 0 10px 28px rgba(14, 17, 22, 0.18);
+  box-shadow: 0 10px 24px rgba(14, 17, 22, 0.22);
+}
+
+.wa-bar svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  fill: currentColor;
 }
 
 .wa-bar:hover {
-  background: #19653f;
+  background: #1fbe5a;
   color: #fff;
 }
 
@@ -1529,7 +1559,7 @@ textarea {
   position: fixed;
   z-index: 47;
   right: 1.1rem;
-  bottom: 5.6rem;
+  bottom: calc(5.1rem + var(--safe-bottom));
   width: 44px;
   height: 44px;
   border: 1px solid var(--line);
@@ -1553,32 +1583,15 @@ textarea {
   .wa-bar {
     right: 1.25rem;
     bottom: 1.25rem;
-    left: auto;
-    padding: 0.75rem 1.15rem;
-    border-radius: 999px;
   }
 
   .back-top {
-    bottom: 5.4rem;
+    bottom: 5.3rem;
   }
 }
 
-@media (max-width: 920px) {
-  .wa-bar {
-    left: 0;
-    right: 0;
-    bottom: 0;
-    padding: 0.85rem 1rem calc(0.85rem + var(--safe-bottom));
-    border-radius: 0;
-  }
-
-  body.has-wa-bar .site-footer {
-    padding-bottom: calc(5.4rem + var(--safe-bottom));
-  }
-
-  .back-top {
-    bottom: calc(4.6rem + var(--safe-bottom));
-  }
+body.has-wa-bar .site-footer {
+  padding-bottom: calc(5.2rem + var(--safe-bottom));
 }
 
 .hidden {
@@ -2106,7 +2119,11 @@ textarea {
           </div>
         </footer>
       </div>
-      <a class='wa-bar hidden' id='waBar' rel='noopener' target='_blank'>WhatsApp</a>
+      <a aria-label='WhatsApp' class='wa-bar hidden' id='waBar' rel='noopener' target='_blank'>
+        <svg aria-hidden='true' viewBox='0 0 24 24'>
+          <path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z'/>
+        </svg>
+      </a>
       <button aria-label='Volver arriba' class='back-top' id='backTop' type='button'>↑</button>
       <div aria-live='polite' class='toast' id='toast' role='status'/>
     </div>
@@ -2396,6 +2413,7 @@ window.GYG_CONFIG = {
       ? raw.vehicles.map((v) => ({
           ...v,
           categoria: v.categoria || (Number(v.km) <= 100 ? "0km" : "usado"),
+          mostrarPrecio: v.mostrarPrecio === true || v.mostrar_precio === true,
         }))
       : [];
 
@@ -2532,6 +2550,11 @@ window.GYG_CONFIG = {
     URL.revokeObjectURL(url);
   }
 
+  function muestraPrecio(v) {
+    if (!v) return false;
+    return v.mostrarPrecio === true || v.mostrar_precio === true;
+  }
+
   function formatPrice(precio, moneda) {
     const m = moneda || "ARS";
     try {
@@ -2627,15 +2650,18 @@ window.GYG_CONFIG = {
     return String(fromSite || cfg().WHATSAPP_NUMBER || "").replace(/\D/g, "");
   }
 
-  function whatsappUrl(data, vehicle) {
+  function whatsappUrl(data, vehicle, opts) {
     const phone = whatsappPhone(data);
     const nameBrand = displayBrandName(
       (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "G\u0026G"
     );
     if (vehicle) {
       const name = `${vehicle.marca} ${vehicle.modelo} ${vehicle.version || ""} ${vehicle.anio}`.trim();
+      const consultarPrecio = opts && opts.consultarPrecio;
       const text = encodeURIComponent(
-        `Hola ${nameBrand}, consulto por el ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
+        consultarPrecio
+          ? `Hola ${nameBrand}, consulto el precio del ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
+          : `Hola ${nameBrand}, consulto por el ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
       );
       return `https://wa.me/${phone}?text=${text}`;
     }
@@ -2672,6 +2698,7 @@ window.GYG_CONFIG = {
       carroceria: "Sedán",
       patente: "",
       destacado: false,
+      mostrarPrecio: false,
       descripcion: "",
       equipamiento: [],
       fotos: [],
@@ -2717,6 +2744,7 @@ window.GYG_CONFIG = {
     downloadBackup,
     normalizeData,
     formatPrice,
+    muestraPrecio,
     formatKm,
     navPages,
     findPageBySlug,
@@ -3338,7 +3366,11 @@ window.GYG_CONFIG = {
             <span>${escapeHtml(v.transmision || "")}</span>
             <span>${escapeHtml(v.carroceria || "")}</span>
           </div>
-          <div class="vehicle__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>
+          ${
+            GyGStock.muestraPrecio(v)
+              ? `<div class="vehicle__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>`
+              : `<div class="vehicle__price vehicle__price--consulta">Consultar</div>`
+          }
         </div>
       </article>
     `;
@@ -3961,7 +3993,11 @@ window.GYG_CONFIG = {
             <div class="detail__status is-${escapeAttr(v.status)}">${escapeHtml(v.status)}</div>
             <h1>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</h1>
             <div class="vehicle__version">${escapeHtml(v.version || "")} · ${escapeHtml(String(v.anio))} · ${escapeHtml(v.categoria || "")}</div>
-            <div class="detail__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>
+            ${
+              GyGStock.muestraPrecio(v)
+                ? `<div class="detail__price">${escapeHtml(GyGStock.formatPrice(v.precio_oferta || v.precio, v.moneda))}</div>`
+                : `<div class="detail__price detail__price--consulta">Precio a consultar</div>`
+            }
             <p class="detail__desc">${escapeHtml(v.descripcion || "")}</p>
             <table class="specs-table">
               <tbody>
@@ -3977,8 +4013,8 @@ window.GYG_CONFIG = {
                 : ""
             }
             <div class="detail__cta">
-              <a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data, v))}">
-                Consultar por WhatsApp
+              <a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data, v, { consultarPrecio: !GyGStock.muestraPrecio(v) }))}">
+                ${GyGStock.muestraPrecio(v) ? "Consultar por WhatsApp" : "Consultar este vehículo"}
               </a>
             </div>
           </aside>

@@ -42,6 +42,7 @@ function serializePublico(row) {
     potencia: row.potencia || "",
     carroceria: row.carroceria || "",
     destacado: !!row.destacado,
+    mostrar_precio: !!row.mostrar_precio,
     equipamiento,
   };
 }

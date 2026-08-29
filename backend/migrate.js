@@ -41,6 +41,7 @@ const COLUMNAS_VEHICULOS = [
   ["potencia", "TEXT NOT NULL DEFAULT ''"],
   ["carroceria", "TEXT NOT NULL DEFAULT ''"],
   ["destacado", "INTEGER NOT NULL DEFAULT 0"],
+  ["mostrar_precio", "INTEGER NOT NULL DEFAULT 0"],
   ["equipamiento", "TEXT NOT NULL DEFAULT '[]'"],
   ["eliminado", "INTEGER NOT NULL DEFAULT 0"],
   ["eliminado_en", "TEXT"],

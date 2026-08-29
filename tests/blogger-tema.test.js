@@ -84,9 +84,10 @@ test("al cambiar de página el scroll vuelve arriba y hay WhatsApp fijo y volver
   assert.match(js, /setupBackTop/);
   assert.match(css, /overflow-anchor: none/);
   assert.doesNotMatch(css, /scroll-behavior:\s*smooth/);
-  assert.match(css, /\.wa-bar/);
+  assert.match(css, /\.wa-bar \{[^}]*border-radius: 50%/);
   assert.match(css, /\.back-top/);
   assert.match(tema, /id='waBar'/);
+  assert.match(tema, /aria-label='WhatsApp'/);
   assert.match(tema, /id='backTop'/);
   assert.match(tema, /id='gygTop'/);
 });
@@ -96,6 +97,14 @@ test("si el catálogo no carga, el visitante ve reintentar y no un formulario de
   assert.match(js, /El catálogo no se pudo cargar/);
   assert.match(js, /gistRetryBtn/);
   assert.match(js, /clearStoredGistId/);
+});
+
+test("el precio no se muestra si no está tildado y hay botón de consulta", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(js, /function muestraPrecio/);
+  assert.match(js, /Precio a consultar/);
+  assert.match(js, /Consultar este vehículo/);
+  assert.match(js, /vehicle__price--consulta/);
 });
 
 test("Contacto tiene mapa, ficha con migas y similares, privacidad y carga con esqueleto", () => {

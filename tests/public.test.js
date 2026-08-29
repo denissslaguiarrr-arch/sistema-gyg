@@ -78,6 +78,7 @@ test("GET /api/public/vehiculos/:id no requiere sesión y expone los datos del v
   assert.equal(body.notas, "Único dueño");
   assert.equal(body.precio, 25000);
   assert.equal(body.precio_oferta, 22000);
+  assert.equal(body.mostrar_precio, false);
   assert.deepEqual(body.imagenes_url, ["https://example.com/foto1.jpg"]);
   assert.equal(body.eliminado, undefined); // no debe filtrar campos internos de auditoría
   assert.equal(body.dominio, undefined); // no expone la patente públicamente

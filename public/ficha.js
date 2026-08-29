@@ -44,7 +44,11 @@ async function iniciar() {
     const precioEl = document.getElementById("precio");
     const precioAnteriorEl = document.getElementById("precio-anterior");
     const badgeOferta = document.getElementById("badge-oferta");
-    if (tienePrecioOferta(v)) {
+    if (!v.mostrar_precio) {
+      precioEl.textContent = "Precio a consultar";
+      precioEl.classList.remove("text-indigo-700", "text-3xl");
+      precioEl.classList.add("text-slate-700", "text-xl");
+    } else if (tienePrecioOferta(v)) {
       precioAnteriorEl.textContent = formatoMoneda(v.precio, v.moneda);
       precioAnteriorEl.classList.remove("hidden");
       precioEl.textContent = formatoMoneda(v.precio_oferta, v.moneda);
@@ -238,9 +242,11 @@ async function iniciar() {
 
     contenedor.classList.remove("hidden");
 
-    const textoPrecio = tienePrecioOferta(v)
-      ? `${formatoMoneda(v.precio_oferta, v.moneda)} (antes ${formatoMoneda(v.precio, v.moneda)})`
-      : formatoMoneda(v.precio, v.moneda);
+    const textoPrecio = !v.mostrar_precio
+      ? "precio a consultar"
+      : tienePrecioOferta(v)
+        ? `${formatoMoneda(v.precio_oferta, v.moneda)} (antes ${formatoMoneda(v.precio, v.moneda)})`
+        : formatoMoneda(v.precio, v.moneda);
     const textoWhatsapp = `${v.marca} ${v.modelo} ${v.anio} — ${textoPrecio}${v.es_0km ? " (0KM)" : ""}\n${window.location.href}`;
     document.getElementById("btn-whatsapp").addEventListener("click", () => {
       window.open(`https://wa.me/?text=${encodeURIComponent(textoWhatsapp)}`, "_blank");

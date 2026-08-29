@@ -97,6 +97,7 @@ function mapearVehiculo(v) {
     carroceria: v.carroceria || "",
     patente: v.dominio,
     destacado: !!v.destacado,
+    mostrarPrecio: !!v.mostrar_precio || !!v.mostrarPrecio,
     descripcion: v.notas || "",
     equipamiento: Array.isArray(v.equipamiento) ? v.equipamiento : [],
     fotos,
@@ -294,6 +295,7 @@ function mapearVehiculoDesdeGist(v = {}) {
     potencia: String(v.potencia || "").trim(),
     carroceria: String(v.carroceria || "").trim(),
     destacado: !!v.destacado,
+    mostrar_precio: !!(v.mostrarPrecio || v.mostrar_precio),
     equipamiento: Array.isArray(v.equipamiento) ? v.equipamiento : [],
     fecha_ingreso: String(v.ingreso || v.fecha_ingreso || "").trim().slice(0, 10),
   };

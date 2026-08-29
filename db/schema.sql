@@ -47,6 +47,7 @@ CREATE TABLE IF NOT EXISTS Vehiculos (
   potencia      TEXT    NOT NULL DEFAULT '',
   carroceria    TEXT    NOT NULL DEFAULT '',
   destacado     INTEGER NOT NULL DEFAULT 0 CHECK (destacado IN (0, 1)),
+  mostrar_precio INTEGER NOT NULL DEFAULT 0 CHECK (mostrar_precio IN (0, 1)),
   equipamiento  TEXT    NOT NULL DEFAULT '[]',
   -- Origen y costo de ingreso (ERP: compra / consignación / permuta).
   origen        TEXT    NOT NULL DEFAULT 'Compra'

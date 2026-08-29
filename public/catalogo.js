@@ -181,7 +181,9 @@
       '</h3><p class="gyg-muted">' +
       esc([v.version, v.anio, v.categoria].filter(Boolean).join(" · ")) +
       '</p><p class="gyg-price">' +
-      esc(dinero(v.precio_oferta || v.precio, v.moneda)) +
+      (v.mostrarPrecio || v.mostrar_precio
+        ? esc(dinero(v.precio_oferta || v.precio, v.moneda))
+        : "Consultar") +
       "</p></div></a>"
     );
   }
@@ -344,7 +346,9 @@
       '</h2><p class="gyg-muted">' +
       esc([v.version, v.anio, v.categoria].filter(Boolean).join(" · ")) +
       '</p><p class="gyg-price">' +
-      esc(dinero(v.precio_oferta || v.precio, v.moneda)) +
+      (v.mostrarPrecio || v.mostrar_precio
+        ? esc(dinero(v.precio_oferta || v.precio, v.moneda))
+        : "Precio a consultar") +
       "</p>" +
       specs(v) +
       (wa
@@ -352,7 +356,9 @@
           wa +
           "?text=" +
           msg +
-          '" target="_blank" rel="noopener">Consultar por WhatsApp</a>'
+          '" target="_blank" rel="noopener">' +
+          (v.mostrarPrecio || v.mostrar_precio ? "Consultar por WhatsApp" : "Consultar este vehículo") +
+          "</a>"
         : "") +
       "</div></div>"
     );

@@ -84,6 +84,7 @@ const el = {
   fMotor: document.getElementById("f-motor"),
   fPotencia: document.getElementById("f-potencia"),
   fDestacado: document.getElementById("f-destacado"),
+  fMostrarPrecio: document.getElementById("f-mostrar-precio"),
   fEquipamiento: document.getElementById("f-equipamiento"),
   galeriaImagenes: document.getElementById("galeria-imagenes"),
   dropzoneImagenes: document.getElementById("dropzone-imagenes"),
@@ -197,13 +198,17 @@ function tienePrecioOferta(v) {
 }
 
 function htmlPrecio(v) {
+  let inner;
   if (!tienePrecioOferta(v)) {
-    return `<span class="font-medium">${formatoMoneda(v.precio, v.moneda)}</span>`;
-  }
-  return `<div>
+    inner = `<span class="font-medium">${formatoMoneda(v.precio, v.moneda)}</span>`;
+  } else {
+    inner = `<div>
       <div class="text-xs text-slate-400 line-through">${formatoMoneda(v.precio, v.moneda)}</div>
       <div class="font-medium text-emerald-700">${formatoMoneda(v.precio_oferta, v.moneda)}</div>
     </div>`;
+  }
+  if (v.mostrar_precio) return inner;
+  return `<div>${inner}<div class="text-[11px] text-slate-400">Oculto en la web</div></div>`;
 }
 
 function formatoKilometraje(km) {
@@ -1239,6 +1244,7 @@ function abrirModal(vehiculo = null) {
     el.fMotor.value = vehiculo.motor || "";
     el.fPotencia.value = vehiculo.potencia || "";
     el.fDestacado.checked = !!vehiculo.destacado;
+    if (el.fMostrarPrecio) el.fMostrarPrecio.checked = !!vehiculo.mostrar_precio;
     el.fEquipamiento.value = (vehiculo.equipamiento || []).join(", ");
   } else {
     el.modalTitulo.textContent = "Nuevo vehículo";
@@ -1247,6 +1253,7 @@ function abrirModal(vehiculo = null) {
     el.fMoneda.value = "ARS";
     el.fKilometraje.value = 0;
     el.fDestacado.checked = false;
+    if (el.fMostrarPrecio) el.fMostrarPrecio.checked = false;
     if (el.fOrigen) el.fOrigen.value = "Compra";
     if (el.fPrecioCompra) el.fPrecioCompra.value = "";
     if (el.fFechaIngreso) el.fFechaIngreso.value = hoyIso();
@@ -1288,6 +1295,7 @@ function leerFormulario() {
     motor: el.fMotor.value.trim(),
     potencia: el.fPotencia.value.trim(),
     destacado: el.fDestacado.checked,
+    mostrar_precio: !!(el.fMostrarPrecio && el.fMostrarPrecio.checked),
     equipamiento: el.fEquipamiento.value,
   };
 }

@@ -24,6 +24,7 @@ test("valida un vehículo correcto y normaliza dominio/moneda", () => {
   assert.equal(data.estado, "Disponible");
   assert.equal(data.origen, "Compra");
   assert.equal(data.precio_compra, null);
+  assert.equal(data.mostrar_precio, 0);
   assert.match(data.fecha_ingreso, /^\d{4}-\d{2}-\d{2}$/);
   assert.deepEqual(JSON.parse(data.imagenes_url), [
     "http://a.com/1.jpg",

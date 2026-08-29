@@ -103,6 +103,10 @@ function validateVehiculo(body = {}, { existente } = {}) {
   const potencia = typeof body.potencia === "string" ? body.potencia.trim() : "";
   const carroceria = typeof body.carroceria === "string" ? body.carroceria.trim() : "";
   const destacado = parseBooleano(body.destacado);
+  let mostrar_precio = existente ? (existente.mostrar_precio ? 1 : 0) : 0;
+  if (campoPresente(body, "mostrar_precio")) {
+    mostrar_precio = parseBooleano(body.mostrar_precio) ? 1 : 0;
+  }
   const puertas =
     body.puertas === undefined || body.puertas === null || body.puertas === ""
       ? null
@@ -216,6 +220,7 @@ function validateVehiculo(body = {}, { existente } = {}) {
     potencia,
     carroceria,
     destacado: destacado ? 1 : 0,
+    mostrar_precio,
     equipamiento: JSON.stringify(equipamiento),
     origen,
     precio_compra,

@@ -63,6 +63,21 @@ test("mapearVehiculo arma el objeto con el esquema del catálogo público", () =
   assert.equal(vehiculo.updatedAt, "2026-02-01T12:30:00.000Z");
   assert.equal(vehiculo.precio, 45000);
   assert.equal(vehiculo.precio_oferta, 42000);
+  assert.equal(vehiculo.mostrarPrecio, false);
+});
+
+test("mapearVehiculo publica mostrarPrecio solo si está tildado", () => {
+  const oculto = mapearVehiculo({
+    id: 1, marca: "A", modelo: "B", anio: 2020, kilometraje: 1,
+    precio: 1, moneda: "ARS", dominio: "X", estado: "Disponible",
+  });
+  assert.equal(oculto.mostrarPrecio, false);
+  const visible = mapearVehiculo({
+    id: 2, marca: "A", modelo: "B", anio: 2020, kilometraje: 1,
+    precio: 1, moneda: "ARS", dominio: "Y", estado: "Disponible",
+    mostrar_precio: 1,
+  });
+  assert.equal(visible.mostrarPrecio, true);
 });
 
 test("mapearVehiculoDesdeGist reconstruye el vehículo local desde el catálogo", () => {
@@ -100,6 +115,7 @@ test("mapearVehiculoDesdeGist reconstruye el vehículo local desde el catálogo"
   assert.equal(local.estado, "Reservado");
   assert.equal(local.kilometraje, 0);
   assert.equal(local.precio, 45000);
+  assert.equal(local.mostrar_precio, false);
   assert.equal(local.fecha_ingreso, "2026-01-15");
   assert.deepEqual(local.imagenes_url, ["https://a.com/1.jpg"]);
 });
