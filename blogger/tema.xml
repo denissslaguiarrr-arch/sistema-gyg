@@ -2139,6 +2139,7 @@ body.has-wa-bar .site-footer {
 
 window.GYG_CONFIG = {
   GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f",
+  GIST_OWNER: "denissslaguiarrr-arch",
   GIST_FILENAME: "stock.json",
   WHATSAPP_NUMBER: "+54 9 3735 46-2914",
   DEALERSHIP_NAME: "G\u0026G",
@@ -2219,6 +2220,37 @@ window.GYG_CONFIG = {
     try {
       localStorage.removeItem(GIST_KEY);
     } catch (_) {}
+  }
+
+  function gistIdCandidates() {
+    const ids = [];
+    const seen = {};
+    const add = (value) => {
+      const id = String(value || "").trim();
+      if (!id || seen[id]) return;
+      seen[id] = true;
+      ids.push(id);
+    };
+    try {
+      add(localStorage.getItem(GIST_KEY));
+    } catch (_) {}
+    add(cfg().GIST_ID);
+    return ids;
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function gistRawUrls(gistId, filename) {
+    const owner = (cfg().GIST_OWNER || "denissslaguiarrr-arch").trim();
+    const id = String(gistId || "").trim();
+    const file = filename || "stock.json";
+    const t = Date.now();
+    return [
+      `https://gist.githubusercontent.com/${owner}/${id}/raw/${file}?t=${t}`,
+      `https://gist.githubusercontent.com/${owner}/${id}/raw?t=${t}`,
+    ];
   }
 
   function defaultSite() {
@@ -2420,9 +2452,30 @@ window.GYG_CONFIG = {
     return { meta: raw.meta || {}, site, pages, vehicles };
   }
 
+  async function fetchJsonUrl(url) {
+    const res = await fetch(url, { cache: "no-store", credentials: "omit" });
+    if (!res.ok) throw new Error(`No se pudo leer el Gist (${res.status})`);
+    return res.json();
+  }
+
+  async function fetchViaRaw(gistId, filename) {
+    let lastErr;
+    const urls = gistRawUrls(gistId, filename);
+    for (let i = 0; i < urls.length; i += 1) {
+      try {
+        return await fetchJsonUrl(urls[i]);
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    throw lastErr || new Error("No se pudo descargar el catálogo");
+  }
+
   async function fetchViaApi(gistId, filename) {
     const res = await fetch(`https://api.github.com/gists/${gistId}`, {
       headers: { Accept: "application/vnd.github+json" },
+      cache: "no-store",
+      credentials: "omit",
     });
     if (!res.ok) throw new Error(`No se pudo leer el Gist (${res.status})`);
     const data = await res.json();
@@ -2430,7 +2483,10 @@ window.GYG_CONFIG = {
     if (!file) throw new Error(`No existe el archivo ${filename} en el Gist`);
     if (file.content && !file.truncated) return JSON.parse(file.content);
     const raw = file.raw_url;
-    const rawRes = await fetch(`${raw}${raw.includes("?") ? "&" : "?"}t=${Date.now()}`);
+    const rawRes = await fetch(`${raw}${raw.includes("?") ? "&" : "?"}t=${Date.now()}`, {
+      cache: "no-store",
+      credentials: "omit",
+    });
     if (!rawRes.ok) throw new Error(`No se pudo descargar ${filename}`);
     return rawRes.json();
   }
@@ -2454,29 +2510,49 @@ window.GYG_CONFIG = {
     };
   }
 
+  async function loadGistOnce(gistId, filename) {
+    try {
+      return await fetchViaRaw(gistId, filename);
+    } catch (rawErr) {
+      try {
+        return await fetchViaApi(gistId, filename);
+      } catch (apiErr) {
+        throw apiErr || rawErr;
+      }
+    }
+  }
+
   async function loadStock() {
-    const gistId = getGistId();
     const filename = cfg().GIST_FILENAME || "stock.json";
-    if (!gistId) {
+    const ids = gistIdCandidates();
+    if (!ids.length) {
       const err = new Error("MISSING_GIST_ID");
       err.code = "MISSING_GIST_ID";
       throw err;
     }
-    try {
-      return normalizeData(await fetchViaApi(gistId, filename));
-    } catch (apiErr) {
-      const localPath = (cfg().LOCAL_SAMPLE_PATH || "").trim();
-      if (localPath) {
-        console.warn("Gist falló, usando sample local:", apiErr);
+    let lastErr;
+    for (let i = 0; i < ids.length; i += 1) {
+      const gistId = ids[i];
+      for (let intento = 0; intento < 3; intento += 1) {
         try {
-          return normalizeData(await fetchLocalSample());
-        } catch (_) {}
+          return normalizeData(await loadGistOnce(gistId, filename));
+        } catch (err) {
+          lastErr = err;
+          await sleep(280 * (intento + 1));
+        }
       }
-      const err = new Error(apiErr.message || "No se pudo leer el Gist");
-      err.code = "GIST_LOAD_FAILED";
-      err.cause = apiErr;
-      throw err;
+      if (i === 0 && ids.length > 1) clearStoredGistId();
     }
+    const localPath = (cfg().LOCAL_SAMPLE_PATH || "").trim();
+    if (localPath) {
+      try {
+        return normalizeData(await fetchLocalSample());
+      } catch (_) {}
+    }
+    const err = new Error((lastErr && lastErr.message) || "No se pudo leer el Gist");
+    err.code = "GIST_LOAD_FAILED";
+    err.cause = lastErr;
+    throw err;
   }
 
   async function createGist(stock, tokenOverride) {
@@ -4071,13 +4147,16 @@ window.GYG_CONFIG = {
       app.innerHTML = `
         <section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">
           <h1>El catálogo no se pudo cargar</h1>
-          <p>A veces tarda un momento. Recargá la página.</p>
+          <p>Recargá la página en un rato. Si sigue, avisá al que te instaló el sistema.</p>
           <p>
             <button type="button" class="btn btn--primary" id="gistRetryBtn">Reintentar</button>
           </p>
         </section>`;
       document.getElementById("gistRetryBtn")?.addEventListener("click", () => {
         GyGStock.clearStoredGistId();
+        try {
+          sessionStorage.removeItem("gyg_gist_auto_retry");
+        } catch (_) {}
         location.reload();
       });
       return;
@@ -4114,11 +4193,40 @@ window.GYG_CONFIG = {
   async function init() {
     try {
       data = await GyGStock.loadStock();
+      try {
+        sessionStorage.removeItem("gyg_gist_auto_retry");
+      } catch (_) {}
       updateChrome();
       if (!location.hash || location.hash === "#") location.hash = "#/";
       route();
     } catch (err) {
       console.error(err);
+      if (!err || err.code !== "MISSING_GIST_ID") {
+        var auto = 0;
+        try {
+          auto = Number(sessionStorage.getItem("gyg_gist_auto_retry") || "0");
+        } catch (_) {
+          auto = 0;
+        }
+        if (auto < 2) {
+          try {
+            sessionStorage.setItem("gyg_gist_auto_retry", String(auto + 1));
+          } catch (_) {}
+          GyGStock.clearStoredGistId();
+          app.innerHTML =
+            '<section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">' +
+            "<h1>Cargando el catálogo…</h1>" +
+            "<p>Un momento, lo estamos bajando de nuevo.</p>" +
+            "</section>";
+          setTimeout(function () {
+            location.reload();
+          }, 2200);
+          return;
+        }
+        try {
+          sessionStorage.removeItem("gyg_gist_auto_retry");
+        } catch (_) {}
+      }
       renderGistSetup(err);
       toast(
         err.code === "MISSING_GIST_ID"

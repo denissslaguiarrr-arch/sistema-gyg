@@ -99,6 +99,20 @@ test("si el catálogo no carga, el visitante ve reintentar y no un formulario de
   assert.match(js, /clearStoredGistId/);
 });
 
+test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {
+  const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
+  assert.match(js, /GIST_OWNER/);
+  assert.match(js, /function gistRawUrls/);
+  assert.match(js, /function fetchViaRaw/);
+  assert.match(js, /function gistIdCandidates/);
+  assert.match(js, /gist\.githubusercontent\.com/);
+  assert.match(js, /gyg_gist_auto_retry/);
+  assert.match(js, /Cargando el catálogo/);
+  assert.match(js, /credentials: "omit"/);
+  assert.match(tema, /gist\.githubusercontent\.com/);
+  assert.match(tema, /gyg_gist_auto_retry/);
+});
+
 test("el precio no se muestra si no está tildado y hay botón de consulta", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(js, /function muestraPrecio/);
