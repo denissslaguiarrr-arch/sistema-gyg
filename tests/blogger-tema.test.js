@@ -153,6 +153,15 @@ test("Contacto tiene mapa, ficha con migas y similares, privacidad y carga con e
   assert.match(tema, /contact-map/);
 });
 
+test("el showroom usa un poco de vidrio en header, tarjetas y filtros", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  assert.match(css, /--glass:/);
+  assert.match(css, /backdrop-filter: var\(--glass-blur\)/);
+  assert.match(css, /prefers-reduced-transparency/);
+  assert.match(tema, /--glass:/);
+  assert.match(tema, /backdrop-filter: var\(--glass-blur\)/);
+});
+
 test("en el celular el menú es un botón y la foto de inicio es una imagen real", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
