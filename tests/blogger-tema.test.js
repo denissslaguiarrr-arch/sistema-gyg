@@ -161,10 +161,14 @@ test("el showroom usa un poco de vidrio en header, tarjetas y filtros", () => {
   assert.match(css, /prefers-reduced-transparency/);
   assert.match(css, /body\.is-home \.site-header/);
   assert.match(css, /home-hero__copy/);
+  assert.match(css, /\.home-hero \.btn--ghost/);
+  assert.match(css, /\.home-hero \.btn--ghost:hover/);
   assert.match(js, /function marcarInicio/);
   assert.match(js, /home-hero__copy/);
   assert.match(tema, /--glass:/);
   assert.match(tema, /backdrop-filter: var\(--glass-blur\)/);
+  assert.match(tema, /\.home-hero \.btn--ghost/);
+  assert.match(tema, /color: #fff/);
 });
 
 test("en el celular el menú es un botón y la foto de inicio es una imagen real", () => {
