@@ -1,6 +1,7 @@
 -- Sistema G&G — Esquema local (SQLite)
 -- Fase 1: stock + panel. Fase 2: sync Gist. schema_version 8: ERP
 -- (origen/compra, gastos, documentación, ventas).
+-- schema_version 9: guía de precios / tasador.
 -- Fechas en TEXT ISO (YYYY-MM-DD o datetime('now')). Booleanos INTEGER 0/1.
 
 PRAGMA foreign_keys = ON;
@@ -114,7 +115,7 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '8'),
+  ('schema_version', '9'),
   ('last_sync_at', '');
 
 -- Reacondicionamiento y gestoría por unidad (ERP).
@@ -154,3 +155,21 @@ CREATE TABLE IF NOT EXISTS Ventas (
 
 CREATE INDEX IF NOT EXISTS idx_ventas_vehiculo ON Ventas (vehiculo_id);
 CREATE INDEX IF NOT EXISTS idx_ventas_fecha ON Ventas (fecha_venta);
+
+-- Precios de revista que carga el encargado (CSV mensual). El tasador
+-- los usa para tirar un número orientativo cuando él no está.
+CREATE TABLE IF NOT EXISTS GuiaPrecios (
+  id             INTEGER PRIMARY KEY AUTOINCREMENT,
+  marca          TEXT    NOT NULL,
+  modelo         TEXT    NOT NULL,
+  version        TEXT    NOT NULL DEFAULT '',
+  anio           INTEGER NOT NULL CHECK (anio >= 1900 AND anio <= 2100),
+  precio_revista REAL    NOT NULL CHECK (precio_revista > 0),
+  moneda         TEXT    NOT NULL DEFAULT 'USD' CHECK (moneda IN ('ARS', 'USD')),
+  edicion        TEXT    NOT NULL,
+  created_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+  updated_at     TEXT    NOT NULL DEFAULT (datetime('now'))
+);
+
+CREATE INDEX IF NOT EXISTS idx_guia_marca_modelo_anio
+  ON GuiaPrecios (marca, modelo, anio);

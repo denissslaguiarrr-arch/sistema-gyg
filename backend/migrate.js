@@ -157,6 +157,29 @@ function migrate(db) {
     `);
     db.prepare("INSERT OR REPLACE INTO Meta (clave, valor) VALUES ('schema_version', '8')").run();
   }
+
+  if (!tablasDe(db).includes("GuiaPrecios")) {
+    db.exec(`
+      CREATE TABLE GuiaPrecios (
+        id             INTEGER PRIMARY KEY AUTOINCREMENT,
+        marca          TEXT    NOT NULL,
+        modelo         TEXT    NOT NULL,
+        version        TEXT    NOT NULL DEFAULT '',
+        anio           INTEGER NOT NULL CHECK (anio >= 1900 AND anio <= 2100),
+        precio_revista REAL    NOT NULL CHECK (precio_revista > 0),
+        moneda         TEXT    NOT NULL DEFAULT 'USD' CHECK (moneda IN ('ARS', 'USD')),
+        edicion        TEXT    NOT NULL,
+        created_at     TEXT    NOT NULL DEFAULT (datetime('now')),
+        updated_at     TEXT    NOT NULL DEFAULT (datetime('now'))
+      );
+      CREATE INDEX IF NOT EXISTS idx_guia_marca_modelo_anio
+        ON GuiaPrecios (marca, modelo, anio);
+    `);
+  }
+
+  if (schemaVersion(db) < 9) {
+    db.prepare("INSERT OR REPLACE INTO Meta (clave, valor) VALUES ('schema_version', '9')").run();
+  }
 }
 
 module.exports = {

@@ -178,6 +178,37 @@ const el = {
   cGithubTokenEstado: document.getElementById("c-github-token-estado"),
   btnCerrarConfig: document.getElementById("btn-cerrar-config"),
   btnCancelarConfig: document.getElementById("btn-cancelar-config"),
+
+  btnTasador: document.getElementById("btn-tasador"),
+  modalTasadorOverlay: document.getElementById("modal-tasador-overlay"),
+  modalTasador: document.getElementById("modal-tasador"),
+  btnCerrarTasador: document.getElementById("btn-cerrar-tasador"),
+  btnCancelarTasador: document.getElementById("btn-cancelar-tasador"),
+  formTasador: document.getElementById("form-tasador"),
+  tasadorGuiaEstado: document.getElementById("tasador-guia-estado"),
+  tasadorResultado: document.getElementById("tasador-resultado"),
+  tasadorAdmin: document.getElementById("tasador-admin"),
+  tMarca: document.getElementById("t-marca"),
+  tModelo: document.getElementById("t-modelo"),
+  tAnio: document.getElementById("t-anio"),
+  tKm: document.getElementById("t-km"),
+  tEstado: document.getElementById("t-estado"),
+  tVersion: document.getElementById("t-version"),
+  tVersionPickWrap: document.getElementById("t-version-pick-wrap"),
+  tVersionPick: document.getElementById("t-version-pick"),
+  formGuiaUno: document.getElementById("form-guia-uno"),
+  gMarca: document.getElementById("g-marca"),
+  gModelo: document.getElementById("g-modelo"),
+  gVersion: document.getElementById("g-version"),
+  gAnio: document.getElementById("g-anio"),
+  gPrecio: document.getElementById("g-precio"),
+  gMoneda: document.getElementById("g-moneda"),
+  formGuiaImport: document.getElementById("form-guia-import"),
+  gArchivo: document.getElementById("g-archivo"),
+  formTasadorConfig: document.getElementById("form-tasador-config"),
+  tKmAnio: document.getElementById("t-km-anio"),
+  tMargen: document.getElementById("t-margen"),
+  tasadorGuiaLista: document.getElementById("tasador-guia-lista"),
 };
 
 const ESTADO_BADGE = {
@@ -1861,6 +1892,195 @@ el.vFecha.addEventListener("change", () => {
   el.vGarantia.value = masMeses(el.vFecha.value || hoyIso(), 3);
 });
 
+function textoEdicionGuia(edicion) {
+  if (!edicion || !/^\d{4}-\d{2}$/.test(edicion)) return edicion || "";
+  const [y, m] = edicion.split("-");
+  const meses = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  return `${meses[Number(m) - 1] || m} ${y}`;
+}
+
+function pintarEstadoGuia(data) {
+  if (!el.tasadorGuiaEstado) return;
+  if (!data || !data.total) {
+    el.tasadorGuiaEstado.textContent = esAdmin()
+      ? "Todavía no hay guía. Cargá abajo los precios de revista de este mes."
+      : "Todavía no hay precios cargados. Pedile al encargado que cargue la guía del mes.";
+    return;
+  }
+  const mes = data.edicion ? ` de ${textoEdicionGuia(data.edicion)}` : "";
+  el.tasadorGuiaEstado.textContent = `Guía${mes}: ${data.total} auto${data.total === 1 ? "" : "s"}. Completá lo que trajo el cliente.`;
+}
+
+function pintarResultadoTasacion(data) {
+  const e = data.estimado;
+  const guia = data.guia || {};
+  const extraAdmin = esAdmin()
+    ? `<p class="text-xs text-slate-500">Revista: ${escapeHtml(formatoMoneda(guia.precio_revista, guia.moneda))}${guia.version ? ` · ${escapeHtml(guia.version)}` : ""}${guia.edicion ? ` · ${escapeHtml(textoEdicionGuia(guia.edicion))}` : ""}</p>`
+    : "";
+  const avisoAnio = data.anio_cercano
+    ? `<p class="text-xs text-amber-800">No estaba el año exacto; se usó ${escapeHtml(String(data.anio_cercano))}.</p>`
+    : "";
+  el.tasadorResultado.innerHTML = `
+    <p class="text-xs font-semibold uppercase tracking-wide text-slate-500">Para decirle, más o menos</p>
+    <p class="text-3xl font-bold text-slate-900">${escapeHtml(formatoMoneda(e.decirle, e.moneda))}</p>
+    <p class="text-sm text-slate-600">Rango: ${escapeHtml(formatoMoneda(e.rango_min, e.moneda))} – ${escapeHtml(formatoMoneda(e.rango_max, e.moneda))}</p>
+    <p class="text-sm text-slate-600">${escapeHtml(e.uso.etiqueta)}. ${Number(e.uso.km_anio).toLocaleString("es-AR")} km/año · estado ${escapeHtml(e.estado)}.</p>
+    ${avisoAnio}
+    ${extraAdmin}
+    <p class="text-xs text-slate-500">El encargado puede mejorar un poco o bajar. Confirmá al ver el auto.</p>
+  `;
+  el.tasadorResultado.classList.remove("hidden");
+}
+
+function mostrarCandidatosVersion(candidatos) {
+  el.tVersionPick.innerHTML = candidatos
+    .map((c) => {
+      const etiqueta = `${c.version || "Sin versión"} · ${formatoMoneda(c.precio_revista, c.moneda)}`;
+      return `<option value="${escapeHtml(c.version)}">${escapeHtml(etiqueta)}</option>`;
+    })
+    .join("");
+  el.tVersionPickWrap.classList.remove("hidden");
+  el.tasadorResultado.innerHTML = `<p class="text-sm text-slate-700">Hay varias versiones. Elegí cuál es y volvé a calcular.</p>`;
+  el.tasadorResultado.classList.remove("hidden");
+}
+
+async function refrescarGuiaTasador() {
+  try {
+    const estado = await apiRequest("/api/tasacion/estado");
+    pintarEstadoGuia(estado);
+    if (!esAdmin()) return;
+    el.tasadorAdmin.classList.remove("hidden");
+    const [config, guia] = await Promise.all([
+      apiRequest("/api/tasacion/config"),
+      apiRequest("/api/tasacion/guia"),
+    ]);
+    if (el.tKmAnio) el.tKmAnio.value = config.km_anio;
+    if (el.tMargen) el.tMargen.value = Math.round(Number(config.margen_medio) * 100);
+    pintarEstadoGuia(guia);
+    el.tasadorGuiaLista.innerHTML = (guia.items || [])
+      .map(
+        (item) => `<li class="py-1.5 flex justify-between gap-2">
+          <span>${escapeHtml(item.marca)} ${escapeHtml(item.modelo)} ${escapeHtml(item.version)} ${item.anio}</span>
+          <span class="text-slate-500 whitespace-nowrap">${escapeHtml(formatoMoneda(item.precio_revista, item.moneda))}</span>
+        </li>`
+      )
+      .join("") || `<li class="py-1.5 text-slate-400">Vacía</li>`;
+  } catch (err) {
+    el.tasadorGuiaEstado.textContent = err.message;
+  }
+}
+
+function abrirTasador() {
+  el.tasadorResultado.classList.add("hidden");
+  el.tasadorResultado.innerHTML = "";
+  el.tVersionPickWrap.classList.add("hidden");
+  el.tVersionPick.innerHTML = "";
+  el.tasadorAdmin.classList.toggle("hidden", !esAdmin());
+  el.modalTasadorOverlay.classList.remove("hidden");
+  el.modalTasador.classList.remove("hidden");
+  refrescarGuiaTasador();
+  el.tMarca.focus();
+}
+
+function cerrarTasador() {
+  el.modalTasadorOverlay.classList.add("hidden");
+  el.modalTasador.classList.add("hidden");
+}
+
+el.btnTasador.addEventListener("click", abrirTasador);
+el.btnCerrarTasador.addEventListener("click", cerrarTasador);
+el.btnCancelarTasador.addEventListener("click", cerrarTasador);
+el.modalTasadorOverlay.addEventListener("click", cerrarTasador);
+
+el.formTasador.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  const versionElegida = !el.tVersionPickWrap.classList.contains("hidden") && el.tVersionPick.value
+    ? el.tVersionPick.value
+    : el.tVersion.value.trim();
+  try {
+    const data = await apiRequest("/api/tasacion/estimar", {
+      method: "POST",
+      body: JSON.stringify({
+        marca: el.tMarca.value.trim(),
+        modelo: el.tModelo.value.trim(),
+        anio: Number(el.tAnio.value),
+        km: Number(el.tKm.value),
+        estado: el.tEstado.value,
+        version: versionElegida,
+      }),
+    });
+    if (data.necesita_version) {
+      mostrarCandidatosVersion(data.candidatos || []);
+      return;
+    }
+    el.tVersionPickWrap.classList.add("hidden");
+    pintarResultadoTasacion(data);
+  } catch (err) {
+    el.tasadorResultado.innerHTML = `<p class="text-sm text-red-700">${escapeHtml(err.message)}</p>`;
+    el.tasadorResultado.classList.remove("hidden");
+  }
+});
+
+el.formGuiaUno.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  try {
+    await apiRequest("/api/tasacion/guia", {
+      method: "POST",
+      body: JSON.stringify({
+        marca: el.gMarca.value.trim(),
+        modelo: el.gModelo.value.trim(),
+        version: el.gVersion.value.trim(),
+        anio: Number(el.gAnio.value),
+        precio_revista: Number(el.gPrecio.value),
+        moneda: el.gMoneda.value,
+      }),
+    });
+    el.formGuiaUno.reset();
+    mostrarAlerta("Quedó en la guía.", "ok");
+    await refrescarGuiaTasador();
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
+el.formGuiaImport.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  const archivo = el.gArchivo.files && el.gArchivo.files[0];
+  if (!archivo) return;
+  try {
+    const formData = new FormData();
+    formData.append("archivo", archivo);
+    const res = await fetch("/api/tasacion/guia/import", { method: "POST", body: formData });
+    if (res.status === 401) {
+      window.location.href = "/login.html";
+      return;
+    }
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || "No se pudo cargar el CSV");
+    mostrarAlerta(`Guía actualizada: ${data.creados} auto(s).`, "ok");
+    el.formGuiaImport.reset();
+    await refrescarGuiaTasador();
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
+el.formTasadorConfig.addEventListener("submit", async (evento) => {
+  evento.preventDefault();
+  try {
+    await apiRequest("/api/tasacion/config", {
+      method: "PUT",
+      body: JSON.stringify({
+        km_anio: Number(el.tKmAnio.value),
+        margen_medio: Number(el.tMargen.value) / 100,
+      }),
+    });
+    mostrarAlerta("Criterios guardados.", "ok");
+  } catch (err) {
+    mostrarAlerta(err.message);
+  }
+});
+
 document.addEventListener("keydown", (evento) => {
   if (evento.key !== "Escape") return;
   if (!el.modal.classList.contains("hidden")) cerrarModal();
@@ -1871,6 +2091,7 @@ document.addEventListener("keydown", (evento) => {
   if (!el.modalUsuarios.classList.contains("hidden")) cerrarModalUsuarios();
   if (!el.modalImportar.classList.contains("hidden")) cerrarModalImportar();
   if (!el.modalConfig.classList.contains("hidden")) cerrarModalConfig();
+  if (!el.modalTasador.classList.contains("hidden")) cerrarTasador();
 });
 
 (async function iniciar() {

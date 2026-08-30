@@ -46,7 +46,7 @@ test("migrate agrega las columnas nuevas a una base vieja y permite guardar foto
     assert.ok(columnas.includes("fecha_ingreso"));
 
     const version = db.prepare("SELECT valor FROM Meta WHERE clave = 'schema_version'").get();
-    assert.equal(version.valor, "8");
+    assert.equal(version.valor, "9");
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("instagram"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("facebook"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("imgbb_api_key"));
@@ -61,6 +61,7 @@ test("migrate agrega las columnas nuevas a una base vieja y permite guardar foto
     assert.ok(tablas.includes("Gastos"));
     assert.ok(tablas.includes("Documentacion"));
     assert.ok(tablas.includes("Ventas"));
+    assert.ok(tablas.includes("GuiaPrecios"));
 
     const insertado = db
       .prepare(
