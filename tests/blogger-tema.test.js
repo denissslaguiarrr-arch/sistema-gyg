@@ -187,14 +187,14 @@ test("en el celular el menú es un botón y la foto de inicio es una imagen real
   assert.doesNotMatch(js, /--hero-image: url\(/);
 });
 
-test("en el celular la portada recorta hacia el auto, no el letrero", () => {
+test("en el celular la portada muestra el cartel y el auto", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
-  assert.match(css, /object-position: 28% 70%/);
-  assert.match(css, /transform-origin: 26% 50%/);
-  assert.match(css, /translateY\(-30%\) scale\(1\.45\)/);
+  assert.match(css, /object-position: 22% 48%/);
+  assert.match(css, /transform: none/);
   assert.doesNotMatch(css, /object-position: center 38%/);
-  assert.match(css, /height: 72vh/);
-  assert.match(tema, /translateY\(-30%\) scale\(1\.45\)/);
+  assert.doesNotMatch(css, /translateY\(-30%\)/);
+  assert.match(css, /height: 78vh/);
+  assert.match(tema, /object-position: 22% 48%/);
 });
 
 test("los títulos 0 km y Usados caben en el celular", () => {
