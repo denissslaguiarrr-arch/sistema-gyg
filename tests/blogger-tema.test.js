@@ -159,7 +159,7 @@ test("el showroom usa un poco de vidrio en header, tarjetas y filtros", () => {
   assert.match(css, /--glass:/);
   assert.match(css, /backdrop-filter: var\(--glass-blur\)/);
   assert.match(css, /prefers-reduced-transparency/);
-  assert.match(css, /body\.is-home \.site-header/);
+  assert.doesNotMatch(css, /body\.is-home \.site-header/);
   assert.match(css, /home-hero__copy/);
   assert.match(css, /\.home-hero \.btn--ghost/);
   assert.match(css, /\.home-hero \.btn--ghost:hover/);
