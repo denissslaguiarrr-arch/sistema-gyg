@@ -2257,6 +2257,8 @@ body.has-wa-bar .site-footer {
 })();
 
 window.GYG_CONFIG = {
+  // Obligatorio en el sitio público: el ID del Gist con stock.json.
+  // Sin esto, los visitantes no ven el catálogo.
   GIST_ID: "",
   GIST_OWNER: "",
   GIST_FILENAME: "stock.json",
@@ -4305,24 +4307,39 @@ window.GYG_CONFIG = {
     }
   }
 
+  function esInstalador() {
+    try {
+      const params = new URLSearchParams(location.search || "");
+      if (params.get("setup") === "1") return true;
+      const hash = String(location.hash || "");
+      return hash === "#/conectar" || hash.indexOf("#/conectar?") === 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function renderCatalogoCaido() {
+    app.innerHTML = `
+      <section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">
+        <h1>El catálogo no se pudo cargar</h1>
+        <p>Recargá la página en un rato. Si sigue, avisá al que te instaló el sistema.</p>
+        <p>
+          <button type="button" class="btn btn--primary" id="gistRetryBtn">Reintentar</button>
+        </p>
+      </section>`;
+    document.getElementById("gistRetryBtn")?.addEventListener("click", () => {
+      GyGStock.clearStoredGistId();
+      try {
+        sessionStorage.removeItem("gyg_gist_auto_retry");
+      } catch (_) {}
+      location.reload();
+    });
+  }
+
   function renderGistSetup(err) {
     const missing = err && err.code === "MISSING_GIST_ID";
-    if (!missing) {
-      app.innerHTML = `
-        <section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">
-          <h1>El catálogo no se pudo cargar</h1>
-          <p>Recargá la página en un rato. Si sigue, avisá al que te instaló el sistema.</p>
-          <p>
-            <button type="button" class="btn btn--primary" id="gistRetryBtn">Reintentar</button>
-          </p>
-        </section>`;
-      document.getElementById("gistRetryBtn")?.addEventListener("click", () => {
-        GyGStock.clearStoredGistId();
-        try {
-          sessionStorage.removeItem("gyg_gist_auto_retry");
-        } catch (_) {}
-        location.reload();
-      });
+    if (!missing || !esInstalador()) {
+      renderCatalogoCaido();
       return;
     }
     const current = GyGStock.getGistId() || "";
@@ -4392,12 +4409,7 @@ window.GYG_CONFIG = {
         } catch (_) {}
       }
       renderGistSetup(err);
-      toast(
-        err.code === "MISSING_GIST_ID"
-          ? "Falta configurar el catálogo"
-          : "No se pudo cargar el catálogo. Recargá en un momento.",
-        "error"
-      );
+      toast("No se pudo cargar el catálogo. Recargá en un momento.", "error");
     }
   }
 

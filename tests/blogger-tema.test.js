@@ -101,6 +101,10 @@ test("si el catálogo no carga, el visitante ve reintentar y no un formulario de
   assert.match(js, /El catálogo no se pudo cargar/);
   assert.match(js, /gistRetryBtn/);
   assert.match(js, /clearStoredGistId/);
+  assert.match(js, /function esInstalador/);
+  assert.match(js, /function renderCatalogoCaido/);
+  assert.match(js, /if \(!missing \|\| !esInstalador\(\)\)/);
+  assert.doesNotMatch(js, /Falta configurar el catálogo/);
 });
 
 test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {
