@@ -192,9 +192,15 @@ test("en el celular la portada muestra el cartel y el auto", () => {
   assert.match(css, /object-position: 22% 48%/);
   assert.match(css, /transform: none/);
   assert.doesNotMatch(css, /object-position: center 38%/);
-  assert.doesNotMatch(css, /translateY\(-30%\)/);
-  assert.match(css, /height: 78vh/);
   assert.match(tema, /object-position: 22% 48%/);
+});
+
+test("en el celular el recuadro no tapa la foto de inicio", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  assert.match(css, /\.home-hero__veil \{\s*display: none/);
+  assert.match(css, /height: min\(72vh, 36rem\)/);
+  assert.match(css, /\.home-hero__copy \{[\s\S]*?background: transparent/);
+  assert.match(tema, /\.home-hero__veil \{\s*display: none/);
 });
 
 test("los títulos 0 km y Usados caben en el celular", () => {

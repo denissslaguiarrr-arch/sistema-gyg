@@ -2094,22 +2094,40 @@ body.has-wa-bar .site-footer {
 
 @media (max-width: 640px) {
   .home-hero {
-    min-height: 78vh;
-    height: 78vh;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: auto;
+    min-height: 0;
   }
 
   .home-hero__photo {
+    position: relative;
+    inset: auto;
+    width: 100%;
+    height: min(72vh, 36rem);
     object-fit: cover;
     object-position: 22% 48%;
     transform: none;
   }
 
+  .home-hero__veil {
+    display: none;
+  }
+
   .home-hero__content {
-    padding: 1.75rem 1rem 1.35rem;
+    padding: 1.15rem 1.1rem 1.4rem;
+    max-width: none;
   }
 
   .home-hero__copy {
-    padding: 0.8rem 0.9rem 0.9rem;
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    border: none;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
   }
 
   .home-hero__brand {
