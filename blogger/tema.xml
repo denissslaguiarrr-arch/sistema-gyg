@@ -2088,31 +2088,33 @@ body.has-wa-bar .site-footer {
   }
 
   .home-hero__photo {
-    object-position: 30% 72%;
+    object-position: 28% 68%;
   }
 }
 
 @media (max-width: 640px) {
   .home-hero {
-    min-height: 78vh;
-    height: 78vh;
+    min-height: 72vh;
+    height: 72vh;
   }
 
   .home-hero__photo {
     object-fit: cover;
-    object-position: 28% 78%;
+    object-position: 28% 70%;
+    transform: translateY(-30%) scale(1.45);
+    transform-origin: 26% 50%;
   }
 
   .home-hero__content {
-    padding: 2.25rem 1rem 1.5rem;
+    padding: 1.75rem 1rem 1.35rem;
   }
 
   .home-hero__copy {
-    padding: 0.85rem 0.95rem 0.95rem;
+    padding: 0.8rem 0.9rem 0.9rem;
   }
 
   .home-hero__brand {
-    font-size: clamp(2.2rem, 11vw, 3.1rem);
+    font-size: clamp(2rem, 10vw, 2.8rem);
   }
 
   .hero h1 {
