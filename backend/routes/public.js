@@ -1,6 +1,7 @@
 const express = require("express");
 const { db } = require("../db");
 const { construirStockJson } = require("../sync/gist");
+const { nombreMarca } = require("../utils/marca");
 
 const router = express.Router();
 
@@ -26,6 +27,7 @@ function serializePublico(row) {
   return {
     id: row.id,
     whatsapp: cfgSitio().whatsapp || "",
+    concesionaria: nombreMarca(cfgSitio().nombre),
     marca: row.marca,
     modelo: row.modelo,
     anio: row.anio,
@@ -51,6 +53,15 @@ function serializePublico(row) {
     equipamiento,
   };
 }
+
+router.get("/marca", (_req, res) => {
+  const cfg = cfgSitio();
+  res.json({
+    nombre: (cfg.nombre || "").trim(),
+    tagline: (cfg.tagline || "").trim(),
+    logoUrl: (cfg.logo_url || "").trim(),
+  });
+});
 
 router.get("/vehiculos/:id", (req, res) => {
   const row = db
@@ -96,6 +107,7 @@ router.get("/catalogo", (_req, res) => {
       direccion: cfg.direccion || "",
       footerText: cfg.footer_text,
       heroImage: cfg.hero_image,
+      logoUrl: cfg.logo_url || "",
     },
   });
   res.json(payload);

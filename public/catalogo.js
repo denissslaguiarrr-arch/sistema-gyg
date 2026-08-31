@@ -1,6 +1,6 @@
-/* Catálogo público G&G. Se usa en /catalogo.html (el sitio de Blogger usa blogger/tema.xml). */
+/* Catálogo público local. En Blogger se usa blogger/tema.xml. */
 (function () {
-  var GIST_ID = window.GYG_GIST_ID || "74837d1c1f0a9a3a67e6dc5cc4fa5b6f";
+  var GIST_ID = window.GYG_GIST_ID || "";
   var root = document.getElementById("gyg-root") || document.body;
   var state = { data: null, error: "", fotoIdx: 0, zoom: 1 };
 
@@ -11,7 +11,10 @@
       "html,body{margin:0;padding:0;background:#f1f5f9;color:#0f172a;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif}",
       "#gyg-root{min-height:100vh;display:flex;flex-direction:column}",
       ".gyg-top{background:#f7f8fa;color:#111;padding:calc(12px + env(safe-area-inset-top,0px)) 16px 10px;border-bottom:1px solid #e8ecf1}",
+      ".gyg-brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px}",
       ".gyg-brand img{height:40px;width:auto;display:block;max-width:min(280px,82vw);object-fit:contain}",
+      ".gyg-brand .marca-wordmark{font-family:Georgia,'Times New Roman',serif;font-weight:800;font-size:1.45rem;letter-spacing:.06em;line-height:1;color:#111}",
+      ".marca-sep{display:inline-block;width:.18em;height:.18em;margin:0 .12em;background:#e85d23;transform:translateY(-.28em);vertical-align:middle}",
       ".gyg-title{margin:6px 0 0;font-size:12px;line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#5c6573;font-weight:600}",
       ".gyg-tag{margin:6px 0 0;color:#cbd5e1;font-size:14px}",
       ".gyg-nav{display:flex;gap:8px;overflow:auto;padding:10px 16px 12px;background:var(--bg);-webkit-overflow-scrolling:touch}",
@@ -84,35 +87,29 @@
       .sort(function (a, b) { return (a.order || 0) - (b.order || 0); })
       .map(function (p) {
         var c = p.content && typeof p.content === "object" ? Object.assign({}, p.content) : {};
-        if (c.headline) c.headline = marca(c.headline);
-        if (c.subtitle) c.subtitle = marca(c.subtitle);
-        if (c.eyebrow) c.eyebrow = marca(c.eyebrow);
-        if (c.body) c.body = marca(c.body);
         return Object.assign({}, p, {
-          title: marca(p.title || ""),
-          navLabel: marca(p.navLabel || p.title || ""),
+          title: p.title || "",
+          navLabel: p.navLabel || p.title || "",
           content: c,
         });
       });
   }
 
-  function marca(t) {
-    return String(t == null ? "" : t).replace(/\bg\s*y\s*g\b(?![\w-])/gi, "G&G");
-  }
-
   function site() {
     var s = (state.data && state.data.site) || {};
+    var nombre = String(s.name || "").trim() || "Concesionaria";
     return {
-      name: marca(s.name || "G&G"),
-      tagline: marca(s.tagline || ""),
+      name: nombre,
+      tagline: s.tagline || "",
       whatsapp: s.whatsapp || "",
       instagram: s.instagram || "",
       facebook: s.facebook || "",
-      contactoTitulo: marca(s.contactoTitulo || "Contactanos"),
-      contactoTexto: marca(s.contactoTexto || ""),
-      direccion: marca(s.direccion || ""),
-      footerText: marca(s.footerText || ""),
+      contactoTitulo: s.contactoTitulo || "Contactanos",
+      contactoTexto: s.contactoTexto || "",
+      direccion: s.direccion || "",
+      footerText: s.footerText || "",
       heroImage: s.heroImage || "",
+      logoUrl: s.logoUrl || "",
     };
   }
 
@@ -157,8 +154,17 @@
 
   function headerHtml() {
     var s = site();
+    var wordmark =
+      window.MarcaSitio && window.MarcaSitio.wordmarkHtml
+        ? window.MarcaSitio.wordmarkHtml(s.name)
+        : esc(s.name);
+    var brand = s.logoUrl
+      ? '<img src="' + esc(s.logoUrl) + '" alt="' + esc(s.name) + '">'
+      : '<div class="marca-wordmark">' + wordmark + "</div>";
     return (
-      '<header class="gyg-top"><a href="#/" class="gyg-brand"><img src="/brand/logo-gg-automotores.png" alt="G&amp;G Automotores"></a><div class="gyg-title">' +
+      '<header class="gyg-top"><a href="#/" class="gyg-brand">' +
+      brand +
+      '</a><div class="gyg-title">' +
       esc(s.tagline || "Selección premium de vehículos") +
       "</div></header>"
     );
@@ -484,6 +490,7 @@
       else inner = stockHtml(page);
     }
     var s = site();
+    document.title = s.name;
     root.innerHTML =
       headerHtml() +
       navHtml(active) +
@@ -499,8 +506,10 @@
     css();
     var urls = [];
     if (window.GYG_STOCK_URL) urls.push(window.GYG_STOCK_URL);
-    if (/localhost|127\.0\.0\.1/.test(location.hostname)) urls.push("/api/public/catalogo");
-    urls.push("https://gist.githubusercontent.com/denissslaguiarrr-arch/" + GIST_ID + "/raw/stock.json?t=" + Date.now());
+    urls.push("/api/public/catalogo");
+    if (GIST_ID) {
+      urls.push("https://gist.githubusercontent.com/" + GIST_ID + "/raw/stock.json?t=" + Date.now());
+    }
     var lastErr = "No se pudo cargar el stock.";
     for (var i = 0; i < urls.length; i++) {
       try {

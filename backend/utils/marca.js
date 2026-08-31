@@ -1,38 +1,25 @@
-// GyG → G&G en textos de marca. No toca URLs ni handles (instagram.com/gygautomotores).
+const NOMBRE_DEFAULT = "Concesionaria";
 
-function reescribirMarca(texto) {
-  return String(texto == null ? "" : texto).replace(/\bg\s*y\s*g\b(?![\w-])/gi, "G&G");
+function nombreMarca(valor) {
+  const n = String(valor == null ? "" : valor).trim();
+  return n || NOMBRE_DEFAULT;
 }
 
-const CLAVES_SIN_REEMPLAZO = new Set([
-  "instagram",
-  "facebook",
-  "whatsapp",
-  "heroImage",
-  "href",
-  "url",
-  "raw_url",
-]);
+function esHeadlineMarcaDefault(texto) {
+  const n = String(texto == null ? "" : texto)
+    .replace(/\s/g, "")
+    .replace(/&amp;/gi, "&")
+    .toLowerCase();
+  return !n || n === "g&g" || n === "gyg" || n === "g+g";
+}
 
-function reescribirMarcaEn(valor) {
-  if (valor == null) return valor;
-  if (typeof valor === "string") return reescribirMarca(valor);
-  if (Array.isArray(valor)) return valor.map(reescribirMarcaEn);
-  if (typeof valor === "object") {
-    const out = Array.isArray(valor) ? [] : { ...valor };
-    for (const clave of Object.keys(valor)) {
-      if (CLAVES_SIN_REEMPLAZO.has(clave)) {
-        out[clave] = valor[clave];
-      } else {
-        out[clave] = reescribirMarcaEn(valor[clave]);
-      }
-    }
-    return out;
-  }
-  return valor;
+function idPublicoVehiculo(id) {
+  return `v-${String(id).padStart(3, "0")}`;
 }
 
 module.exports = {
-  reescribirMarca,
-  reescribirMarcaEn,
+  NOMBRE_DEFAULT,
+  nombreMarca,
+  esHeadlineMarcaDefault,
+  idPublicoVehiculo,
 };

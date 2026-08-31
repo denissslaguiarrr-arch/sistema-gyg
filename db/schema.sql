@@ -1,7 +1,8 @@
--- Sistema G&G — Esquema local (SQLite)
+-- Sistema de stock para concesionarias — Esquema local (SQLite)
 -- Fase 1: stock + panel. Fase 2: sync Gist. schema_version 8: ERP
 -- (origen/compra, gastos, documentación, ventas).
 -- schema_version 9: guía de precios / tasador.
+-- schema_version 10: logo configurable y Gist vacío por defecto.
 -- Fechas en TEXT ISO (YYYY-MM-DD o datetime('now')). Booleanos INTEGER 0/1.
 
 PRAGMA foreign_keys = ON;
@@ -100,8 +101,9 @@ CREATE TABLE IF NOT EXISTS ConfiguracionSitio (
   direccion     TEXT NOT NULL DEFAULT '',
   footer_text TEXT NOT NULL DEFAULT '',
   hero_image  TEXT NOT NULL DEFAULT '',
+  logo_url      TEXT NOT NULL DEFAULT '',
   imgbb_api_key TEXT NOT NULL DEFAULT '',
-  gist_id       TEXT NOT NULL DEFAULT '74837d1c1f0a9a3a67e6dc5cc4fa5b6f',
+  gist_id       TEXT NOT NULL DEFAULT '',
   github_token  TEXT NOT NULL DEFAULT '',
   updated_at  TEXT NOT NULL DEFAULT (datetime('now'))
 );
@@ -115,7 +117,7 @@ CREATE TABLE IF NOT EXISTS Meta (
 );
 
 INSERT OR IGNORE INTO Meta (clave, valor) VALUES
-  ('schema_version', '9'),
+  ('schema_version', '10'),
   ('last_sync_at', '');
 
 -- Reacondicionamiento y gestoría por unidad (ERP).

@@ -1,5 +1,5 @@
-G&G Automotores — instalar en otra PC (Windows)
-===============================================
+Sistema de stock para concesionarias — instalar en otra PC (Windows)
+====================================================================
 
 El sistema funciona SOLO en esa computadora: no hace falta Cursor ni internet
 para usar el panel. Internet sí hace falta para publicar el stock en la web
@@ -8,7 +8,7 @@ y para subir fotos con ImgBB.
 Opción A — la más simple (copiar la carpeta)
 --------------------------------------------
 1. En la PC que ya funciona, COPIÁ la carpeta del sistema (por ejemplo
-   "sistema gyg" o "sistema-gyg") a un pendrive o al Escritorio de la otra PC.
+   "sistema-concesionaria") a un pendrive o al Escritorio de la otra PC.
    No copies la carpeta "node_modules" si pesa mucho: se regenera sola.
    Tampoco copies "db\concesionaria.db" si querés empezar con stock vacío:
    después, con el panel abierto, usá "Traer de la web" para bajar los autos
@@ -20,12 +20,12 @@ Opción A — la más simple (copiar la carpeta)
    Botón verde "LTS". No instales "Current" (24).
    Cerrá y volvé a abrir todo al terminar.
 
-3. Dejá la carpeta FUERA de OneDrive si podés (mejor: C:\sistema-gyg).
+3. Dejá la carpeta FUERA de OneDrive si podés (mejor: C:\sistema-concesionaria).
    OneDrive a veces bloquea la instalación.
 
 4. Doble clic en Iniciar.bat
    Se instalan las dependencias, se crea un acceso directo en el Escritorio
-   ("G&G Automotores") y se abre el navegador.
+   ("Panel de stock") y se abre el navegador.
 
 5. Entrar:  http://localhost:3000
    Usuario: admin
@@ -33,24 +33,26 @@ Opción A — la más simple (copiar la carpeta)
    Cambiá la contraseña apenas entres.
 
 6. Una sola vez, en Configuración del sitio:
+   - Nombre de la concesionaria (se ve en el panel, el login y el sitio)
+   - Logo opcional; si no hay logo, se muestra el nombre grande
    - Clave ImgBB (fotos del sitio): https://api.imgbb.com/
-   - Token de GitHub (permiso gist): https://github.com/settings/tokens/new?scopes=gist
-   El ID del Gist ya viene cargado. Guardar.
+   - ID del Gist y token de GitHub (permiso gist):
+     https://github.com/settings/tokens/new?scopes=gist
+   Guardar.
 
 7. Traer el stock publicado: botón "Traer de la web".
    Eso baja los autos del Gist a este panel (por patente: crea o actualiza).
    No trae precio de costo ni gastos: eso queda en cada PC.
 
-8. Para usarlo todos los días: doble clic en "G&G Automotores" del Escritorio.
+8. Para usarlo todos los días: doble clic en "Panel de stock" del Escritorio.
    Dejá la ventana negra abierta. Para apagar el sistema, cerrala.
 
 
 Opción B — bajarlo de GitHub
 ----------------------------
 1. Instalá Node.js 22 LTS (paso 2 de arriba).
-2. Bajá el ZIP de esta rama (no uses main, está desactualizado):
-   https://github.com/denissslaguiarrr-arch/sistema-gyg/archive/refs/heads/cursor/paso-1-schema-servidor-9f90.zip
-3. Extraé el ZIP en C:\sistema-gyg (no en OneDrive).
+2. Bajá el ZIP de esta rama (no uses main, está desactualizado).
+3. Extraé el ZIP en C:\sistema-concesionaria (no en OneDrive).
 4. Doble clic en Iniciar.bat y seguí desde el paso 5 de la opción A.
 
 
@@ -58,7 +60,7 @@ Si algo falla
 -------------
 - "No está Node.js": instalá el LTS 22 y cerrá/abrí la ventana.
 - Error de Visual Studio / better-sqlite3: estás en Node 24. Instalá el 22.
-- EPERM / OneDrive: copiá la carpeta a C:\sistema-gyg y abrí Iniciar.bat ahí.
+- EPERM / OneDrive: copiá la carpeta a C:\sistema-concesionaria y abrí Iniciar.bat ahí.
 - El navegador no abre: andá a http://localhost:3000
 - Cada PC tiene SU stock, SU clave ImgBB y SU token. No se comparten solos.
 
@@ -66,7 +68,8 @@ Si algo falla
 Publicar en la web
 ------------------
 Con el panel abierto: botón "Publicar en la web".
-El sitio de los clientes es https://gyg-automotores.blogspot.com/
+El nombre que cargaste en Configuración es el que se ve en el encabezado,
+el inicio y el pie del sitio.
 
 El token de GitHub tiene que ser de la MISMA cuenta que creó el Gist
 (permiso gist, token classic). Si al publicar te manda al login, el token

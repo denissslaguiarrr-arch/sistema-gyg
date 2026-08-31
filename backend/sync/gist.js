@@ -4,7 +4,7 @@
 // no hay una pantalla para editar la estructura de páginas.
 
 const { fotosParaCatalogo, mediaParaCatalogo } = require("../utils/fotos");
-const { reescribirMarca, reescribirMarcaEn } = require("../utils/marca");
+const { nombreMarca, esHeadlineMarcaDefault, idPublicoVehiculo } = require("../utils/marca");
 
 const ESTADO_A_STATUS = {
   Disponible: "disponible",
@@ -76,7 +76,7 @@ function mapearVehiculo(v) {
       : catalogo.videos.map((item) => item.thumbnail).filter(Boolean).slice(0, 1);
 
   return {
-    id: `gyg-${String(v.id).padStart(3, "0")}`,
+    id: idPublicoVehiculo(v.id),
     status: mapearEstado(v.estado),
     categoria: v.kilometraje === 0 ? "0km" : "usado",
     marca: v.marca,
@@ -120,16 +120,17 @@ function mergeSiteConfig(gistSite, config) {
   const gs = gistSite && typeof gistSite === "object" ? gistSite : {};
   const cfg = config || {};
   return {
-    name: reescribirMarca(cfg.nombre || gs.name || ""),
-    tagline: reescribirMarca(cfg.tagline || gs.tagline || ""),
+    name: cfg.nombre || gs.name || "",
+    tagline: cfg.tagline || gs.tagline || "",
     whatsapp: cfg.whatsapp || gs.whatsapp || "",
     instagram: tiene(cfg, "instagram") ? cfg.instagram || "" : gs.instagram || "",
     facebook: tiene(cfg, "facebook") ? cfg.facebook || "" : gs.facebook || "",
-    contactoTitulo: reescribirMarca(cfg.contactoTitulo || gs.contactoTitulo || "Contactanos"),
-    contactoTexto: reescribirMarca(cfg.contactoTexto || gs.contactoTexto || ""),
-    direccion: tiene(cfg, "direccion") ? reescribirMarca(cfg.direccion || "") : reescribirMarca(gs.direccion || ""),
-    footerText: reescribirMarca(cfg.footerText || gs.footerText || ""),
+    contactoTitulo: cfg.contactoTitulo || gs.contactoTitulo || "Contactanos",
+    contactoTexto: cfg.contactoTexto || gs.contactoTexto || "",
+    direccion: tiene(cfg, "direccion") ? cfg.direccion || "" : gs.direccion || "",
+    footerText: cfg.footerText || gs.footerText || "",
     heroImage: cfg.heroImage || gs.heroImage || "",
+    logoUrl: tiene(cfg, "logoUrl") ? cfg.logoUrl || "" : gs.logoUrl || "",
   };
 }
 
@@ -193,6 +194,8 @@ function normalizarCopiaPagina(page, site) {
     // pages.home.content.heroImage. Sin esto, una foto vieja del Gist no se pisa.
     const hero = site && String(site.heroImage || "").trim();
     if (hero) content.heroImage = hero;
+    const nombre = site && String(site.name || "").trim();
+    if (nombre && esHeadlineMarcaDefault(content.headline)) content.headline = nombre;
     if (Array.isArray(content.highlights)) {
       content.highlights = content.highlights.map((h) => {
         if (!h || typeof h !== "object") return h;
@@ -210,7 +213,7 @@ function normalizarCopiaPagina(page, site) {
   }
 
   next.content = content;
-  return reescribirMarcaEn(next);
+  return next;
 }
 
 function insertarPaginaVender(pages) {
@@ -373,7 +376,7 @@ function construirStockJson({ gistActual, vehiculos, siteConfig }) {
 
   return {
     meta: {
-      concesionaria: site.name || "Concesionaria",
+      concesionaria: nombreMarca(site.name),
       updatedAt: new Date().toISOString(),
     },
     site,
@@ -457,7 +460,6 @@ module.exports = {
   mergePages,
   insertarPaginaVender,
   normalizarCopiaPagina,
-  reescribirMarca,
   construirStockJson,
   vehiculosParaCatalogo,
   vehiculoVisibleEnCatalogo,

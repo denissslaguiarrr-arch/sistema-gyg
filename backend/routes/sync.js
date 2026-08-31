@@ -35,6 +35,7 @@ function obtenerConfigSitio() {
     direccion: row.direccion || "",
     footerText: row.footer_text,
     heroImage: row.hero_image,
+    logoUrl: row.logo_url || "",
   };
 }
 
@@ -123,6 +124,7 @@ function completarConfigDesdeGist(site) {
        contacto_titulo = @contactoTitulo, contacto_texto = @contactoTexto,
        direccion = @direccion,
        footer_text = @footerText, hero_image = @heroImage,
+       logo_url = @logoUrl,
        updated_at = datetime('now')
      WHERE id = 1`
   ).run({
@@ -138,6 +140,7 @@ function completarConfigDesdeGist(site) {
     direccion: vacio(actual.direccion) ? String(site.direccion || "").trim() : actual.direccion,
     footerText: vacio(actual.footer_text) ? String(site.footerText || "").trim() : actual.footer_text,
     heroImage: vacio(actual.hero_image) ? String(site.heroImage || "").trim() : actual.hero_image,
+    logoUrl: vacio(actual.logo_url) ? String(site.logoUrl || "").trim() : actual.logo_url,
   });
   return true;
 }

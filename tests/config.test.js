@@ -62,7 +62,7 @@ test("GET /api/config/sitio devuelve valores vacíos por defecto", async () => {
   assert.equal(body.direccion, "");
   assert.equal(body.imgbbConfigurado, false);
   assert.equal(body.imgbbApiKey, undefined);
-  assert.equal(body.gistId, "74837d1c1f0a9a3a67e6dc5cc4fa5b6f");
+  assert.equal(body.gistId, "");
   assert.equal(body.githubTokenConfigurado, false);
   assert.equal(body.githubToken, undefined);
 });
@@ -87,23 +87,23 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
     method: "PUT",
     headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
     body: JSON.stringify({
-      nombre: "GyG",
+      nombre: "Autos del Sur",
       tagline: "Selección premium",
       whatsapp: "5491123456789",
-      instagram: "@gygautomotores",
+      instagram: "@autosdelsur",
       facebook: "",
       contactoTitulo: "Contactanos",
       contactoTexto: "Escribinos por WhatsApp o Instagram.",
       direccion: "Av. San Martín 123, Resistencia",
-      footerText: "Concesionaria GyG",
+      footerText: "Concesionaria del Sur",
       heroImage: "https://ejemplo.com/hero.jpg",
     }),
   });
   assert.equal(res.status, 200);
   const body = await res.json();
-  assert.equal(body.nombre, "G&G");
+  assert.equal(body.nombre, "Autos del Sur");
   assert.equal(body.whatsapp, "5491123456789");
-  assert.equal(body.instagram, "https://www.instagram.com/gygautomotores");
+  assert.equal(body.instagram, "https://www.instagram.com/autosdelsur");
   assert.equal(body.facebook, "");
   assert.equal(body.contactoTitulo, "Contactanos");
 
@@ -115,12 +115,30 @@ test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", asy
   assert.equal(relectura.heroImage, "https://ejemplo.com/hero.jpg");
 });
 
+test("GET /api/public/marca expone el nombre y el logo sin sesión", async () => {
+  await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "Autos del Sur",
+      tagline: "Selección premium",
+      logoUrl: "https://ejemplo.com/logo.png",
+    }),
+  });
+  const res = await fetch(`${baseUrl}/api/public/marca`);
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.nombre, "Autos del Sur");
+  assert.equal(body.tagline, "Selección premium");
+  assert.equal(body.logoUrl, "https://ejemplo.com/logo.png");
+});
+
 test("PUT /api/config/sitio guarda la clave ImgBB sin devolverla", async () => {
   const res = await fetch(`${baseUrl}/api/config/sitio`, {
     method: "PUT",
     headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
     body: JSON.stringify({
-      nombre: "GyG",
+      nombre: "Autos del Sur",
       imgbbApiKey: "clave-secreta-imgbb",
     }),
   });
@@ -136,7 +154,7 @@ test("PUT /api/config/sitio guarda el token de GitHub sin devolverlo", async () 
     method: "PUT",
     headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
     body: JSON.stringify({
-      nombre: "GyG",
+      nombre: "Autos del Sur",
       gistId: "https://gist.github.com/alguien/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       githubToken: "ghp_token-secreto-de-prueba",
     }),

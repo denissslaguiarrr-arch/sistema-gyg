@@ -12,8 +12,7 @@ function dataUri(filePath, mime) {
   return `data:${mime};base64,${buf.toString("base64")}`;
 }
 
-const logoSrc = dataUri(path.join(publicDir, "brand", "logo-gg-automotores.png"), "image/png");
-const favSrc = dataUri(path.join(publicDir, "favicon.png"), "image/png");
+const favSrc = dataUri(path.join(publicDir, "brand", "favicon.svg"), "image/svg+xml");
 const appleSrc = dataUri(path.join(publicDir, "apple-touch-icon.png"), "image/png");
 
 const xml = `<?xml version="1.0" encoding="UTF-8" ?>
@@ -23,7 +22,7 @@ const xml = `<?xml version="1.0" encoding="UTF-8" ?>
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1, viewport-fit=cover' name='viewport'/>
     <title><data:blog.pageTitle/></title>
-    <link href='${favSrc}' rel='icon' type='image/png'/>
+    <link href='${favSrc}' rel='icon' type='image/svg+xml'/>
     <link href='${appleSrc}' rel='apple-touch-icon'/>
     <b:include data='blog' name='all-head-content'/>
     <b:skin version='1.0.0'><![CDATA[
@@ -31,7 +30,7 @@ ${css}
 ]]></b:skin>
   </head>
   <body>
-    <b:section id='gyg-required-section' maxwidgets='0' name='G&amp;G' showaddelement='no'/>
+    <b:section id='gyg-required-section' maxwidgets='0' name='Showroom' showaddelement='no'/>
 
     <div id='gyg-blogger-root'>
       <div class='gyg-top-anchor' id='gygTop'></div>
@@ -39,8 +38,9 @@ ${css}
       <div class='app-shell'>
         <header class='site-header'>
           <div class='site-header__inner'>
-            <a aria-label='G&amp;G Automotores inicio' class='brand' href='#/'>
-              <img alt='G&amp;G Automotores' class='brand__logo' src='${logoSrc}'/>
+            <a aria-label='Inicio' class='brand' href='#/'>
+              <img alt='' class='brand__logo hidden' id='brandLogo'/>
+              <div class='brand__name' id='brandName'>Concesionaria</div>
               <div class='brand__tag' id='brandTag'>Selección premium</div>
             </a>
             <button aria-controls='navLinks' aria-expanded='false' aria-label='Abrir menú' class='nav-toggle' id='navToggle' type='button'>
@@ -63,7 +63,7 @@ ${css}
         </main>
         <footer class='site-footer'>
           <div class='site-footer__main'>
-            <div>G&amp;G Automotores <span id='year'/></div>
+            <div><span id='footerBrand'>Concesionaria</span> <span id='year'/></div>
             <div id='footerUpdated'>Stock en vivo</div>
           </div>
           <div class='site-footer__legal'>

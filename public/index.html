@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Stock de Vehículos · G&amp;G Automotores</title>
+  <title data-brand-title="Stock de Vehículos">Stock de Vehículos</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,10 +13,11 @@
   <div class="max-w-7xl mx-auto px-4 py-6">
     <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
       <div class="flex items-center gap-3 min-w-0">
-        <img src="/brand/logo-gg-automotores.png" alt="G&amp;G Automotores" class="h-10 w-auto" />
+        <img data-brand-logo alt="" class="hidden h-10 w-auto max-w-[220px] object-contain object-left" />
+        <div data-brand-wordmark class="marca-wordmark">Concesionaria</div>
         <div>
           <h1 class="text-2xl font-bold text-slate-900">Stock de Vehículos</h1>
-          <p class="text-sm text-slate-500">Panel de administración — G&amp;G Automotores</p>
+          <p class="text-sm text-slate-500">Panel de administración — <span data-brand-name>Concesionaria</span></p>
         </div>
       </div>
       <div class="flex items-center gap-2">
@@ -806,7 +808,26 @@
           </p>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Nombre de la concesionaria</label>
-            <input id="c-nombre" class="campo" placeholder="G&amp;G" />
+            <input id="c-nombre" class="campo" placeholder="Ej. Automotores del Sur" maxlength="80" />
+            <p class="text-[11px] text-slate-400 mt-1">Este nombre se ve en el panel, el login, la ficha y el sitio (encabezado, inicio y pie), igual que se veía la marca en este sistema.</p>
+            <div id="c-nombre-preview" class="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p class="text-[10px] uppercase tracking-[0.16em] text-slate-400 mb-1">Así se ve</p>
+              <div id="c-nombre-wordmark" class="marca-wordmark">Concesionaria</div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Logo (opcional)</label>
+            <input id="c-logo" class="campo" placeholder="https://..." />
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <input id="c-logo-archivo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="hidden" />
+              <button type="button" id="btn-logo-subir" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Subir logo
+              </button>
+            </div>
+            <img id="c-logo-preview" alt="Vista previa del logo" class="hidden mt-2 max-h-16 object-contain" />
+            <p id="c-logo-estado" class="text-[11px] text-slate-400 mt-1">
+              Si no subís logo, el sitio muestra el nombre con la misma tipografía grande del inicio.
+            </p>
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Frase / tagline</label>
@@ -818,7 +839,7 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Instagram (link o @usuario)</label>
-            <input id="c-instagram" class="campo" placeholder="@gygautomotores" />
+            <input id="c-instagram" class="campo" placeholder="@tunegocio" />
             <p class="text-[11px] text-slate-400 mt-1">Si lo dejás vacío, no aparece en el sitio.</p>
           </div>
           <div>
@@ -841,7 +862,7 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Texto de pie de página</label>
-            <input id="c-footer" class="campo" placeholder="G&amp;G Automotores — stock en vivo desde la nube" />
+            <input id="c-footer" class="campo" placeholder="Automotores del Sur — stock en vivo" />
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">Imagen de portada (inicio del sitio)</label>
@@ -868,9 +889,9 @@
           </div>
           <div>
             <label class="block text-xs font-medium text-slate-600 mb-1">ID del Gist (catálogo web)</label>
-            <input id="c-gist" class="campo" placeholder="74837d1c1f0a9a3a67e6dc5cc4fa5b6f" />
+            <input id="c-gist" class="campo" placeholder="ID o URL del Gist" />
             <p id="c-gist-estado" class="text-[11px] text-slate-400 mt-1">
-              Ya viene el Gist de G&amp;G. Solo cambialo si usás otro.
+              Creá un Gist público con un archivo stock.json y pegá el ID o la URL. Sin esto no se puede publicar el catálogo.
             </p>
           </div>
           <div>
@@ -898,6 +919,24 @@
   </div>
 
   <style>
+    .marca-wordmark {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 800;
+      font-size: 1.65rem;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: #0e1116;
+      white-space: nowrap;
+    }
+    .marca-sep {
+      display: inline-block;
+      width: 0.18em;
+      height: 0.18em;
+      margin: 0 0.12em;
+      background: #e85d23;
+      transform: translateY(-0.28em);
+      vertical-align: middle;
+    }
     .campo {
       width: 100%;
       border: 1px solid rgb(203 213 225);
@@ -912,6 +951,7 @@
     }
   </style>
 
+  <script src="brand.js"></script>
   <script src="media.js"></script>
   <script src="app.js"></script>
 </body>

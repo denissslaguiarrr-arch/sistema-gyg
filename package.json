@@ -1,7 +1,7 @@
 {
-  "name": "sistema-gyg",
+  "name": "sistema-concesionaria",
   "version": "0.1.0",
-  "description": "Sistema de Control de Stock y Gestión para Concesionaria de Vehículos",
+  "description": "Sistema de control de stock y gestión para concesionarias de vehículos",
   "main": "backend/server.js",
   "scripts": {
     "start": "node backend/server.js",

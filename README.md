@@ -1,6 +1,8 @@
-# Sistema G&G
+# Sistema de stock para concesionarias
 
-Sistema de Control de Stock y Gestión para **G&G Automotores**.
+Sistema de Control de Stock y Gestión para **cualquier concesionaria**.
+El nombre (y un logo opcional) se cargan en **Configuración del sitio** y se
+ven en el panel, el login, la ficha y el catálogo web.
 
 - **Fase 1**: panel de administración y backend locales (Node.js + Express + SQLite).
 - **Fase 2**: publicación del stock a un catálogo web público (ej. un sitio de
@@ -45,11 +47,12 @@ public/
   app.js                 Lógica del panel en Vanilla JS
   ficha.html / ficha.js   Ficha pública de un vehículo (compartible, sin login)
   catalogo.html / .js     Catálogo público (mobile, zoom, contacto y redes)
-  brand/                 Logo G&G y marca para header / favicon
+  brand.js               Aplica el nombre y el logo en panel, login y ficha
+  brand/                 Favicon genérico; el logo se carga en Configuración
   favicon.png            Favicon del panel y del catálogo local
   uploads/               Fotos subidas desde el panel (generado en runtime)
 blogger/
-  tema.xml               Tema de Blogger (diseño G&G + zoom, contacto y redes)
+  tema.xml               Tema de Blogger (showroom + zoom, contacto y redes)
   gyg-showroom.css       Estilos del showroom (fuente del tema)
   gyg-showroom.js        Lógica del showroom (fuente del tema)
 tests/
@@ -61,7 +64,7 @@ tests/
   import.test.js          Importación masiva de vehículos por CSV
   config.test.js          Configuración del catálogo público
   gist.test.js            Mapeo de datos y publicación en el Gist (fetch mockeado)
-  blogger-tema.test.js    El tema de Blogger conserva el diseño G&G y el zoom
+  blogger-tema.test.js    El tema de Blogger conserva el diseño del showroom y el zoom
   fotos.test.js           URLs públicas vs locales para Blogger
   imgur.test.js           Subida a Imgur (fetch mockeado)
   sync.test.js            Endpoint /api/sync/publicar (fetch mockeado)
@@ -107,7 +110,7 @@ Si querés los mismos autos, copiá ese archivo con el servidor parado.
 Si `npm install` falla (better-sqlite3 / Visual Studio / express) suele ser
 Node 24: instalá el 22, borra `node_modules` y volvé a abrir `Iniciar.bat`.
 No hace falta Visual Studio. Si ves `EPERM` (OneDrive), copiá el proyecto
-a `C:\sistema-gyg`.
+a `C:\sistema-concesionaria`.
 
 ## Autenticación y roles
 
@@ -253,8 +256,8 @@ la web"** (solo admin) hace esto manualmente, cuando vos lo decidís.
 
 1. Generá un **Personal Access Token** de GitHub con permiso **`gist`**
    únicamente: [github.com/settings/tokens/new?scopes=gist](https://github.com/settings/tokens/new?scopes=gist).
-2. En el panel: **Configuración del sitio** → el ID del Gist de G&G ya viene
-   cargado (`74837d1c1f0a9a3a67e6dc5cc4fa5b6f`) → pegá el token → Guardar.
+2. En el panel: **Configuración del sitio** → Nombre de la concesionaria →
+   ID del Gist (un Gist público con `stock.json`) → pegá el token → Guardar.
 
 También se pueden poner en `.env` (`GYG_GIST_ID` y `GYG_GITHUB_TOKEN`); si
 están, pisan lo del panel. Sin el token, "Publicar en la web" avisa qué falta;
@@ -315,8 +318,9 @@ publicar, esas rutas se omiten y el panel avisa cuántas quedaron afuera.
 ### Fotos recortadas, celular y Contacto (Blogger)
 
 Los cambios van **sobre el tema que ya tenían** (Syne/Manrope, vitrina,
-hero), no sobre el catálogo corto de 477 líneas. El nombre visible es
-**G&G** (logo del cartel en el header y favicon naranja).
+hero), no sobre el catálogo corto de 477 líneas. El nombre visible es el
+que cargás en **Configuración del sitio** (tipografía grande en el inicio;
+si subís un logo, ese va en el encabezado).
 
 - La foto grande usa `object-fit: contain` y se puede ampliar (tocar, pellizcar o +/−).
 - En el celular hay margen inferior para que Contacto no se corte.
@@ -341,7 +345,8 @@ Si cambiaste `blogger/gyg-showroom.css` o `.js`, regenerá el XML con
 ### Configuración del sitio
 
 Desde el botón **"Configuración del sitio"** (solo admin) se edita el
-nombre de la concesionaria, la frase/tagline, el número de WhatsApp (con
+nombre de la concesionaria (se ve en el panel y en el sitio como wordmark),
+un logo opcional, la frase/tagline, el número de WhatsApp (con
 código de país, sin `+`), el texto de pie de página y la imagen de portada.
 Estos datos se guardan localmente y se incluyen la próxima vez que
 publiques.

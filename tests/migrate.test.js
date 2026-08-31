@@ -46,13 +46,14 @@ test("migrate agrega las columnas nuevas a una base vieja y permite guardar foto
     assert.ok(columnas.includes("fecha_ingreso"));
 
     const version = db.prepare("SELECT valor FROM Meta WHERE clave = 'schema_version'").get();
-    assert.equal(version.valor, "9");
+    assert.equal(version.valor, "10");
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("instagram"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("facebook"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("imgbb_api_key"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("gist_id"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("github_token"));
     assert.ok(columnasDe(db, "ConfiguracionSitio").includes("direccion"));
+    assert.ok(columnasDe(db, "ConfiguracionSitio").includes("logo_url"));
 
     const tablas = db
       .prepare("SELECT name FROM sqlite_master WHERE type = 'table'")

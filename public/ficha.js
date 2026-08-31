@@ -255,7 +255,7 @@ async function iniciar() {
     const btnWhatsapp = document.getElementById("btn-whatsapp");
     if (btnConsultar && telefono && v.estado !== "Vendido") {
       btnConsultar.href = `https://wa.me/${telefono}?text=${encodeURIComponent(
-        `Hola G&G, consulto por el ${v.marca} ${v.modelo} ${v.anio}. ¿Sigue disponible?`
+        `Hola ${v.concesionaria || (window.MarcaSitio && window.MarcaSitio.nombreMarca()) || "Concesionaria"}, consulto por el ${v.marca} ${v.modelo} ${v.anio}. ¿Sigue disponible?`
       )}`;
       btnConsultar.classList.remove("hidden");
       if (btnWhatsapp) {

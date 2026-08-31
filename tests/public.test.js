@@ -123,13 +123,18 @@ test("/catalogo.html y /catalogo.js son accesibles sin sesión", async () => {
   assert.match(await js.text(), /Contactanos/);
 });
 
-test("logo, favicon y marca son públicos (login, ficha y catálogo)", async () => {
+test("logo, favicon y marca pública son accesibles sin sesión", async () => {
   const fav = await fetch(`${baseUrl}/favicon.png`);
   assert.equal(fav.status, 200);
-  const logo = await fetch(`${baseUrl}/brand/logo-gg-automotores.png`);
-  assert.equal(logo.status, 200);
-  const marca = await fetch(`${baseUrl}/brand/marca-gg.png`);
+  const icon = await fetch(`${baseUrl}/brand/favicon.svg`);
+  assert.equal(icon.status, 200);
+  const brandJs = await fetch(`${baseUrl}/brand.js`);
+  assert.equal(brandJs.status, 200);
+  const marca = await fetch(`${baseUrl}/api/public/marca`);
   assert.equal(marca.status, 200);
+  const body = await marca.json();
+  assert.equal(body.nombre, "");
+  assert.equal(body.logoUrl, "");
 });
 
 test("GET /api/public/catalogo no requiere sesión y usa Contactanos", async () => {
@@ -164,7 +169,7 @@ test("GET /api/public/catalogo no incluye vehículos vendidos", async () => {
   const res = await fetch(`${baseUrl}/api/public/catalogo`);
   assert.equal(res.status, 200);
   const body = await res.json();
-  const idPublico = `gyg-${String(vendido.id).padStart(3, "0")}`;
+  const idPublico = `v-${String(vendido.id).padStart(3, "0")}`;
   assert.equal(
     body.vehicles.some((v) => v.id === idPublico || v.patente === "PUBVEND"),
     false

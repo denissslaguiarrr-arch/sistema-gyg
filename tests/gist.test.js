@@ -10,7 +10,6 @@ const {
   vehiculosParaCatalogo,
   obtenerGistActual,
   publicarEnGist,
-  DEFAULT_PAGES,
   normalizarCopiaPagina,
 } = require("../backend/sync/gist");
 
@@ -50,7 +49,7 @@ test("mapearVehiculo arma el objeto con el esquema del catálogo público", () =
     updated_at: "2026-02-01 12:30:00",
   });
 
-  assert.equal(vehiculo.id, "gyg-007");
+  assert.equal(vehiculo.id, "v-007");
   assert.equal(vehiculo.status, "reservado");
   assert.equal(vehiculo.categoria, "0km");
   assert.equal(vehiculo.patente, "AB123CD");
@@ -166,16 +165,16 @@ test("mapearVehiculo publica videos de YouTube aparte y conserva el orden en med
 });
 
 test("mergeSiteConfig prioriza los valores locales, pero no pisa con vacíos", () => {
-  const gistSite = { name: "GyG viejo", tagline: "Tagline viejo", whatsapp: "111", footerText: "pie", heroImage: "img.jpg" };
+  const gistSite = { name: "Viejo", tagline: "Tagline viejo", whatsapp: "111", footerText: "pie", heroImage: "img.jpg" };
 
-  const conDatosLocales = mergeSiteConfig(gistSite, { nombre: "GyG nuevo", tagline: "", whatsapp: "222" });
-  assert.equal(conDatosLocales.name, "G&G nuevo");
+  const conDatosLocales = mergeSiteConfig(gistSite, { nombre: "Autos del Sur", tagline: "", whatsapp: "222" });
+  assert.equal(conDatosLocales.name, "Autos del Sur");
   assert.equal(conDatosLocales.tagline, "Tagline viejo"); // vacío local no pisa
   assert.equal(conDatosLocales.whatsapp, "222");
   assert.equal(conDatosLocales.footerText, "pie");
 
   const sinConfigLocal = mergeSiteConfig(gistSite, {});
-  assert.equal(sinConfigLocal.name, "G&G viejo");
+  assert.equal(sinConfigLocal.name, "Viejo");
   assert.equal(sinConfigLocal.instagram, "");
   assert.equal(sinConfigLocal.contactoTitulo, "Contactanos");
 });
@@ -204,9 +203,9 @@ test("construirStockJson no publica los vehículos vendidos", () => {
       { id: 2, marca: "B", modelo: "Dos", anio: 2020, kilometraje: 1, precio: 1, moneda: "ARS", dominio: "BB", estado: "Vendido" },
       { id: 3, marca: "C", modelo: "Tres", anio: 2020, kilometraje: 1, precio: 1, moneda: "ARS", dominio: "CC", estado: "Reservado" },
     ],
-    siteConfig: { nombre: "GyG" },
+    siteConfig: { nombre: "Autos del Sur" },
   });
-  assert.deepEqual(stock.vehicles.map((v) => v.id), ["gyg-001", "gyg-003"]);
+  assert.deepEqual(stock.vehicles.map((v) => v.id), ["v-001", "v-003"]);
   assert.deepEqual(
     vehiculosParaCatalogo([{ estado: "Vendido" }, { status: "vendido" }, { estado: "Disponible" }]).map((v) => v.estado || "ok"),
     ["Disponible"]
@@ -222,11 +221,12 @@ test("construirStockJson conserva las páginas existentes y usa DEFAULT_PAGES si
   assert.equal(conPaginasPropias.pages[0].id, "custom");
   assert.ok(conPaginasPropias.pages.some((p) => p.id === "vender"));
 
-  const sinGistPrevio = construirStockJson({ gistActual: null, vehiculos: [], siteConfig: { nombre: "GyG" } });
-  assert.deepEqual(sinGistPrevio.pages, DEFAULT_PAGES);
+  const sinGistPrevio = construirStockJson({ gistActual: null, vehiculos: [], siteConfig: { nombre: "Autos del Sur" } });
   assert.ok(sinGistPrevio.pages.some((p) => p.id === "vender"));
-  assert.equal(sinGistPrevio.site.name, "G&G");
-  assert.equal(sinGistPrevio.meta.concesionaria, "G&G");
+  assert.equal(sinGistPrevio.site.name, "Autos del Sur");
+  assert.equal(sinGistPrevio.meta.concesionaria, "Autos del Sur");
+  const homeDefault = sinGistPrevio.pages.find((p) => p.id === "home");
+  assert.equal(homeDefault.content.headline, "Autos del Sur");
   assert.ok(sinGistPrevio.meta.updatedAt);
 });
 
@@ -296,21 +296,35 @@ test("construirStockJson pisa la foto de inicio del Gist con la del panel", () =
       ],
     },
     vehiculos: [],
-    siteConfig: { heroImage: "https://i.ibb.co/nueva.jpg", nombre: "G&G" },
+    siteConfig: { heroImage: "https://i.ibb.co/nueva.jpg", nombre: "Autos del Sur" },
   });
   const home = publicado.pages.find((p) => p.id === "home");
   assert.equal(publicado.site.heroImage, "https://i.ibb.co/nueva.jpg");
   assert.equal(home.content.heroImage, "https://i.ibb.co/nueva.jpg");
+  assert.equal(home.content.headline, "Autos del Sur");
 });
 
-test("normalizarCopiaPagina cambia GyG a G&G en títulos visibles", () => {
-  const contacto = normalizarCopiaPagina({
-    id: "contacto",
-    slug: "contacto",
-    content: { eyebrow: "GyG", headline: "Contactanos", body: "Escribile a GyG." },
-  });
-  assert.equal(contacto.content.eyebrow, "G&G");
-  assert.equal(contacto.content.body, "Escribile a G&G.");
+test("normalizarCopiaPagina pone el nombre del sitio en el inicio si el titular era la marca vieja", () => {
+  const home = normalizarCopiaPagina(
+    {
+      id: "home",
+      slug: "",
+      type: "home",
+      content: { headline: "GyG", subtitle: "Stock" },
+    },
+    { name: "Autos del Sur" }
+  );
+  assert.equal(home.content.headline, "Autos del Sur");
+  const custom = normalizarCopiaPagina(
+    {
+      id: "home",
+      slug: "",
+      type: "home",
+      content: { headline: "Tu próximo auto" },
+    },
+    { name: "Autos del Sur" }
+  );
+  assert.equal(custom.content.headline, "Tu próximo auto");
 });
 
 function fetchFalso(respuestas) {
@@ -380,7 +394,7 @@ test("publicarEnGist arma y envía el payload, devolviendo la cantidad publicada
         created_at: "2026-01-01", updated_at: "2026-01-01",
       },
     ],
-    siteConfig: { nombre: "GyG" },
+    siteConfig: { nombre: "Autos del Sur" },
     fetchImpl,
   });
 

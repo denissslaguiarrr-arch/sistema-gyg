@@ -9,19 +9,19 @@ const {
 test("normalizarInstagram acepta @usuario, path o URL y vacía si no hay valor", () => {
   assert.equal(normalizarInstagram(""), "");
   assert.equal(normalizarInstagram("   "), "");
-  assert.equal(normalizarInstagram("@gygautomotores"), "https://www.instagram.com/gygautomotores");
-  assert.equal(normalizarInstagram("gygautomotores"), "https://www.instagram.com/gygautomotores");
+  assert.equal(normalizarInstagram("@autosdelsur"), "https://www.instagram.com/autosdelsur");
+  assert.equal(normalizarInstagram("autosdelsur"), "https://www.instagram.com/autosdelsur");
   assert.equal(
-    normalizarInstagram("https://instagram.com/gygautomotores"),
-    "https://instagram.com/gygautomotores"
+    normalizarInstagram("https://instagram.com/autosdelsur"),
+    "https://instagram.com/autosdelsur"
   );
 });
 
 test("normalizarFacebook deja vacío si no cargaron nada", () => {
   assert.equal(normalizarFacebook(""), "");
-  assert.equal(normalizarFacebook("GyGAutomotores"), "https://www.facebook.com/GyGAutomotores");
+  assert.equal(normalizarFacebook("AutosDelSur"), "https://www.facebook.com/AutosDelSur");
 });
 
 test("digitosWhatsapp quita espacios, + y guiones", () => {
-  assert.equal(digitosWhatsapp("+54 9 3735 46-2914"), "5493735462914");
+  assert.equal(digitosWhatsapp("+54 9 1112 34-5678"), "5491112345678");
 });

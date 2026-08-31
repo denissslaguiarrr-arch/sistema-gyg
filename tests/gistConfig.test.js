@@ -14,7 +14,7 @@ test("normalizarGistId acepta el ID pelado o la URL de GitHub", () => {
     "74837d1c1f0a9a3a67e6dc5cc4fa5b6f"
   );
   assert.equal(normalizarGistId(""), "");
-  assert.equal(GIST_ID_DEFAULT, "74837d1c1f0a9a3a67e6dc5cc4fa5b6f");
+  assert.equal(GIST_ID_DEFAULT, "");
 });
 
 test("tokenGithubUsable ignora el placeholder del env.example", () => {

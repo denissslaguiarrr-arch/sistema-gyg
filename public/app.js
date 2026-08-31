@@ -170,6 +170,12 @@ const el = {
   cHeroPreview: document.getElementById("c-hero-preview"),
   btnHeroSubir: document.getElementById("btn-hero-subir"),
   cHeroEstado: document.getElementById("c-hero-estado"),
+  cLogo: document.getElementById("c-logo"),
+  cLogoArchivo: document.getElementById("c-logo-archivo"),
+  cLogoPreview: document.getElementById("c-logo-preview"),
+  btnLogoSubir: document.getElementById("btn-logo-subir"),
+  cLogoEstado: document.getElementById("c-logo-estado"),
+  cNombrePreview: document.getElementById("c-nombre-wordmark"),
   cImgbb: document.getElementById("c-imgbb"),
   cImgbbEstado: document.getElementById("c-imgbb-estado"),
   cGist: document.getElementById("c-gist"),
@@ -515,6 +521,7 @@ el.btnConfigSitio.addEventListener("click", async () => {
   try {
     const config = await apiRequest("/api/config/sitio");
     el.cNombre.value = config.nombre || "";
+    actualizarPreviewNombre();
     el.cTagline.value = config.tagline || "";
     el.cWhatsapp.value = config.whatsapp || "";
     el.cInstagram.value = config.instagram || "";
@@ -525,6 +532,8 @@ el.btnConfigSitio.addEventListener("click", async () => {
     el.cFooter.value = config.footerText || "";
     el.cHero.value = config.heroImage || "";
     actualizarPreviewHero();
+    if (el.cLogo) el.cLogo.value = config.logoUrl || "";
+    actualizarPreviewLogo();
     if (el.cImgbb) el.cImgbb.value = "";
     if (el.cImgbbEstado) {
       el.cImgbbEstado.textContent = config.imgbbConfigurado
@@ -535,7 +544,9 @@ el.btnConfigSitio.addEventListener("click", async () => {
     if (el.cGistEstado) {
       el.cGistEstado.textContent = config.gistIdEnEnv
         ? "Este ID viene del archivo .env (GYG_GIST_ID). El valor del panel no lo pisa."
-        : "Ya viene el Gist de G&G. Solo cambialo si usás otro.";
+        : config.gistId
+          ? "Gist cargado. Cambialo solo si usás otro catálogo."
+          : "Creá un Gist público con un archivo stock.json y pegá el ID o la URL.";
     }
     if (el.cGithubToken) el.cGithubToken.value = "";
     if (el.cGithubTokenEstado) {
@@ -556,7 +567,7 @@ el.modalConfigOverlay.addEventListener("click", cerrarModalConfig);
 el.formConfig.addEventListener("submit", async (evento) => {
   evento.preventDefault();
   try {
-    await apiRequest("/api/config/sitio", {
+    const guardada = await apiRequest("/api/config/sitio", {
       method: "PUT",
       body: JSON.stringify({
         nombre: el.cNombre.value.trim(),
@@ -569,11 +580,19 @@ el.formConfig.addEventListener("submit", async (evento) => {
         direccion: el.cDireccion ? el.cDireccion.value.trim() : "",
         footerText: el.cFooter.value.trim(),
         heroImage: el.cHero.value.trim(),
+        logoUrl: el.cLogo ? el.cLogo.value.trim() : "",
         imgbbApiKey: el.cImgbb && el.cImgbb.value.trim() ? el.cImgbb.value.trim() : undefined,
         gistId: el.cGist ? el.cGist.value.trim() : undefined,
         githubToken: el.cGithubToken && el.cGithubToken.value.trim() ? el.cGithubToken.value.trim() : undefined,
       }),
     });
+    if (window.MarcaSitio) {
+      window.MarcaSitio.aplicarMarca({
+        nombre: guardada.nombre,
+        tagline: guardada.tagline,
+        logoUrl: guardada.logoUrl,
+      });
+    }
     mostrarAlerta("Configuración del sitio guardada. Para verla en Blogger, dale a Publicar en la web.", "ok");
     cerrarModalConfig();
     await refrescarAvisoWeb();
@@ -581,6 +600,27 @@ el.formConfig.addEventListener("submit", async (evento) => {
     mostrarAlerta(err.message);
   }
 });
+
+function actualizarPreviewNombre() {
+  if (!el.cNombrePreview) return;
+  const nombre = (el.cNombre && el.cNombre.value.trim()) || "Concesionaria";
+  el.cNombrePreview.innerHTML =
+    window.MarcaSitio && window.MarcaSitio.wordmarkHtml
+      ? window.MarcaSitio.wordmarkHtml(nombre)
+      : escapeHtml(nombre);
+}
+
+function actualizarPreviewLogo() {
+  if (!el.cLogoPreview) return;
+  const url = el.cLogo && el.cLogo.value.trim();
+  if (!url) {
+    el.cLogoPreview.removeAttribute("src");
+    el.cLogoPreview.classList.add("hidden");
+    return;
+  }
+  el.cLogoPreview.src = url;
+  el.cLogoPreview.classList.remove("hidden");
+}
 
 function actualizarPreviewHero() {
   if (!el.cHeroPreview) return;
@@ -592,6 +632,36 @@ function actualizarPreviewHero() {
   }
   el.cHeroPreview.src = url;
   el.cHeroPreview.classList.remove("hidden");
+}
+
+if (el.cNombre) {
+  el.cNombre.addEventListener("input", actualizarPreviewNombre);
+}
+
+if (el.cLogo) {
+  el.cLogo.addEventListener("input", actualizarPreviewLogo);
+}
+
+if (el.btnLogoSubir && el.cLogoArchivo) {
+  el.btnLogoSubir.addEventListener("click", () => el.cLogoArchivo.click());
+  el.cLogoArchivo.addEventListener("change", async () => {
+    const archivo = el.cLogoArchivo.files && el.cLogoArchivo.files[0];
+    el.cLogoArchivo.value = "";
+    if (!archivo) return;
+    if (el.cLogoEstado) el.cLogoEstado.textContent = "Subiendo logo...";
+    try {
+      const url = await subirArchivoPublico(archivo);
+      el.cLogo.value = url;
+      actualizarPreviewLogo();
+      if (el.cLogoEstado) {
+        el.cLogoEstado.textContent = "Logo listo. Guardá la configuración y después dale a Publicar en la web.";
+      }
+      mostrarAlerta("Logo subido. Guardá y publicá para verlo en el sitio.", "ok");
+    } catch (err) {
+      if (el.cLogoEstado) el.cLogoEstado.textContent = err.message;
+      mostrarAlerta(err.message);
+    }
+  });
 }
 
 if (el.cHero) {

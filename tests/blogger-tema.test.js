@@ -5,8 +5,8 @@ const path = require("path");
 
 const tema = fs.readFileSync(path.join(__dirname, "../blogger/tema.xml"), "utf8");
 
-test("el tema de Blogger conserva el showroom G&G y no es el catálogo corto", () => {
-  assert.match(tema, /G&G Showroom/);
+test("el tema de Blogger conserva el showroom y no es el catálogo corto", () => {
+  assert.match(tema, /Showroom/);
   assert.match(tema, /site-header/);
   assert.match(tema, /home-hero/);
   assert.match(tema, /font-display: "Syne"/);
@@ -14,6 +14,7 @@ test("el tema de Blogger conserva el showroom G&G y no es el catálogo corto", (
   assert.match(tema, /rel='icon'/);
   assert.match(tema, /#e85d23/i);
   assert.doesNotMatch(tema, /id='gyg-root'/);
+  assert.doesNotMatch(tema, /G&amp;G Automotores/);
 });
 
 test("el inicio del showroom tiene un carrusel de vehículos", () => {
@@ -38,11 +39,12 @@ test("el tema incluye zoom, Contactanos, Vendé tu auto y redes opcionales", () 
   assert.match(tema, /btn--instagram/);
   assert.match(tema, /safe-area-inset-bottom/);
   assert.match(tema, /CDATA/);
-  assert.match(tema, /G&amp;G Automotores/);
+  assert.match(tema, /id='brandName'/);
+  assert.match(tema, /id='footerBrand'/);
   assert.doesNotMatch(tema, /G<span>y<\/span>G/);
 });
 
-test("el nombre G&G está disponible en las dos partes del script de Blogger", () => {
+test("el nombre de la concesionaria se pinta en header y hero", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   const partes = js.split("})(window);");
   assert.equal(partes.length, 2);
@@ -51,6 +53,7 @@ test("el nombre G&G está disponible en las dos partes del script de Blogger", (
   assert.match(partes[1], /GyGStock\.displayBrandName/);
   assert.match(partes[1], /GyGStock\.reescribirMarca/);
   assert.match(partes[1], /brand-sep/);
+  assert.match(partes[1], /id='brandName'|brandName/);
 });
 
 test("el tema reproduce videos de YouTube en la galería", () => {
@@ -59,18 +62,19 @@ test("el tema reproduce videos de YouTube en la galería", () => {
   assert.match(tema, /is-video/);
 });
 
-test("el hero no usa un & tipográfico entre las G", () => {
+test("el hero muestra el nombre configurado como wordmark", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(css, /\.brand-sep/);
   assert.match(js, /brand-sep/);
   assert.match(js, /reescribirMarca\(site\.footerText/);
-  assert.match(js, /function isBrandWordmark/);
+  assert.match(js, /home-hero__brand/);
   assert.match(js, /Vendé tu auto<\/h2>/);
   assert.doesNotMatch(js, /Vendé tu auto con G/);
   assert.match(tema, /brand-sep/);
   assert.doesNotMatch(js, /brand-amp/);
   assert.doesNotMatch(css, /brand-amp/);
+  assert.doesNotMatch(js, /function isBrandWordmark/);
 });
 
 test("al cambiar de página el scroll vuelve arriba y hay WhatsApp fijo y volver arriba", () => {

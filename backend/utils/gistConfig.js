@@ -1,7 +1,7 @@
 // Credenciales para publicar stock.json. El .env gana si tiene un token
 // real; un valor de ejemplo no pisa lo pegado en Configuración del sitio.
 
-const GIST_ID_DEFAULT = "74837d1c1f0a9a3a67e6dc5cc4fa5b6f";
+const GIST_ID_DEFAULT = "";
 
 function normalizarGistId(valor) {
   const texto = String(valor || "").trim();

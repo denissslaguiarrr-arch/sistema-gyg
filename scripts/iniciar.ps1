@@ -42,7 +42,7 @@ if ($nodeMajor -ge 24) {
 
 $cwd = (Get-Location).Path
 if ($cwd -match "OneDrive") {
-  Write-Host "Esta carpeta está en OneDrive. Si npm falla con EPERM, copiá el proyecto a C:\sistema-gyg"
+  Write-Host "Esta carpeta está en OneDrive. Si npm falla con EPERM, copiá el proyecto a C:\sistema-concesionaria"
 }
 
 if (-not (Test-Path ".env")) {
@@ -61,11 +61,11 @@ if ($LASTEXITCODE -ne 0) {
   Write-Host "  2. Cerrá esta ventana y abrila de nuevo"
   Write-Host "  3. En esta carpeta borra node_modules y volvé a hacer doble clic en Iniciar.bat"
   Write-Host ""
-  Write-Host "Si ves EPERM / OneDrive: copiá la carpeta a C:\sistema-gyg y abrí Iniciar.bat ahí."
+  Write-Host "Si ves EPERM / OneDrive: copiá la carpeta a C:\sistema-concesionaria y abrí Iniciar.bat ahí."
   exit 1
 }
 
-$atajo = Join-Path ([Environment]::GetFolderPath("Desktop")) "G&G Automotores.lnk"
+$atajo = Join-Path ([Environment]::GetFolderPath("Desktop")) "Panel de stock.lnk"
 if (-not (Test-Path $atajo)) {
   $crearAtajo = Join-Path $PSScriptRoot "crear-acceso-directo.ps1"
   if (Test-Path $crearAtajo) {

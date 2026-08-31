@@ -6,11 +6,11 @@
 })();
 
 window.GYG_CONFIG = {
-  GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f",
-  GIST_OWNER: "denissslaguiarrr-arch",
+  GIST_ID: "",
+  GIST_OWNER: "",
   GIST_FILENAME: "stock.json",
-  WHATSAPP_NUMBER: "+54 9 3735 46-2914",
-  DEALERSHIP_NAME: "G\u0026G",
+  WHATSAPP_NUMBER: "",
+  DEALERSHIP_NAME: "Concesionaria",
   TAGLINE: "Selección premium de vehículos",
   LOCAL_SAMPLE_PATH: "",
 };
@@ -24,7 +24,7 @@ window.GYG_CONFIG = {
   }
 
   function reescribirMarca(texto) {
-    return String(texto == null ? "" : texto).replace(/\bg\s*y\s*g\b(?![\w-])/gi, "G\u0026G");
+    return String(texto == null ? "" : texto);
   }
 
   function reescribirMarcaEn(valor) {
@@ -43,9 +43,9 @@ window.GYG_CONFIG = {
   }
 
   function displayBrandName(value) {
-    const n = reescribirMarca(value).trim();
-    if (!n) return "G\u0026G";
-    return n;
+    const n = String(value == null ? "" : value).trim();
+    if (n) return n;
+    return String(cfg().DEALERSHIP_NAME || "Concesionaria").trim() || "Concesionaria";
   }
 
   function getToken() {
@@ -111,19 +111,21 @@ window.GYG_CONFIG = {
   }
 
   function gistRawUrls(gistId, filename) {
-    const owner = (cfg().GIST_OWNER || "denissslaguiarrr-arch").trim();
+    const owner = (cfg().GIST_OWNER || "").trim();
     const id = String(gistId || "").trim();
     const file = filename || "stock.json";
     const t = Date.now();
-    return [
-      `https://gist.githubusercontent.com/${owner}/${id}/raw/${file}?t=${t}`,
-      `https://gist.githubusercontent.com/${owner}/${id}/raw?t=${t}`,
-    ];
+    const urls = [];
+    if (owner && id) {
+      urls.push(`https://gist.githubusercontent.com/${owner}/${id}/raw/${file}?t=${t}`);
+      urls.push(`https://gist.githubusercontent.com/${owner}/${id}/raw?t=${t}`);
+    }
+    return urls;
   }
 
   function defaultSite() {
     return {
-      name: cfg().DEALERSHIP_NAME || "G\u0026G",
+      name: cfg().DEALERSHIP_NAME || "Concesionaria",
       tagline: cfg().TAGLINE || "Selección premium de vehículos",
       whatsapp: cfg().WHATSAPP_NUMBER || "",
       instagram: "",
@@ -131,8 +133,9 @@ window.GYG_CONFIG = {
       contactoTitulo: "Contactanos",
       contactoTexto: "",
       direccion: "",
-      footerText: "G\u0026G Automotores",
+      footerText: "",
       heroImage: "",
+      logoUrl: "",
     };
   }
 
@@ -148,7 +151,7 @@ window.GYG_CONFIG = {
         order: 0,
         content: {
           eyebrow: "Concesionaria",
-          headline: "G\u0026G",
+          headline: "",
           subtitle: "Stock 0 km y usados.",
           ctaPrimary: { label: "Ver 0 km", href: "#/0km" },
           ctaSecondary: { label: "Ver usados", href: "#/usados" },
@@ -372,7 +375,7 @@ window.GYG_CONFIG = {
       ...normalized,
       meta: {
         ...(normalized.meta || {}),
-        concesionaria: normalized.site.name || cfg().DEALERSHIP_NAME || "G\u0026G",
+        concesionaria: normalized.site.name || cfg().DEALERSHIP_NAME || "Concesionaria",
         updatedAt: new Date().toISOString(),
       },
     };
@@ -489,7 +492,7 @@ window.GYG_CONFIG = {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = name || `gyg-site-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.download = name || `stock-backup-${new Date().toISOString().slice(0, 10)}.json`;
     a.click();
     URL.revokeObjectURL(url);
   }
@@ -607,7 +610,7 @@ window.GYG_CONFIG = {
   function whatsappUrl(data, vehicle, opts) {
     const phone = whatsappPhone(data);
     const nameBrand = displayBrandName(
-      (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "G\u0026G"
+      (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "Concesionaria"
     );
     if (vehicle) {
       const name = `${vehicle.marca} ${vehicle.modelo} ${vehicle.version || ""} ${vehicle.anio}`.trim();
@@ -626,7 +629,7 @@ window.GYG_CONFIG = {
   function createId(vehicles) {
     const n = (vehicles || []).length + 1;
     const stamp = Date.now().toString(36).slice(-4);
-    return `gyg-${String(n).padStart(3, "0")}-${stamp}`;
+    return `v-${String(n).padStart(3, "0")}-${stamp}`;
   }
 
   function emptyVehicle() {
@@ -787,15 +790,10 @@ window.GYG_CONFIG = {
     return escapeHtml(displayBrandName(value)).replace(
       /G\u0026amp;G/g,
       "G<span class=\"brand-sep\" aria-hidden=\"true\"></span>G"
+    ).replace(
+      /&amp;/g,
+      "<span class=\"brand-sep\" aria-hidden=\"true\"></span>"
     );
-  }
-
-  function isBrandWordmark(value) {
-    const n = String(value || "")
-      .replace(/\s/g, "")
-      .replace(/&amp;/gi, "&")
-      .toLowerCase();
-    return n === "g&g" || n === "gyg" || n === "g+g";
   }
 
   function escapeAttr(str) {
@@ -941,8 +939,31 @@ window.GYG_CONFIG = {
 
   function updateChrome() {
     const site = data.site || {};
+    const nombre = displayBrandName(site.name);
+    const logo = String(site.logoUrl || site.logo || "").trim();
+    const nameEl = document.getElementById("brandName");
+    const logoEl = document.getElementById("brandLogo");
+    const brandLink = document.querySelector("a.brand");
+    if (brandLink) brandLink.setAttribute("aria-label", `${nombre} inicio`);
+    if (nameEl) {
+      nameEl.innerHTML = brandMarkup(nombre);
+      nameEl.classList.toggle("hidden", Boolean(logo));
+    }
+    if (logoEl) {
+      if (logo) {
+        logoEl.src = logo;
+        logoEl.alt = nombre;
+        logoEl.classList.remove("hidden");
+      } else {
+        logoEl.removeAttribute("src");
+        logoEl.alt = "";
+        logoEl.classList.add("hidden");
+      }
+    }
+    const footerBrand = document.getElementById("footerBrand");
+    if (footerBrand) footerBrand.textContent = nombre;
     const tag = document.getElementById("brandTag");
-    if (tag) tag.textContent = GyGStock.reescribirMarca(site.tagline || GYG_CONFIG.TAGLINE || "");
+    if (tag) tag.textContent = site.tagline || GYG_CONFIG.TAGLINE || "";
     const year = document.getElementById("year");
     if (year) year.textContent = String(new Date().getFullYear());
     const footer = document.getElementById("footerUpdated");
@@ -955,7 +976,7 @@ window.GYG_CONFIG = {
       }
       footer.textContent = bits.join(" · ") || "Stock en vivo";
     }
-    document.title = `${displayBrandName(site.name)} — ${GyGStock.reescribirMarca(site.tagline || "Stock")}`;
+    document.title = `${nombre} — ${site.tagline || "Stock"}`;
     renderNav();
     actualizarWhatsappBar(null);
   }
@@ -1230,11 +1251,7 @@ window.GYG_CONFIG = {
         <div class="home-hero__content">
           <div class="home-hero__copy">
           <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
-          ${
-            isBrandWordmark(c.headline || site.name)
-              ? `<h1 class="visually-hidden">${escapeHtml(displayBrandName(site.name || "G&G"))} Automotores</h1>`
-              : `<h1 class="home-hero__brand">${brandMarkup(c.headline || site.name || "G&G")}</h1>`
-          }
+          <h1 class="home-hero__brand">${brandMarkup(c.headline || site.name)}</h1>
           <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
           <div class="home-hero__cta">
             <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>
@@ -1478,7 +1495,7 @@ window.GYG_CONFIG = {
       c.subtitle ||
       "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.";
     const anioMax = new Date().getFullYear() + 1;
-    const brand = displayBrandName(site.name || "G&G");
+    const brand = displayBrandName(site.name);
 
     app.innerHTML = `
       <section class="hero hero--sell">

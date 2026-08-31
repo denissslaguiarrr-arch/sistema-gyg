@@ -3,7 +3,8 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ficha del vehículo · G&amp;G Automotores</title>
+  <title data-brand-title="Ficha del vehículo">Ficha del vehículo</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
@@ -12,8 +13,9 @@
   <div class="max-w-2xl mx-auto px-4 py-6">
     <div id="contenido" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
       <div class="flex items-center gap-3 px-6 pt-5 ficha-marca">
-        <img src="/brand/logo-gg-automotores.png" alt="G&amp;G Automotores" class="h-10 w-auto" />
-        <p class="text-sm font-medium text-slate-500">G&amp;G Automotores</p>
+        <img data-brand-logo alt="" class="hidden h-10 w-auto max-w-[220px] object-contain" />
+        <div data-brand-wordmark class="marca-wordmark">Concesionaria</div>
+        <p class="text-sm font-medium text-slate-500"><span data-brand-name>Concesionaria</span></p>
       </div>
       <p id="aviso-vendido" class="hidden mx-6 mt-4 rounded-lg bg-slate-100 border border-slate-200 px-3 py-2 text-sm text-slate-700">
         Este vehículo ya está vendido. No se muestra en el sitio.
@@ -90,8 +92,26 @@
       #foto-principal { max-height: none; background: white; }
       .ficha-marca { margin-bottom: 0.5rem; }
     }
+    .marca-wordmark {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: #0e1116;
+    }
+    .marca-sep {
+      display: inline-block;
+      width: 0.18em;
+      height: 0.18em;
+      margin: 0 0.12em;
+      background: #e85d23;
+      transform: translateY(-0.28em);
+      vertical-align: middle;
+    }
   </style>
 
+  <script src="brand.js"></script>
   <script src="media.js"></script>
   <script src="ficha.js"></script>
 </body>

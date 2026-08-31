@@ -3,16 +3,18 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Ingresar · G&amp;G Automotores</title>
+  <title data-brand-title="Ingresar">Ingresar</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
   <link rel="icon" type="image/png" href="/favicon.png" />
   <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-slate-100 min-h-screen flex items-center justify-center px-4">
   <div class="w-full max-w-sm bg-white rounded-xl shadow-sm border border-slate-200 p-6">
-    <img src="/brand/logo-gg-automotores.png" alt="G&amp;G Automotores" class="h-12 w-auto mb-4" />
+    <img data-brand-logo alt="" class="hidden h-12 w-auto max-w-[240px] object-contain mb-4" />
+    <div data-brand-wordmark class="marca-wordmark mb-4">Concesionaria</div>
     <h1 class="text-xl font-bold text-slate-900 mb-1">Panel de administración</h1>
-    <p class="text-sm text-slate-500 mb-6">G&amp;G Automotores — acceso interno</p>
+    <p class="text-sm text-slate-500 mb-6"><span data-brand-name>Concesionaria</span> — acceso interno</p>
 
     <form id="form-login" class="space-y-4">
       <div>
@@ -34,6 +36,23 @@
   </div>
 
   <style>
+    .marca-wordmark {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 800;
+      font-size: 1.75rem;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: #0e1116;
+    }
+    .marca-sep {
+      display: inline-block;
+      width: 0.18em;
+      height: 0.18em;
+      margin: 0 0.12em;
+      background: #e85d23;
+      transform: translateY(-0.28em);
+      vertical-align: middle;
+    }
     .campo {
       width: 100%;
       border: 1px solid rgb(203 213 225);
@@ -48,6 +67,7 @@
     }
   </style>
 
+  <script src="brand.js"></script>
   <script src="login.js"></script>
 </body>
 </html>

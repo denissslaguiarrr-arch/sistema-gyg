@@ -122,8 +122,9 @@ test("POST /api/sync/publicar usa el token pegado en Configuración del sitio", 
     method: "PUT",
     headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
     body: JSON.stringify({
-      nombre: "G&G",
+      nombre: "Autos del Sur",
       githubToken: "token-desde-el-panel",
+      gistId: "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
     }),
   });
   assert.equal(guardar.status, 200);
@@ -163,8 +164,8 @@ test("POST /api/sync/traer requiere rol admin", async () => {
 });
 
 test("POST /api/sync/traer carga el stock del Gist en el panel", async () => {
-  delete process.env.GYG_GIST_ID;
   delete process.env.GYG_GITHUB_TOKEN;
+  process.env.GYG_GIST_ID = "gist-de-prueba";
   global.fetch = async (url, opciones) => {
     if (!String(url).includes("api.github.com")) {
       return fetchOriginal(url, opciones);
