@@ -187,6 +187,15 @@ test("en el celular el menú es un botón y la foto de inicio es una imagen real
   assert.doesNotMatch(js, /--hero-image: url\(/);
 });
 
+test("en el celular la portada recorta hacia el auto, no el letrero", () => {
+  const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
+  assert.match(css, /object-position: 28% 78%/);
+  assert.match(css, /object-position: 30% 72%/);
+  assert.doesNotMatch(css, /object-position: center 38%/);
+  assert.match(css, /height: 78vh/);
+  assert.match(tema, /object-position: 28% 78%/);
+});
+
 test("los títulos 0 km y Usados caben en el celular", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
