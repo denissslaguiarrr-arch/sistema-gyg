@@ -71,7 +71,8 @@ test("el hero muestra el nombre configurado como wordmark", () => {
   assert.match(js, /Vendé tu auto<\/h2>/);
   assert.doesNotMatch(js, /Vendé tu auto con G/);
   assert.match(tema, /brand-sep/);
-  assert.match(js, /brand-sep\\" aria-hidden=\\"true\\">&amp;/);
+  assert.match(js, /function esSoloMarca/);
+  assert.match(js, /esSoloMarca\(c\.headline \|\| site\.name\)/);
   assert.doesNotMatch(js, /function isBrandWordmark/);
 });
 
@@ -115,6 +116,7 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   assert.match(gyg, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
   assert.match(gyg, /id='brandName'>G&amp;G</);
   assert.match(gyg, /alt='G&amp;G Automotores'/);
+  assert.match(gyg, /GYG_CONFIG\.LOGO_URL \|\| site\.logoUrl/);
   assert.match(gyg, /rel='icon' type='image\/png'/);
   assert.match(tema, /GIST_ID: ""/);
   assert.match(tema, /rel='icon' type='image\/svg\+xml'/);

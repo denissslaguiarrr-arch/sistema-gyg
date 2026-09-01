@@ -795,6 +795,14 @@ window.GYG_CONFIG = {
     );
   }
 
+  function esSoloMarca(value) {
+    const n = String(value || "")
+      .replace(/\s/g, "")
+      .replace(/&amp;/gi, "&")
+      .toLowerCase();
+    return n === "g&g" || n === "gyg" || n === "g+g" || n === "g&gautomotores" || n === "gygautomotores";
+  }
+
   function escapeAttr(str) {
     return escapeHtml(str).replace(/'/g, "&#39;");
   }
@@ -1250,7 +1258,7 @@ window.GYG_CONFIG = {
         <div class="home-hero__content">
           <div class="home-hero__copy">
           <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
-          <h1 class="home-hero__brand">${brandMarkup(c.headline || site.name)}</h1>
+          ${esSoloMarca(c.headline || site.name) ? "" : `<h1 class="home-hero__brand">${brandMarkup(c.headline || site.name)}</h1>`}
           <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
           <div class="home-hero__cta">
             <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>

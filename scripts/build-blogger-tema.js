@@ -123,7 +123,7 @@ const jsGyg = js
   )
   .replace(
     'const logo = String(site.logoUrl || site.logo || "").trim();',
-    'const logo = String(site.logoUrl || site.logo || GYG_CONFIG.LOGO_URL || "").trim();'
+    'const logo = String(GYG_CONFIG.LOGO_URL || site.logoUrl || site.logo || "").trim();'
   )
   .replace(/LOCAL_SAMPLE_PATH: ""/, `LOCAL_SAMPLE_PATH: "",\n  LOGO_URL: ${JSON.stringify(logoGyg)}`);
 const temaGyg = armarTema(jsGyg, {
