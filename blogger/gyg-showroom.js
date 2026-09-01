@@ -64,10 +64,12 @@ window.GYG_CONFIG = {
     sessionStorage.removeItem(TOKEN_KEY);
   }
 
-  function getGistId() {
-    const fromStorage = (localStorage.getItem(GIST_KEY) || "").trim();
-    if (fromStorage) return fromStorage;
+  function gistFromDom(attr) {
+    const root = document.getElementById("gyg-blogger-root");
+    return String((root && root.getAttribute(attr)) || "").trim();
+  }
 
+  function getGistId() {
     try {
       const params = new URLSearchParams(location.search || "");
       const fromQuery = (params.get("gist") || "").trim();
@@ -77,7 +79,15 @@ window.GYG_CONFIG = {
       }
     } catch (_) {}
 
-    return (cfg().GIST_ID || "").trim();
+    const fromCfg = (cfg().GIST_ID || "").trim();
+    if (fromCfg) return fromCfg;
+    const fromDom = gistFromDom("data-gist-id");
+    if (fromDom) return fromDom;
+    try {
+      return (localStorage.getItem(GIST_KEY) || "").trim();
+    } catch (_) {
+      return "";
+    }
   }
 
   function setGistId(id) {
@@ -102,10 +112,11 @@ window.GYG_CONFIG = {
       seen[id] = true;
       ids.push(id);
     };
+    add(cfg().GIST_ID);
+    add(gistFromDom("data-gist-id"));
     try {
       add(localStorage.getItem(GIST_KEY));
     } catch (_) {}
-    add(cfg().GIST_ID);
     return ids;
   }
 
@@ -114,15 +125,17 @@ window.GYG_CONFIG = {
   }
 
   function gistRawUrls(gistId, filename) {
-    const owner = (cfg().GIST_OWNER || "").trim();
+    const owner = (cfg().GIST_OWNER || gistFromDom("data-gist-owner") || "").trim();
     const id = String(gistId || "").trim();
     const file = filename || "stock.json";
     const t = Date.now();
     const urls = [];
-    if (owner && id) {
+    if (!id) return urls;
+    if (owner) {
       urls.push(`https://gist.githubusercontent.com/${owner}/${id}/raw/${file}?t=${t}`);
       urls.push(`https://gist.githubusercontent.com/${owner}/${id}/raw?t=${t}`);
     }
+    urls.push(`https://gist.githubusercontent.com/${id}/raw/${file}?t=${t}`);
     return urls;
   }
 

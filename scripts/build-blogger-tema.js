@@ -45,7 +45,7 @@ ${css}
   <body>
     <b:section id='gyg-required-section' maxwidgets='0' name='Showroom' showaddelement='no'/>
 
-    <div id='gyg-blogger-root'>
+    <div data-gist-id='${extras.gistId || ""}' data-gist-owner='${extras.gistOwner || ""}' id='gyg-blogger-root'>
       <div class='gyg-top-anchor' id='gygTop'></div>
       <div aria-hidden='true' class='atmosphere'/>
       <div class='app-shell'>
@@ -128,6 +128,8 @@ const temaGyg = armarTema(jsGyg, {
   logoSrc: logoGyg,
   brandName: "G&amp;G",
   footerName: "G&amp;G",
+  gistId: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f",
+  gistOwner: "denissslaguiarrr-arch",
 });
 const destinoGyg = path.join(dir, "tema-gyg-automotores.xml");
 fs.writeFileSync(destinoGyg, temaGyg);

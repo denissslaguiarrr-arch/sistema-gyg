@@ -110,6 +110,10 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   const gyg = fs.readFileSync(path.join(__dirname, "../blogger/tema-gyg-automotores.xml"), "utf8");
   assert.match(gyg, /GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f"/);
   assert.match(gyg, /GIST_OWNER: "denissslaguiarrr-arch"/);
+  assert.match(gyg, /data-gist-id='74837d1c1f0a9a3a67e6dc5cc4fa5b6f'/);
+  assert.match(gyg, /data-gist-owner='denissslaguiarrr-arch'/);
+  assert.match(gyg, /function gistFromDom/);
+  assert.doesNotMatch(tema, /data-gist-id='74837d1c1f0a9a3a67e6dc5cc4fa5b6f'/);
   assert.match(gyg, /\.home-hero__veil \{\s*display: none/);
   assert.match(gyg, /function esInstalador/);
   assert.match(gyg, /height: min\(72vh, 36rem\)/);
