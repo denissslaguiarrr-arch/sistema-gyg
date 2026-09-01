@@ -1,0 +1,150 @@
+const test = require("node:test");
+const assert = require("node:assert/strict");
+const { tmpDbPath, limpiarArchivosDb, extraerCookie } = require("./helpers");
+
+const dbPath = tmpDbPath("config");
+process.env.GYG_DB_PATH = dbPath;
+process.env.GYG_ADMIN_USER = "admin";
+process.env.GYG_ADMIN_PASSWORD = "clave-admin-123";
+
+const app = require("../backend/app");
+const { ensureDefaultAdmin } = require("../backend/auth");
+
+let server;
+let baseUrl;
+let cookieAdmin;
+let cookieVendedor;
+
+test.before(async () => {
+  ensureDefaultAdmin();
+
+  await new Promise((resolve) => {
+    server = app.listen(0, "127.0.0.1", () => {
+      baseUrl = `http://127.0.0.1:${server.address().port}`;
+      resolve();
+    });
+  });
+
+  const loginAdmin = await fetch(`${baseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "admin", password: "clave-admin-123" }),
+  });
+  cookieAdmin = extraerCookie(loginAdmin);
+
+  await fetch(`${baseUrl}/api/usuarios`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({ username: "vendedorconfig", password: "clave-123456", rol: "vendedor" }),
+  });
+  const loginVendedor = await fetch(`${baseUrl}/api/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ username: "vendedorconfig", password: "clave-123456" }),
+  });
+  cookieVendedor = extraerCookie(loginVendedor);
+});
+
+test.after(async () => {
+  await new Promise((resolve) => server.close(resolve));
+  limpiarArchivosDb(dbPath);
+});
+
+test("GET /api/config/sitio devuelve valores vacíos por defecto", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, { headers: { Cookie: cookieAdmin } });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.nombre, "");
+  assert.equal(body.whatsapp, "");
+  assert.equal(body.instagram, "");
+  assert.equal(body.facebook, "");
+  assert.equal(body.contactoTitulo, "Contactanos");
+  assert.equal(body.direccion, "");
+  assert.equal(body.imgbbConfigurado, false);
+  assert.equal(body.imgbbApiKey, undefined);
+  assert.equal(body.gistId, "74837d1c1f0a9a3a67e6dc5cc4fa5b6f");
+  assert.equal(body.githubTokenConfigurado, false);
+  assert.equal(body.githubToken, undefined);
+});
+
+test("GET /api/config/sitio requiere sesión, pero no rol admin", async () => {
+  assert.equal((await fetch(`${baseUrl}/api/config/sitio`)).status, 401);
+  const res = await fetch(`${baseUrl}/api/config/sitio`, { headers: { Cookie: cookieVendedor } });
+  assert.equal(res.status, 200);
+});
+
+test("PUT /api/config/sitio requiere rol admin", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieVendedor },
+    body: JSON.stringify({ nombre: "Intento vendedor" }),
+  });
+  assert.equal(res.status, 403);
+});
+
+test("PUT /api/config/sitio (admin) actualiza y persiste la configuración", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "GyG",
+      tagline: "Selección premium",
+      whatsapp: "5491123456789",
+      instagram: "@gygautomotores",
+      facebook: "",
+      contactoTitulo: "Contactanos",
+      contactoTexto: "Escribinos por WhatsApp o Instagram.",
+      direccion: "Av. San Martín 123, Resistencia",
+      footerText: "Concesionaria GyG",
+      heroImage: "https://ejemplo.com/hero.jpg",
+    }),
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.nombre, "G&G");
+  assert.equal(body.whatsapp, "5491123456789");
+  assert.equal(body.instagram, "https://www.instagram.com/gygautomotores");
+  assert.equal(body.facebook, "");
+  assert.equal(body.contactoTitulo, "Contactanos");
+
+  const relectura = await (
+    await fetch(`${baseUrl}/api/config/sitio`, { headers: { Cookie: cookieAdmin } })
+  ).json();
+  assert.equal(relectura.tagline, "Selección premium");
+  assert.equal(relectura.direccion, "Av. San Martín 123, Resistencia");
+  assert.equal(relectura.heroImage, "https://ejemplo.com/hero.jpg");
+});
+
+test("PUT /api/config/sitio guarda la clave ImgBB sin devolverla", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "GyG",
+      imgbbApiKey: "clave-secreta-imgbb",
+    }),
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.imgbbConfigurado, true);
+  assert.equal(body.imgbbApiKey, undefined);
+  assert.doesNotMatch(JSON.stringify(body), /clave-secreta-imgbb/);
+});
+
+test("PUT /api/config/sitio guarda el token de GitHub sin devolverlo", async () => {
+  const res = await fetch(`${baseUrl}/api/config/sitio`, {
+    method: "PUT",
+    headers: { "Content-Type": "application/json", Cookie: cookieAdmin },
+    body: JSON.stringify({
+      nombre: "GyG",
+      gistId: "https://gist.github.com/alguien/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      githubToken: "ghp_token-secreto-de-prueba",
+    }),
+  });
+  assert.equal(res.status, 200);
+  const body = await res.json();
+  assert.equal(body.gistId, "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");
+  assert.equal(body.githubTokenConfigurado, true);
+  assert.equal(body.githubToken, undefined);
+  assert.doesNotMatch(JSON.stringify(body), /ghp_token-secreto-de-prueba/);
+});
