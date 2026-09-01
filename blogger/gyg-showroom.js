@@ -790,11 +790,8 @@ window.GYG_CONFIG = {
 
   function brandMarkup(value) {
     return escapeHtml(displayBrandName(value)).replace(
-      /G\u0026amp;G/g,
-      "G<span class=\"brand-sep\" aria-hidden=\"true\"></span>G"
-    ).replace(
       /&amp;/g,
-      "<span class=\"brand-sep\" aria-hidden=\"true\"></span>"
+      "<span class=\"brand-sep\" aria-hidden=\"true\">&amp;</span>"
     );
   }
 

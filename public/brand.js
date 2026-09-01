@@ -17,7 +17,7 @@
   function wordmarkHtml(valor) {
     return escapeHtml(nombreMarca(valor)).replace(
       /&amp;/g,
-      '<span class="marca-sep" aria-hidden="true"></span>'
+      '<span class="marca-sep" aria-hidden="true">&amp;</span>'
     );
   }
 

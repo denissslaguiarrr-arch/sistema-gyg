@@ -14,7 +14,7 @@
       ".gyg-brand{display:flex;flex-direction:column;align-items:flex-start;gap:4px}",
       ".gyg-brand img{height:40px;width:auto;display:block;max-width:min(280px,82vw);object-fit:contain}",
       ".gyg-brand .marca-wordmark{font-family:Georgia,'Times New Roman',serif;font-weight:800;font-size:1.45rem;letter-spacing:.06em;line-height:1;color:#111}",
-      ".marca-sep{display:inline-block;width:.18em;height:.18em;margin:0 .12em;background:#e85d23;transform:translateY(-.28em);vertical-align:middle}",
+      ".marca-sep{color:#e85d23;font-family:Georgia,'Times New Roman',Times,serif;font-weight:700}",
       ".gyg-title{margin:6px 0 0;font-size:12px;line-height:1.3;letter-spacing:.12em;text-transform:uppercase;color:#5c6573;font-weight:600}",
       ".gyg-tag{margin:6px 0 0;color:#cbd5e1;font-size:14px}",
       ".gyg-nav{display:flex;gap:8px;overflow:auto;padding:10px 16px 12px;background:var(--bg);-webkit-overflow-scrolling:touch}",

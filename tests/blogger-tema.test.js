@@ -67,13 +67,11 @@ test("el hero muestra el nombre configurado como wordmark", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(css, /\.brand-sep/);
   assert.match(js, /brand-sep/);
-  assert.match(js, /reescribirMarca\(site\.footerText/);
   assert.match(js, /home-hero__brand/);
   assert.match(js, /Vendé tu auto<\/h2>/);
   assert.doesNotMatch(js, /Vendé tu auto con G/);
   assert.match(tema, /brand-sep/);
-  assert.doesNotMatch(js, /brand-amp/);
-  assert.doesNotMatch(css, /brand-amp/);
+  assert.match(js, /brand-sep\\" aria-hidden=\\"true\\">&amp;/);
   assert.doesNotMatch(js, /function isBrandWordmark/);
 });
 

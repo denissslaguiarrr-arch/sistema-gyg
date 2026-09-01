@@ -167,22 +167,19 @@ textarea {
   color: var(--orange);
 }
 
-/* Sin & tipográfico: un bloque naranja entre las dos G. */
+/* El & del nombre va en naranja, como el logo G&G. */
 .brand-sep {
-  display: inline-block;
-  width: 0.18em;
-  height: 0.18em;
-  margin: 0 0.12em;
-  background: var(--orange);
-  transform: translateY(-0.28em);
-  vertical-align: middle;
+  display: inline;
+  color: var(--orange);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-weight: 700;
+  margin: 0 0.04em;
+  background: none;
+  transform: none;
 }
 
 .home-hero__brand .brand-sep {
-  width: 0.14em;
-  height: 0.14em;
-  margin: 0 0.1em 0 0.08em;
-  transform: translateY(-0.42em);
+  font-size: 0.72em;
 }
 
 @media (max-width: 640px) {
@@ -3041,11 +3038,8 @@ window.GYG_CONFIG = {
 
   function brandMarkup(value) {
     return escapeHtml(displayBrandName(value)).replace(
-      /G\u0026amp;G/g,
-      "G<span class=\"brand-sep\" aria-hidden=\"true\"></span>G"
-    ).replace(
       /&amp;/g,
-      "<span class=\"brand-sep\" aria-hidden=\"true\"></span>"
+      "<span class=\"brand-sep\" aria-hidden=\"true\">&amp;</span>"
     );
   }
 
