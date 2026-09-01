@@ -45,6 +45,7 @@ html, body { margin: 0 !important; padding: 0 !important; background: #f7f8fa; }
   --radius: 2px;
   --font-display: "Syne", sans-serif;
   --font-body: "Manrope", sans-serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", Times, serif;
   --shadow-soft: 0 24px 60px rgba(14, 17, 22, 0.08);
   --glass: rgba(255, 255, 255, 0.48);
   --glass-strong: rgba(255, 255, 255, 0.62);
@@ -153,6 +154,56 @@ textarea {
   object-position: left center;
 }
 
+.gg-lockup {
+  display: flex;
+  align-items: flex-end;
+  gap: 0.45rem;
+  color: #111;
+  line-height: 1;
+}
+
+.gg-lockup__mark {
+  font-family: var(--font-serif);
+  font-size: 2.28rem;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  line-height: 0.82;
+}
+
+.gg-lockup__amp {
+  color: var(--orange);
+  font-size: 0.72em;
+  font-weight: 700;
+  margin: 0 0.03em 0 0.02em;
+  position: relative;
+  top: -0.04em;
+}
+
+.gg-lockup__aside {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 0.12rem;
+  padding-bottom: 0.16rem;
+}
+
+.gg-lockup__roof {
+  display: block;
+  width: 9.7rem;
+  height: 0.72rem;
+  overflow: visible;
+}
+
+.gg-lockup__word {
+  font-family: var(--font-display);
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  line-height: 1;
+  color: #111;
+  white-space: nowrap;
+}
+
 .brand__name {
   font-family: var(--font-display);
   font-weight: 800;
@@ -185,6 +236,20 @@ textarea {
 @media (max-width: 640px) {
   .brand__logo {
     height: 42px;
+  }
+
+  .gg-lockup__mark {
+    font-size: 1.7rem;
+  }
+
+  .gg-lockup__word {
+    font-size: 0.52rem;
+    letter-spacing: 0.14em;
+  }
+
+  .gg-lockup__roof {
+    width: 7.2rem;
+    height: 0.55rem;
   }
 }
 
@@ -2204,7 +2269,7 @@ body.has-wa-bar .site-footer {
             <a aria-label='Inicio' class='brand' href='#/'>
               <img alt='' class='brand__logo hidden' id='brandLogo'/>
               <div class='brand__name' id='brandName'>Concesionaria</div>
-              <div class='brand__tag' id='brandTag'>Selección premium</div>
+              <div class='brand__tag' id='brandTag'>Selección premium de vehículos</div>
             </a>
             <button aria-controls='navLinks' aria-expanded='false' aria-label='Abrir menú' class='nav-toggle' id='navToggle' type='button'>
               <span class='nav-toggle__bar'></span>
@@ -2249,7 +2314,7 @@ body.has-wa-bar .site-footer {
 (function () {
   var l = document.createElement("link");
   l.rel = "stylesheet";
-  l.href = "https://fonts.googleapis.com/css?family=Syne:500,600,700,800|Manrope:400,500,600,700";
+  l.href = "https://fonts.googleapis.com/css?family=Playfair+Display:700|Syne:500,600,700,800|Manrope:400,500,600,700";
   document.head.appendChild(l);
 })();
 
@@ -3198,21 +3263,27 @@ window.GYG_CONFIG = {
     const logo = String(site.logoUrl || site.logo || "").trim();
     const nameEl = document.getElementById("brandName");
     const logoEl = document.getElementById("brandLogo");
+    const lockup = document.getElementById("ggLockup");
     const brandLink = document.querySelector("a.brand");
     if (brandLink) brandLink.setAttribute("aria-label", `${nombre} inicio`);
-    if (nameEl) {
-      nameEl.innerHTML = brandMarkup(nombre);
-      nameEl.classList.toggle("hidden", Boolean(logo));
-    }
-    if (logoEl) {
-      if (logo) {
-        logoEl.src = logo;
-        logoEl.alt = nombre;
-        logoEl.classList.remove("hidden");
-      } else {
-        logoEl.removeAttribute("src");
-        logoEl.alt = "";
-        logoEl.classList.add("hidden");
+    if (lockup) {
+      if (nameEl) nameEl.classList.add("hidden");
+      if (logoEl) logoEl.classList.add("hidden");
+    } else {
+      if (nameEl) {
+        nameEl.innerHTML = brandMarkup(nombre);
+        nameEl.classList.toggle("hidden", Boolean(logo));
+      }
+      if (logoEl) {
+        if (logo) {
+          logoEl.src = logo;
+          logoEl.alt = nombre;
+          logoEl.classList.remove("hidden");
+        } else {
+          logoEl.removeAttribute("src");
+          logoEl.alt = "";
+          logoEl.classList.add("hidden");
+        }
       }
     }
     const footerBrand = document.getElementById("footerBrand");

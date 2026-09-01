@@ -1,7 +1,7 @@
 (function () {
   var l = document.createElement("link");
   l.rel = "stylesheet";
-  l.href = "https://fonts.googleapis.com/css?family=Syne:500,600,700,800|Manrope:400,500,600,700";
+  l.href = "https://fonts.googleapis.com/css?family=Playfair+Display:700|Syne:500,600,700,800|Manrope:400,500,600,700";
   document.head.appendChild(l);
 })();
 
@@ -950,21 +950,27 @@ window.GYG_CONFIG = {
     const logo = String(site.logoUrl || site.logo || "").trim();
     const nameEl = document.getElementById("brandName");
     const logoEl = document.getElementById("brandLogo");
+    const lockup = document.getElementById("ggLockup");
     const brandLink = document.querySelector("a.brand");
     if (brandLink) brandLink.setAttribute("aria-label", `${nombre} inicio`);
-    if (nameEl) {
-      nameEl.innerHTML = brandMarkup(nombre);
-      nameEl.classList.toggle("hidden", Boolean(logo));
-    }
-    if (logoEl) {
-      if (logo) {
-        logoEl.src = logo;
-        logoEl.alt = nombre;
-        logoEl.classList.remove("hidden");
-      } else {
-        logoEl.removeAttribute("src");
-        logoEl.alt = "";
-        logoEl.classList.add("hidden");
+    if (lockup) {
+      if (nameEl) nameEl.classList.add("hidden");
+      if (logoEl) logoEl.classList.add("hidden");
+    } else {
+      if (nameEl) {
+        nameEl.innerHTML = brandMarkup(nombre);
+        nameEl.classList.toggle("hidden", Boolean(logo));
+      }
+      if (logoEl) {
+        if (logo) {
+          logoEl.src = logo;
+          logoEl.alt = nombre;
+          logoEl.classList.remove("hidden");
+        } else {
+          logoEl.removeAttribute("src");
+          logoEl.alt = "";
+          logoEl.classList.add("hidden");
+        }
       }
     }
     const footerBrand = document.getElementById("footerBrand");
