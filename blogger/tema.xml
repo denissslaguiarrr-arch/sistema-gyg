@@ -1,0 +1,4514 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE html>
+<html b:css='false' b:defaultwidgets='false' b:layoutsVersion='3' b:responsive='true' b:templateVersion='1.0.0' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
+  <head>
+    <meta charset='UTF-8'/>
+    <meta content='width=device-width, initial-scale=1, viewport-fit=cover' name='viewport'/>
+    <title><data:blog.pageTitle/></title>
+    <link href='data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2NCA2NCIgcm9sZT0iaW1nIiBhcmlhLWxhYmVsPSJDb25jZXNpb25hcmlhIj4KICA8cmVjdCB3aWR0aD0iNjQiIGhlaWdodD0iNjQiIHJ4PSIxMiIgZmlsbD0iIzBlMTExNiIvPgogIDxyZWN0IHg9IjEwIiB5PSIyNiIgd2lkdGg9IjQ0IiBoZWlnaHQ9IjE2IiByeD0iMyIgZmlsbD0iI2U4NWQyMyIvPgogIDxjaXJjbGUgY3g9IjIyIiBjeT0iNDYiIHI9IjUiIGZpbGw9IiNmN2Y4ZmEiLz4KICA8Y2lyY2xlIGN4PSI0NCIgY3k9IjQ2IiByPSI1IiBmaWxsPSIjZjdmOGZhIi8+CiAgPHBhdGggZD0iTTE4IDI2IEwyNiAxNiBIMzggTDQ2IDI2IiBmaWxsPSIjZTg1ZDIzIi8+Cjwvc3ZnPgo=' rel='icon' type='image/svg+xml'/>
+    <link href='data:image/png;base64,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' rel='apple-touch-icon'/>
+    <b:include data='blog' name='all-head-content'/>
+    <b:skin version='1.0.0'><![CDATA[
+html, body { margin: 0 !important; padding: 0 !important; background: #f7f8fa; }
+#b-navbar, .navbar, #header, .header, .footer, #footer, .blog-pager, .sidebar { display: none !important; }
+#gyg-blogger-root, .app-shell { min-height: 100vh; position: relative; }
+
+.gyg-top-anchor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  pointer-events: none;
+}
+/* Showroom — black, orange, white/silver */
+:root {
+  --white: #f7f8fa;
+  --white-pure: #ffffff;
+  --silver: #c5ccd6;
+  --silver-soft: #e8ecf1;
+  --black: #0e1116;
+  --black-matte: #1a1f28;
+  --blue: #0b3d6e;
+  --blue-deep: #072a4d;
+  --blue-glow: rgba(11, 61, 110, 0.14);
+  --orange: #e85d23;
+  --orange-deep: #c44a18;
+  --orange-glow: rgba(232, 93, 35, 0.16);
+  --text: #141820;
+  --muted: #5c6573;
+  --line: rgba(14, 17, 22, 0.08);
+  --ok: #1f7a4c;
+  --warn: #9a6b12;
+  --danger: #8f2f2f;
+  --radius: 2px;
+  --font-display: "Syne", sans-serif;
+  --font-body: "Manrope", sans-serif;
+  --shadow-soft: 0 24px 60px rgba(14, 17, 22, 0.08);
+  --glass: rgba(255, 255, 255, 0.48);
+  --glass-strong: rgba(255, 255, 255, 0.62);
+  --glass-line: rgba(255, 255, 255, 0.7);
+  --glass-blur: blur(18px) saturate(1.2);
+  --max: 1180px;
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-top: env(safe-area-inset-top, 0px);
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: auto;
+  overflow-anchor: none;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  overflow-anchor: none;
+  font-family: var(--font-body);
+  color: var(--text);
+  background:
+    radial-gradient(1200px 600px at 12% -10%, var(--orange-glow), transparent 55%),
+    radial-gradient(900px 500px at 100% 0%, rgba(197, 204, 214, 0.45), transparent 50%),
+    linear-gradient(180deg, #eef1f5 0%, var(--white) 38%, #f3f5f8 100%);
+  background-attachment: fixed;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  background-image:
+    linear-gradient(rgba(14, 17, 22, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(14, 17, 22, 0.03) 1px, transparent 1px);
+  background-size: 72px 72px;
+  mask-image: linear-gradient(180deg, rgba(0, 0, 0, 0.55), transparent 75%);
+}
+
+.app-shell {
+  position: relative;
+  z-index: 1;
+}
+
+.site-header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  background: rgba(247, 248, 250, 0.92);
+  border-bottom: 1px solid var(--line);
+  padding-top: var(--safe-top);
+}
+
+.site-header__inner {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1rem 1.25rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.15rem;
+  min-width: 0;
+}
+
+.brand__logo {
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: min(360px, 78vw);
+  object-fit: contain;
+  object-position: left center;
+  mix-blend-mode: multiply;
+}
+
+.brand__name {
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.55rem;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  color: var(--black);
+}
+
+.brand__name span,
+.home-hero__brand span {
+  color: var(--orange);
+}
+
+/* El & del nombre va en naranja, como el logo G&G. */
+.brand-sep {
+  display: inline;
+  color: var(--orange);
+  font-family: Georgia, "Times New Roman", Times, serif;
+  font-weight: 700;
+  margin: 0 0.04em;
+  background: none;
+  transform: none;
+}
+
+.home-hero__brand .brand-sep {
+  font-size: 0.72em;
+}
+
+@media (max-width: 640px) {
+  .brand__logo {
+    height: 38px;
+  }
+}
+
+.brand__tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  max-width: 100%;
+}
+
+.nav-toggle {
+  display: none;
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  border: 1px solid var(--glass-line);
+  border-radius: 8px;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 5px;
+  cursor: pointer;
+}
+
+.nav-toggle__bar {
+  display: block;
+  width: 18px;
+  height: 2px;
+  background: var(--black);
+  border-radius: 1px;
+  transition: transform 0.2s ease, opacity 0.2s ease;
+}
+
+.site-header.is-open .nav-toggle__bar:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+.site-header.is-open .nav-toggle__bar:nth-child(2) {
+  opacity: 0;
+}
+
+.site-header.is-open .nav-toggle__bar:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+.nav-links a {
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  transition: color 0.2s ease;
+  white-space: nowrap;
+  flex: 0 0 auto;
+}
+
+.nav-links a:hover,
+.nav-links a.is-active {
+  color: var(--orange);
+}
+
+.nav-links a.is-active {
+  text-decoration: underline;
+  text-underline-offset: 0.35em;
+}
+
+.home-hero {
+  position: relative;
+  min-height: min(88vh, 820px);
+  display: grid;
+  align-items: end;
+  background: #1a1f28;
+  color: #fff;
+  overflow: hidden;
+  animation: rise 0.7s ease both;
+}
+
+.home-hero__photo {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  max-width: none;
+  object-fit: cover;
+  object-position: center 42%;
+}
+
+.home-hero__veil {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(14, 17, 22, 0.18) 0%, rgba(14, 17, 22, 0.12) 42%, rgba(14, 17, 22, 0.72) 100%);
+  pointer-events: none;
+}
+
+.home-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: var(--max);
+  width: 100%;
+  margin: 0 auto;
+  padding: 4.5rem 1.25rem 3.25rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.home-hero__copy {
+  width: fit-content;
+  max-width: min(42rem, 100%);
+  padding: 1.1rem 1.2rem 1.2rem;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(14, 17, 22, 0.28);
+  -webkit-backdrop-filter: blur(16px) saturate(1.2);
+  backdrop-filter: blur(16px) saturate(1.2);
+}
+
+.home-hero__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--silver);
+}
+
+.home-hero__brand {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(3.4rem, 10vw, 7rem);
+  letter-spacing: 0.06em;
+  line-height: 0.92;
+  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.35);
+}
+
+.home-hero__sub {
+  margin: 0;
+  max-width: 36ch;
+  font-size: 1.08rem;
+  color: rgba(247, 248, 250, 0.88);
+}
+
+.home-hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.5rem;
+}
+
+.home-hero__ghost {
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.carousel {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 2.25rem 1.25rem 0.5rem;
+}
+
+.carousel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 0.85rem 1rem;
+  margin-bottom: 1.1rem;
+}
+
+.carousel__eyebrow {
+  margin: 0 0 0.3rem;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.carousel__head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+.carousel__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+}
+
+.carousel__controls {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.carousel__nav {
+  width: 2.45rem;
+  height: 2.45rem;
+  border: 1px solid var(--line);
+  background: var(--white-pure);
+  color: var(--black);
+  cursor: pointer;
+  font-size: 1.45rem;
+  line-height: 1;
+  display: grid;
+  place-items: center;
+}
+
+.carousel__nav:hover,
+.carousel__nav:focus-visible {
+  border-color: var(--orange);
+  color: var(--orange);
+  outline: none;
+}
+
+.carousel__viewport {
+  overflow: hidden;
+}
+
+.carousel__viewport:focus-visible {
+  outline: 2px solid var(--orange-glow);
+  outline-offset: 3px;
+}
+
+.carousel__track {
+  display: flex;
+  gap: 1rem;
+  transition: transform 0.5s ease;
+}
+
+.carousel__slide {
+  flex: 0 0 calc((100% - 2rem) / 3);
+  min-width: 0;
+}
+
+.carousel--duo .carousel__slide {
+  flex-basis: calc((100% - 1rem) / 2);
+}
+
+.carousel--solo .carousel__slide {
+  flex-basis: 100%;
+}
+
+.carousel__slide .vehicle {
+  height: 100%;
+  animation: none;
+}
+
+.carousel__dots {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-top: 0.95rem;
+}
+
+.carousel__dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  padding: 0;
+  border: 0;
+  border-radius: 99px;
+  background: var(--silver);
+  cursor: pointer;
+}
+
+.carousel__dot.is-active {
+  background: var(--orange);
+  width: 1.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .carousel__track {
+    transition: none;
+  }
+
+  .home-hero__photo {
+    transform: none;
+  }
+}
+
+.home-links {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 2.5rem 1.25rem 3.5rem;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.home-link {
+  display: grid;
+  gap: 0.35rem;
+  padding: 1.35rem 0;
+  border-top: 1px solid var(--line);
+  transition: color 0.2s ease, transform 0.25s ease;
+}
+
+.home-link:hover {
+  color: var(--orange);
+  transform: translateY(-2px);
+}
+
+.home-link__title {
+  font-family: var(--font-body);
+  font-weight: 800;
+  font-size: 1.2rem;
+  letter-spacing: 0.01em;
+  overflow-wrap: break-word;
+}
+
+.home-link__text {
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.content-page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4.5rem + var(--safe-bottom));
+}
+
+.content-page__body {
+  max-width: 58ch;
+  font-size: 1.05rem;
+  color: var(--muted);
+  margin: 0 0 1.25rem;
+}
+
+.content-page__cta {
+  margin-top: 0.25rem;
+}
+
+.contact-address {
+  margin: 0 0 1rem;
+  font-size: 1.02rem;
+  color: var(--text);
+}
+
+.contact-address a {
+  color: var(--orange);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.contact-map {
+  margin-top: 1.5rem;
+  border: 1px solid var(--line);
+  overflow: hidden;
+  background: var(--silver-soft);
+}
+
+.contact-map iframe {
+  width: 100%;
+  height: 280px;
+  border: 0;
+  display: block;
+}
+
+.privacy p {
+  max-width: 62ch;
+  color: var(--muted);
+  margin: 0 0 0.9rem;
+  font-size: 1.02rem;
+}
+
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem 0.45rem;
+  align-items: center;
+  font-size: 0.82rem;
+  color: var(--muted);
+  margin: 0 0 1.1rem;
+}
+
+.crumbs a {
+  color: var(--muted);
+}
+
+.crumbs a:hover {
+  color: var(--orange);
+}
+
+.crumbs__current {
+  color: var(--text);
+}
+
+.similar {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4rem + var(--safe-bottom));
+}
+
+.similar__title {
+  font-family: var(--font-display);
+  font-size: 1.35rem;
+  margin: 0 0 1rem;
+}
+
+.skeleton-page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.skeleton {
+  background: linear-gradient(90deg, #e8ecf1 0%, #f7f8fa 45%, #e8ecf1 90%);
+  background-size: 200% 100%;
+  animation: skeleton-shimmer 1.15s ease-in-out infinite;
+}
+
+.skeleton--hero {
+  height: 220px;
+  margin-bottom: 1.5rem;
+}
+
+.skeleton--card {
+  grid-column: span 4;
+  min-height: 220px;
+  aspect-ratio: 16 / 12;
+}
+
+@keyframes skeleton-shimmer {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -100% 0;
+  }
+}
+
+.badge--cat {
+  display: none;
+}
+
+.vehicle__chips {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 3;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.35rem;
+  max-width: calc(100% - 7rem);
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  padding: 0.42rem 0.65rem;
+  line-height: 1;
+  white-space: nowrap;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: 0 8px 20px rgba(14, 17, 22, 0.18);
+}
+
+.chip--0km {
+  background: var(--blue);
+  color: #fff;
+}
+
+.chip--usado {
+  background: rgba(14, 17, 22, 0.9);
+  color: #fff;
+}
+
+.chip--disponible {
+  background: rgba(31, 122, 76, 0.95);
+  color: #fff;
+}
+
+.chip--reservado {
+  background: rgba(154, 107, 18, 0.95);
+  color: #fff;
+}
+
+.chip--destacado {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+  z-index: 3;
+  background: rgba(247, 248, 250, 0.95);
+  color: var(--blue);
+  letter-spacing: 0.12em;
+}
+
+.admin-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin-bottom: 1rem;
+}
+
+.admin-tabs .btn.is-active {
+  background: var(--blue);
+  color: #fff;
+  border-color: var(--blue);
+}
+
+@media (max-width: 800px) {
+  .home-links {
+    grid-template-columns: 1fr;
+  }
+}
+
+.hero {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 3.5rem 1.25rem 2rem;
+  display: grid;
+  gap: 1rem;
+  animation: rise 0.7s ease both;
+}
+
+.hero__eyebrow {
+  font-size: 0.75rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--blue);
+  font-weight: 700;
+}
+
+.hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.65rem, 6.5vw, 3.2rem);
+  letter-spacing: -0.02em;
+  line-height: 1.08;
+  max-width: 100%;
+  overflow-wrap: break-word;
+  word-break: break-word;
+}
+
+.hero p {
+  margin: 0;
+  max-width: 42ch;
+  color: var(--muted);
+  font-size: 1.05rem;
+}
+
+.hero__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 0.5rem;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.hero__meta strong {
+  color: var(--black);
+  font-weight: 700;
+}
+
+.hero--sell h1 {
+  max-width: min(16ch, 100%);
+}
+
+.hero__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-top: 0.35rem;
+}
+
+.filters {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem 1.5rem;
+  animation: rise 0.8s ease both;
+}
+
+.filters__panel {
+  display: grid;
+  grid-template-columns: 1.4fr repeat(4, 1fr);
+  gap: 0.65rem;
+  padding: 0.85rem;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--shadow-soft);
+}
+
+.filters__panel input,
+.filters__panel select {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--white-pure);
+  color: var(--text);
+  padding: 0.7rem 0.75rem;
+  outline: none;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.filters__panel input:focus,
+.filters__panel select:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-glow);
+}
+
+.filters__row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.65rem;
+  margin-top: 0.65rem;
+}
+
+.filters__actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+  margin-top: 0.85rem;
+  flex-wrap: wrap;
+}
+
+.results-count {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  border: 1px solid transparent;
+  padding: 0.72rem 1.15rem;
+  cursor: pointer;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  transition: transform 0.18s ease, background 0.18s ease, color 0.18s ease, border-color 0.18s ease;
+}
+
+.btn:active {
+  transform: translateY(1px);
+}
+
+.btn--primary {
+  background: var(--orange);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--orange-deep);
+}
+
+.btn--dark {
+  background: var(--black);
+  color: #fff;
+}
+
+.btn--dark:hover {
+  background: var(--black-matte);
+}
+
+.btn--ghost {
+  background: transparent;
+  border-color: var(--line);
+  color: var(--text);
+}
+
+.btn--ghost:hover {
+  border-color: var(--silver);
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Gana a .btn--ghost: sobre el auto negro la letra negra no se leía. */
+.home-hero .btn--ghost,
+.btn.home-hero__ghost {
+  border-color: rgba(255, 255, 255, 0.55);
+  color: #fff;
+  background: rgba(255, 255, 255, 0.2);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.home-hero .btn--ghost:hover,
+.btn.home-hero__ghost:hover {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.8);
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.45);
+}
+
+.btn--whatsapp {
+  background: #128c7e;
+  color: #fff;
+}
+
+.btn--whatsapp:hover {
+  background: #0e7368;
+}
+
+.btn--instagram {
+  background: #c13584;
+  color: #fff;
+}
+
+.btn--instagram:hover {
+  background: #a12c6e;
+}
+
+.btn--facebook {
+  background: #1877f2;
+  color: #fff;
+}
+
+.btn--facebook:hover {
+  background: #1462c7;
+}
+
+.btn--danger {
+  background: transparent;
+  border-color: rgba(143, 47, 47, 0.35);
+  color: var(--danger);
+}
+
+.btn--sm {
+  padding: 0.45rem 0.75rem;
+  font-size: 0.82rem;
+}
+
+.stock {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4rem + var(--safe-bottom));
+}
+
+.stock-grid {
+  display: grid;
+  grid-template-columns: repeat(12, 1fr);
+  gap: 1.25rem;
+}
+
+.vehicle {
+  grid-column: span 4;
+  position: relative;
+  overflow: hidden;
+  background: var(--glass);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-line);
+  box-shadow: 0 12px 32px rgba(14, 17, 22, 0.06);
+  cursor: pointer;
+  transition: transform 0.35s ease, box-shadow 0.35s ease, border-color 0.35s ease;
+  animation: rise 0.6s ease both;
+}
+
+.vehicle:nth-child(1) { animation-delay: 0.05s; }
+.vehicle:nth-child(2) { animation-delay: 0.1s; }
+.vehicle:nth-child(3) { animation-delay: 0.15s; }
+.vehicle:nth-child(4) { animation-delay: 0.2s; }
+.vehicle:nth-child(5) { animation-delay: 0.25s; }
+.vehicle:nth-child(6) { animation-delay: 0.3s; }
+
+.vehicle:hover {
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-soft);
+  border-color: rgba(11, 61, 110, 0.25);
+}
+
+.vehicle--featured {
+  grid-column: span 6;
+}
+
+.vehicle__media {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  overflow: hidden;
+  background: var(--black-matte);
+}
+
+.vehicle__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.6s ease;
+}
+
+.vehicle:hover .vehicle__media img {
+  transform: scale(1.04);
+}
+
+.vehicle__media::after {
+  content: "";
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 40%;
+  background: linear-gradient(transparent, rgba(14, 17, 22, 0.45));
+  pointer-events: none;
+}
+
+.badge {
+  position: absolute;
+  top: 0.75rem;
+  left: 0.75rem;
+  z-index: 2;
+  font-size: 0.68rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  background: rgba(255, 255, 255, 0.92);
+  color: var(--black);
+}
+
+.badge--reservado {
+  background: rgba(154, 107, 18, 0.95);
+  color: #fff;
+}
+
+.badge--disponible {
+  background: rgba(31, 122, 76, 0.92);
+  color: #fff;
+}
+
+.badge--destacado {
+  left: auto;
+  right: 0.75rem;
+  background: var(--blue);
+  color: #fff;
+}
+
+.vehicle__body {
+  padding: 1rem 1.05rem 1.15rem;
+  display: grid;
+  gap: 0.45rem;
+}
+
+.vehicle__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+}
+
+.vehicle__version {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.vehicle__specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.85rem;
+  color: var(--muted);
+  font-size: 0.82rem;
+}
+
+.vehicle__price {
+  margin-top: 0.35rem;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 1.2rem;
+  color: var(--orange);
+}
+
+.vehicle__price-antes {
+  display: block;
+  font-size: 0.72em;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.vehicle__price-ahora {
+  display: block;
+}
+
+.vehicle__price--consulta {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  margin-top: 0.5rem;
+  padding: 0.35rem 0.75rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: #25d366;
+  border-radius: 999px;
+}
+
+.empty-state,
+.loading-state,
+.error-state {
+  grid-column: 1 / -1;
+  padding: 3rem 1rem;
+  text-align: center;
+  color: var(--muted);
+  border: 1px dashed var(--line);
+  background: rgba(255, 255, 255, 0.5);
+}
+
+.detail {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem calc(4rem + var(--safe-bottom));
+  animation: rise 0.45s ease both;
+}
+
+.detail__back {
+  margin-bottom: 1.25rem;
+}
+
+.detail__layout {
+  display: grid;
+  grid-template-columns: 1.35fr 0.95fr;
+  gap: 1.75rem;
+  align-items: start;
+}
+
+.gallery {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.gallery__main {
+  aspect-ratio: 16 / 10;
+  min-height: 220px;
+  overflow: hidden;
+  background: var(--black-matte);
+  border: 1px solid var(--line);
+}
+
+.gallery__main img,
+.gallery__main video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  cursor: zoom-in;
+}
+
+.gallery__main video {
+  cursor: default;
+  background: #111;
+}
+
+.gallery__main iframe {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: #111;
+}
+
+.gallery__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.8rem;
+}
+
+.gallery__thumbs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(88px, 1fr));
+  gap: 0.5rem;
+}
+
+.gallery__thumbs button {
+  border: 1px solid var(--line);
+  padding: 0;
+  background: var(--silver-soft);
+  cursor: pointer;
+  aspect-ratio: 1;
+  overflow: hidden;
+  opacity: 0.75;
+  transition: opacity 0.2s ease, border-color 0.2s ease;
+}
+
+.gallery__thumbs button.is-active,
+.gallery__thumbs button:hover {
+  opacity: 1;
+  border-color: var(--blue);
+}
+
+.gallery__thumbs img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.gallery__thumbs button.is-video {
+  position: relative;
+}
+
+.gallery__thumbs button.is-video::after {
+  content: "▶";
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  font-size: 1.1rem;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.7);
+  pointer-events: none;
+}
+
+.detail__info {
+  display: grid;
+  gap: 1rem;
+  padding: 1.25rem;
+  background: var(--glass-strong);
+  -webkit-backdrop-filter: var(--glass-blur);
+  backdrop-filter: var(--glass-blur);
+  border: 1px solid var(--glass-line);
+  box-shadow: var(--shadow-soft);
+}
+
+.detail__info h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.7rem, 3vw, 2.2rem);
+  line-height: 1.1;
+}
+
+.detail__price {
+  font-family: var(--font-display);
+  font-size: 1.8rem;
+  font-weight: 800;
+  color: var(--orange);
+}
+
+.detail__price-antes {
+  display: block;
+  font-size: 0.55em;
+  font-weight: 600;
+  color: #64748b;
+  text-decoration: line-through;
+}
+
+.detail__price-ahora {
+  display: block;
+}
+
+.detail__price--consulta {
+  font-size: 1.15rem;
+  color: var(--blue);
+}
+
+.detail__status {
+  display: inline-flex;
+  width: fit-content;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.35rem 0.55rem;
+  background: var(--silver-soft);
+}
+
+.detail__status.is-disponible { background: rgba(31, 122, 76, 0.12); color: var(--ok); }
+.detail__status.is-reservado { background: rgba(154, 107, 18, 0.14); color: var(--warn); }
+
+.specs-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.92rem;
+}
+
+.specs-table th,
+.specs-table td {
+  text-align: left;
+  padding: 0.55rem 0;
+  border-bottom: 1px solid var(--line);
+  vertical-align: top;
+}
+
+.specs-table th {
+  width: 42%;
+  color: var(--muted);
+  font-weight: 500;
+}
+
+.equip-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.equip-list li {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.55rem;
+  background: var(--silver-soft);
+  border: 1px solid var(--line);
+}
+
+.detail__cta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+  margin-top: 0.25rem;
+}
+
+.detail__desc {
+  color: var(--muted);
+  margin: 0;
+}
+
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  background: rgba(14, 17, 22, 0.94);
+  display: flex;
+  flex-direction: column;
+  touch-action: none;
+}
+
+.lightbox__bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.65rem;
+  padding: calc(0.75rem + var(--safe-top)) 1rem 0.75rem;
+}
+
+.lightbox__stage {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+  padding: 0.5rem 1rem calc(1rem + var(--safe-bottom));
+  touch-action: none;
+}
+
+.lightbox__stage img {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  transform-origin: center center;
+}
+
+.admin-page {
+  max-width: 1240px;
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem 4rem;
+}
+
+.admin-header {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  gap: 1rem;
+  align-items: end;
+  margin-bottom: 1.5rem;
+}
+
+.admin-header h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 2rem;
+}
+
+.admin-header p {
+  margin: 0.35rem 0 0;
+  color: var(--muted);
+}
+
+.auth-box,
+.admin-panel,
+.form-panel {
+  background: rgba(255, 255, 255, 0.82);
+  border: 1px solid var(--line);
+  padding: 1.15rem;
+  margin-bottom: 1rem;
+  box-shadow: var(--shadow-soft);
+}
+
+.auth-box h2,
+.form-panel h2 {
+  margin: 0 0 0.75rem;
+  font-family: var(--font-display);
+  font-size: 1.2rem;
+}
+
+.field-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.65rem;
+  align-items: end;
+}
+
+.field {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.field label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.field input,
+.field select,
+.field textarea {
+  width: 100%;
+  border: 1px solid var(--line);
+  background: var(--white-pure);
+  padding: 0.65rem 0.7rem;
+  outline: none;
+}
+
+.field input:focus,
+.field select:focus,
+.field textarea:focus {
+  border-color: var(--blue);
+  box-shadow: 0 0 0 3px var(--blue-glow);
+}
+
+.field textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+.form-grid .span-2 { grid-column: span 2; }
+.form-grid .span-3 { grid-column: span 3; }
+
+.admin-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-bottom: 0.85rem;
+}
+
+.admin-table-wrap {
+  overflow-x: auto;
+}
+
+.admin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.admin-table th,
+.admin-table td {
+  text-align: left;
+  padding: 0.7rem 0.55rem;
+  border-bottom: 1px solid var(--line);
+  white-space: nowrap;
+}
+
+.admin-table th {
+  font-size: 0.72rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.admin-table tr:hover td {
+  background: rgba(11, 61, 110, 0.04);
+}
+
+.status-pill {
+  display: inline-block;
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  padding: 0.25rem 0.45rem;
+  background: var(--silver-soft);
+}
+
+.status-pill.disponible { color: var(--ok); background: rgba(31, 122, 76, 0.12); }
+.status-pill.reservado { color: var(--warn); background: rgba(154, 107, 18, 0.14); }
+.status-pill.vendido { color: var(--danger); background: rgba(143, 47, 47, 0.12); }
+.status-pill.oculto { color: var(--muted); }
+
+.foto-list {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.foto-row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto auto;
+  gap: 0.45rem;
+  align-items: center;
+}
+
+.foto-row img {
+  width: 56px;
+  height: 40px;
+  object-fit: cover;
+  background: var(--silver-soft);
+  border: 1px solid var(--line);
+}
+
+.toast {
+  position: fixed;
+  right: 1rem;
+  bottom: calc(1rem + var(--safe-bottom));
+  z-index: 100;
+  max-width: min(360px, calc(100vw - 2rem));
+  padding: 0.85rem 1rem;
+  background: var(--black);
+  color: #fff;
+  font-size: 0.9rem;
+  box-shadow: var(--shadow-soft);
+  transform: translateY(120%);
+  opacity: 0;
+  transition: transform 0.3s ease, opacity 0.3s ease;
+}
+
+.toast.is-visible {
+  transform: translateY(0);
+  opacity: 1;
+}
+
+.toast.is-error {
+  background: var(--danger);
+}
+
+.toast.is-ok {
+  background: var(--ok);
+}
+
+.site-footer {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.5rem 1.25rem calc(2.5rem + var(--safe-bottom));
+  color: var(--muted);
+  font-size: 0.85rem;
+  border-top: 1px solid var(--glass-line);
+  background: rgba(247, 248, 250, 0.4);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .site-header,
+  .vehicle,
+  .filters__panel,
+  .detail__info,
+  .site-footer,
+  .nav-toggle,
+  .chip,
+  .home-hero__ghost,
+  .home-hero__copy {
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  .site-header,
+  .vehicle,
+  .filters__panel,
+  .detail__info {
+    background: #fff;
+  }
+}
+
+.site-footer__main {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.site-footer__legal {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+  font-size: 0.78rem;
+}
+
+.site-footer__legal a {
+  color: var(--muted);
+}
+
+.site-footer__legal a:hover {
+  color: var(--orange);
+}
+
+.footer-credit {
+  opacity: 0.72;
+}
+
+.wa-bar {
+  position: fixed;
+  z-index: 46;
+  right: 1.1rem;
+  bottom: calc(1.1rem + var(--safe-bottom));
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #25d366;
+  color: #fff;
+  text-decoration: none;
+  box-shadow: 0 10px 24px rgba(14, 17, 22, 0.22);
+}
+
+.wa-bar svg {
+  width: 28px;
+  height: 28px;
+  display: block;
+  fill: currentColor;
+}
+
+.wa-bar:hover {
+  background: #1fbe5a;
+  color: #fff;
+}
+
+.back-top {
+  position: fixed;
+  z-index: 47;
+  right: 1.1rem;
+  bottom: calc(5.1rem + var(--safe-bottom));
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(247, 248, 250, 0.92);
+  color: var(--black);
+  font-size: 1.15rem;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  box-shadow: var(--shadow-soft);
+}
+
+.back-top.is-visible {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+@media (min-width: 921px) {
+  .wa-bar {
+    right: 1.25rem;
+    bottom: 1.25rem;
+  }
+
+  .back-top {
+    bottom: 5.3rem;
+  }
+}
+
+body.has-wa-bar .site-footer {
+  padding-bottom: calc(5.2rem + var(--safe-bottom));
+}
+
+.hidden {
+  display: none !important;
+}
+
+@keyframes rise {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.sell-band {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 1.75rem 1.25rem 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.25rem;
+}
+
+.sell-band__copy {
+  display: grid;
+  gap: 0.35rem;
+  max-width: 52ch;
+}
+
+.sell-band__eyebrow {
+  margin: 0;
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.sell-band h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.6rem, 3vw, 2.1rem);
+  letter-spacing: -0.02em;
+}
+
+.sell-band p {
+  margin: 0;
+  color: var(--muted);
+}
+
+.sell-page {
+  max-width: var(--max);
+  margin: 0 auto;
+  padding: 0 1.25rem calc(4.5rem + var(--safe-bottom));
+  display: grid;
+  gap: 2rem;
+}
+
+.sell-steps {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.sell-steps li {
+  padding: 1.25rem 1.1rem 1.35rem;
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+}
+
+.sell-steps__n {
+  display: block;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.16em;
+  color: var(--orange);
+  margin-bottom: 0.55rem;
+}
+
+.sell-steps h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.15rem;
+}
+
+.sell-steps p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.sell-form {
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  padding: 1.5rem 1.25rem 1.75rem;
+  display: grid;
+  gap: 0.85rem;
+}
+
+.sell-form h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.45rem;
+}
+
+.sell-form__lead,
+.sell-form__hint {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.sell-form__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.85rem 1rem;
+}
+
+.sell-form label {
+  display: grid;
+  gap: 0.35rem;
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.sell-form input,
+.sell-form select,
+.sell-form textarea {
+  width: 100%;
+  padding: 0.7rem 0.8rem;
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  background: #fff;
+  color: var(--text);
+  text-transform: none;
+  letter-spacing: 0;
+  font-weight: 500;
+}
+
+.sell-form input:focus,
+.sell-form select:focus,
+.sell-form textarea:focus {
+  outline: 2px solid var(--orange-glow);
+  border-color: var(--orange);
+}
+
+.sell-form__full {
+  grid-column: 1 / -1;
+}
+
+.sell-form .btn {
+  justify-self: start;
+  margin-top: 0.25rem;
+}
+
+.sell-form__check {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.sell-form__check input {
+  width: auto;
+  margin-top: 0.2rem;
+  accent-color: var(--orange);
+}
+
+.sell-block {
+  display: grid;
+  gap: 1rem;
+}
+
+.sell-section-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 800;
+  font-size: clamp(1.45rem, 3vw, 2rem);
+  letter-spacing: -0.02em;
+}
+
+.sell-modes {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.sell-mode {
+  display: grid;
+  gap: 0.45rem;
+  text-align: left;
+  padding: 1.3rem 1.15rem 1.2rem;
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+  box-shadow: var(--shadow-soft);
+  color: inherit;
+  cursor: pointer;
+}
+
+.sell-mode:hover,
+.sell-mode:focus-visible {
+  border-color: var(--orange);
+  outline: none;
+}
+
+.sell-mode__tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 700;
+  color: var(--orange);
+}
+
+.sell-mode h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 1.25rem;
+}
+
+.sell-mode p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.sell-mode__cta {
+  margin-top: 0.35rem;
+  font-size: 0.82rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--blue);
+}
+
+.sell-why {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.sell-why article {
+  padding: 1.15rem 1rem 1.2rem;
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+}
+
+.sell-why h3 {
+  margin: 0 0 0.4rem;
+  font-family: var(--font-display);
+  font-size: 1.05rem;
+}
+
+.sell-why p {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.sell-faq {
+  background: var(--white-pure);
+  border: 1px solid var(--line);
+}
+
+.sell-faq details {
+  padding: 0.95rem 1.1rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.sell-faq details:last-child {
+  border-bottom: 0;
+}
+
+.sell-faq summary {
+  cursor: pointer;
+  font-weight: 700;
+  list-style: none;
+}
+
+.sell-faq summary::-webkit-details-marker {
+  display: none;
+}
+
+.sell-faq summary::after {
+  content: "+";
+  float: right;
+  color: var(--orange);
+  font-weight: 800;
+}
+
+.sell-faq details[open] summary::after {
+  content: "–";
+}
+
+.sell-faq p {
+  margin: 0.55rem 1.6rem 0.15rem 0;
+  color: var(--muted);
+  font-size: 0.95rem;
+}
+
+.sell-cta-end {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 1.35rem 1.2rem;
+  background: var(--black);
+  color: #fff;
+}
+
+.sell-cta-end h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 3vw, 1.7rem);
+}
+
+.sell-cta-end p {
+  margin: 0.25rem 0 0;
+  color: var(--silver);
+}
+
+@media (max-width: 980px) {
+  .filters__panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .filters__row {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .vehicle,
+  .vehicle--featured {
+    grid-column: span 6;
+  }
+
+  .detail__layout {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .form-grid .span-2,
+  .form-grid .span-3 {
+    grid-column: span 2;
+  }
+
+  .sell-steps {
+    grid-template-columns: 1fr;
+  }
+
+  .sell-modes,
+  .sell-why {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .carousel__slide {
+    flex-basis: calc((100% - 1rem) / 2);
+  }
+}
+
+@media (max-width: 920px) {
+  .site-header__inner {
+    flex-wrap: wrap;
+  }
+
+  .nav-toggle {
+    display: flex;
+  }
+
+  .nav-links {
+    display: none;
+    flex-direction: column;
+    align-items: stretch;
+    flex-basis: 100%;
+    width: 100%;
+    gap: 0;
+    padding: 0.25rem 0 0.5rem;
+  }
+
+  .site-header.is-open .nav-links {
+    display: flex;
+  }
+
+  .nav-links a {
+    padding: 0.7rem 0.15rem;
+    border-top: 1px solid var(--line);
+  }
+
+  .home-hero__photo {
+    object-position: 18% 52%;
+  }
+}
+
+@media (max-width: 640px) {
+  .home-hero {
+    min-height: min(78vh, 640px);
+  }
+
+  .home-hero__photo {
+    object-fit: cover;
+    object-position: 18% 52%;
+    transform: scale(1.28);
+    transform-origin: 18% 62%;
+  }
+
+  .home-hero__veil {
+    background:
+      linear-gradient(180deg, rgba(14, 17, 22, 0.06) 0%, rgba(14, 17, 22, 0.1) 38%, rgba(14, 17, 22, 0.7) 100%);
+  }
+
+  .home-hero__content {
+    padding: 2.1rem 1.1rem 1.45rem;
+  }
+
+  .home-hero__copy {
+    width: 100%;
+    max-width: none;
+    padding: 0;
+    border: none;
+    background: transparent;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .home-hero__brand {
+    font-size: clamp(2rem, 10vw, 2.8rem);
+  }
+
+  .hero h1 {
+    font-size: clamp(1.5rem, 8vw, 2rem);
+  }
+
+  .sell-form__grid,
+  .sell-modes,
+  .sell-why {
+    grid-template-columns: 1fr;
+  }
+
+  .carousel__slide,
+  .carousel--duo .carousel__slide {
+    flex-basis: 100%;
+  }
+
+  .filters__panel,
+  .filters__row {
+    grid-template-columns: 1fr;
+  }
+
+  .vehicle,
+  .vehicle--featured {
+    grid-column: span 12;
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .form-grid .span-2,
+  .form-grid .span-3 {
+    grid-column: span 1;
+  }
+
+  .field-row {
+    grid-template-columns: 1fr;
+  }
+
+  .foto-row {
+    grid-template-columns: 56px 1fr;
+  }
+
+  .foto-row .btn {
+    grid-column: span 2;
+  }
+
+  .content-page,
+  .sell-page,
+  .detail,
+  .stock,
+  .similar {
+    padding-bottom: calc(5.5rem + var(--safe-bottom));
+  }
+
+  .skeleton--card {
+    grid-column: span 12;
+  }
+}
+
+]]></b:skin>
+  </head>
+  <body>
+    <b:section id='gyg-required-section' maxwidgets='0' name='Showroom' showaddelement='no'/>
+
+    <div data-gist-id='' data-gist-owner='' id='gyg-blogger-root'>
+      <div class='gyg-top-anchor' id='gygTop'></div>
+      <div aria-hidden='true' class='atmosphere'/>
+      <div class='app-shell'>
+        <header class='site-header'>
+          <div class='site-header__inner'>
+            <a aria-label='Inicio' class='brand' href='#/'>
+              <img alt='' class='brand__logo hidden' id='brandLogo'/>
+              <div class='brand__name' id='brandName'>Concesionaria</div>
+              <div class='brand__tag' id='brandTag'>Selección premium de vehículos</div>
+            </a>
+            <button aria-controls='navLinks' aria-expanded='false' aria-label='Abrir menú' class='nav-toggle' id='navToggle' type='button'>
+              <span class='nav-toggle__bar'></span>
+              <span class='nav-toggle__bar'></span>
+              <span class='nav-toggle__bar'></span>
+            </button>
+            <nav aria-label='Secciones' class='nav-links' id='navLinks'/>
+          </div>
+        </header>
+        <main id='app'>
+          <div aria-busy='true' aria-label='Cargando sitio' class='skeleton-page'>
+            <div class='skeleton skeleton--hero'></div>
+            <div class='stock-grid'>
+              <div class='skeleton skeleton--card'></div>
+              <div class='skeleton skeleton--card'></div>
+              <div class='skeleton skeleton--card'></div>
+            </div>
+          </div>
+        </main>
+        <footer class='site-footer'>
+          <div class='site-footer__main'>
+            <div><span id='footerBrand'>Concesionaria</span> <span id='year'/></div>
+            <div id='footerUpdated'>Stock en vivo</div>
+          </div>
+          <div class='site-footer__legal'>
+            <a href='#/privacidad'>Privacidad</a>
+            <span class='footer-credit'>Sistema de gestión para concesionarias</span>
+          </div>
+        </footer>
+      </div>
+      <a aria-label='WhatsApp' class='wa-bar hidden' id='waBar' rel='noopener' target='_blank'>
+        <svg aria-hidden='true' viewBox='0 0 24 24'>
+          <path d='M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.435 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z'/>
+        </svg>
+      </a>
+      <button aria-label='Volver arriba' class='back-top' id='backTop' type='button'>↑</button>
+      <div aria-live='polite' class='toast' id='toast' role='status'/>
+    </div>
+
+    <script type='text/javascript'>
+//<![CDATA[
+(function () {
+  var l = document.createElement("link");
+  l.rel = "stylesheet";
+  l.href = "https://fonts.googleapis.com/css?family=Syne:500,600,700,800|Manrope:400,500,600,700";
+  document.head.appendChild(l);
+})();
+
+window.GYG_CONFIG = {
+  // Obligatorio en el sitio público: el ID del Gist con stock.json.
+  // Sin esto, los visitantes no ven el catálogo.
+  GIST_ID: "",
+  GIST_OWNER: "",
+  GIST_FILENAME: "stock.json",
+  WHATSAPP_NUMBER: "",
+  DEALERSHIP_NAME: "Concesionaria",
+  TAGLINE: "Selección premium de vehículos",
+  LOCAL_SAMPLE_PATH: "",
+  LOGO_URL: "",
+};
+
+(function (global) {
+  const TOKEN_KEY = "gyg_gh_token";
+  const GIST_KEY = "gyg_gist_id";
+  const CACHE_KEY = "gyg_stock_cache";
+
+  function cfg() {
+    return global.GYG_CONFIG || {};
+  }
+
+  function reescribirMarca(texto) {
+    return String(texto == null ? "" : texto);
+  }
+
+  function reescribirMarcaEn(valor) {
+    const skip = { instagram: 1, facebook: 1, whatsapp: 1, heroImage: 1, href: 1, url: 1 };
+    if (valor == null) return valor;
+    if (typeof valor === "string") return reescribirMarca(valor);
+    if (Array.isArray(valor)) return valor.map(reescribirMarcaEn);
+    if (typeof valor === "object") {
+      const out = { ...valor };
+      Object.keys(valor).forEach((clave) => {
+        out[clave] = skip[clave] ? valor[clave] : reescribirMarcaEn(valor[clave]);
+      });
+      return out;
+    }
+    return valor;
+  }
+
+  function displayBrandName(value) {
+    const n = String(value == null ? "" : value).trim();
+    if (n) return n;
+    return String(cfg().DEALERSHIP_NAME || "Concesionaria").trim() || "Concesionaria";
+  }
+
+  function getToken() {
+    return sessionStorage.getItem(TOKEN_KEY) || "";
+  }
+
+  function setToken(token) {
+    if (token) sessionStorage.setItem(TOKEN_KEY, token.trim());
+    else sessionStorage.removeItem(TOKEN_KEY);
+  }
+
+  function clearToken() {
+    sessionStorage.removeItem(TOKEN_KEY);
+  }
+
+  function gistFromDom(attr) {
+    const root = document.getElementById("gyg-blogger-root");
+    return String((root && root.getAttribute(attr)) || "").trim();
+  }
+
+  function getGistId() {
+    const fromCfg = (cfg().GIST_ID || "").trim();
+    if (fromCfg) return fromCfg;
+    const fromDom = gistFromDom("data-gist-id");
+    if (fromDom) return fromDom;
+
+    try {
+      const params = new URLSearchParams(location.search || "");
+      const fromQuery = (params.get("gist") || "").trim();
+      if (fromQuery) {
+        localStorage.setItem(GIST_KEY, fromQuery);
+        return fromQuery;
+      }
+    } catch (_) {}
+
+    try {
+      return (localStorage.getItem(GIST_KEY) || "").trim();
+    } catch (_) {
+      return "";
+    }
+  }
+
+  function setGistId(id) {
+    const value = (id || "").trim();
+    if (value) localStorage.setItem(GIST_KEY, value);
+    else localStorage.removeItem(GIST_KEY);
+    if (global.GYG_CONFIG) global.GYG_CONFIG.GIST_ID = value;
+  }
+
+  function clearStoredGistId() {
+    try {
+      localStorage.removeItem(GIST_KEY);
+    } catch (_) {}
+  }
+
+  function gistIdCandidates() {
+    const ids = [];
+    const seen = {};
+    const add = (value) => {
+      const id = String(value || "").trim();
+      if (!id || seen[id]) return;
+      seen[id] = true;
+      ids.push(id);
+    };
+    add(cfg().GIST_ID);
+    add(gistFromDom("data-gist-id"));
+    if (!ids.length) {
+      try {
+        add(localStorage.getItem(GIST_KEY));
+      } catch (_) {}
+    }
+    return ids;
+  }
+
+  function readStockCache() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || !parsed.data) return null;
+      return parsed.data;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function writeStockCache(data) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    } catch (_) {}
+  }
+
+  function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+  }
+
+  function gistRawUrls(gistId, filename) {
+    const owner = (cfg().GIST_OWNER || gistFromDom("data-gist-owner") || "").trim();
+    const id = String(gistId || "").trim();
+    const file = filename || "stock.json";
+    const t = Date.now();
+    const urls = [];
+    if (!id) return urls;
+    if (owner) {
+      urls.push(`https://gist.githubusercontent.com/${owner}/${id}/raw/${file}?t=${t}`);
+      urls.push(`https://gist.githubusercontent.com/${owner}/${id}/raw?t=${t}`);
+    }
+    urls.push(`https://gist.githubusercontent.com/${id}/raw/${file}?t=${t}`);
+    return urls;
+  }
+
+  function defaultSite() {
+    return {
+      name: cfg().DEALERSHIP_NAME || "Concesionaria",
+      tagline: cfg().TAGLINE || "Selección premium de vehículos",
+      whatsapp: cfg().WHATSAPP_NUMBER || "",
+      instagram: "",
+      facebook: "",
+      contactoTitulo: "Contactanos",
+      contactoTexto: "",
+      direccion: "",
+      footerText: "",
+      heroImage: "",
+      logoUrl: "",
+    };
+  }
+
+  function defaultPages() {
+    return [
+      {
+        id: "home",
+        slug: "",
+        title: "Inicio",
+        navLabel: "Inicio",
+        type: "home",
+        visible: true,
+        order: 0,
+        content: {
+          eyebrow: "Concesionaria",
+          headline: "",
+          subtitle: "Stock 0 km y usados.",
+          ctaPrimary: { label: "Ver 0 km", href: "#/0km" },
+          ctaSecondary: { label: "Ver usados", href: "#/usados" },
+          heroImage: "",
+          highlights: [],
+        },
+      },
+      {
+        id: "0km",
+        slug: "0km",
+        title: "0 km",
+        navLabel: "0 km",
+        type: "stock",
+        visible: true,
+        order: 1,
+        filter: { categoria: "0km" },
+        content: { eyebrow: "Catálogo", headline: "0 km", subtitle: "Unidades nuevas." },
+      },
+      {
+        id: "usados",
+        slug: "usados",
+        title: "Usados",
+        navLabel: "Usados",
+        type: "stock",
+        visible: true,
+        order: 2,
+        filter: { categoria: "usado" },
+        content: { eyebrow: "Catálogo", headline: "Usados", subtitle: "Selección revisada." },
+      },
+      {
+        id: "stock",
+        slug: "stock",
+        title: "Stock",
+        navLabel: "Stock",
+        type: "stock",
+        visible: true,
+        order: 3,
+        filter: {},
+        content: { eyebrow: "Catálogo", headline: "Todo el stock", subtitle: "0 km y usados." },
+      },
+      {
+        id: "vender",
+        slug: "vender",
+        title: "Vendé tu auto",
+        navLabel: "Vendé tu auto",
+        type: "vender",
+        visible: true,
+        order: 4,
+        filter: {},
+        content: {
+          eyebrow: "Compra y consignación",
+          headline: "Vendé tu auto",
+          subtitle: "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.",
+        },
+      },
+      {
+        id: "contacto",
+        slug: "contacto",
+        title: "Contacto",
+        navLabel: "Contacto",
+        type: "content",
+        visible: true,
+        order: 5,
+        filter: {},
+        content: {
+          eyebrow: "Contacto",
+          headline: "Contactanos",
+          subtitle: "Consultá disponibilidad, financiación o una visita al showroom.",
+          showWhatsapp: true,
+        },
+      },
+    ];
+  }
+
+  function ensureVenderPage(pages) {
+    const lista = Array.isArray(pages) ? pages.slice() : [];
+    if (lista.some((p) => p.id === "vender" || p.slug === "vender")) return lista;
+    const page = {
+      id: "vender",
+      slug: "vender",
+      title: "Vendé tu auto",
+      navLabel: "Vendé tu auto",
+      type: "vender",
+      visible: true,
+      order: 4,
+      filter: {},
+      content: {
+        eyebrow: "Compra y consignación",
+        headline: "Vendé tu auto",
+        subtitle: "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.",
+      },
+    };
+    const idx = lista.findIndex((p) => p.id === "contacto" || p.slug === "contacto");
+    if (idx === -1) {
+      page.order = lista.length;
+      lista.push(page);
+      return lista;
+    }
+    page.order = Number(lista[idx].order) || idx;
+    lista.splice(idx, 0, page);
+    for (let i = idx + 1; i < lista.length; i += 1) {
+      lista[i] = { ...lista[i], order: Number(lista[i].order || i) + 1 };
+    }
+    return lista;
+  }
+
+  function normalizePageCopy(page) {
+    const next = { ...page };
+    const content = page.content && typeof page.content === "object" ? { ...page.content } : {};
+    const id = String(page.id || "");
+    const slug = String(page.slug || "");
+
+    if (id === "0km" || slug === "0km") {
+      next.title = "0 km";
+      next.navLabel = "0 km";
+      content.headline = "0 km";
+    }
+    if (id === "usados" || slug === "usados") {
+      if (!content.headline || /seleccion/i.test(String(content.headline))) {
+        content.headline = "Usados";
+      }
+    }
+    if ((id === "home" || slug === "" || page.type === "home") && Array.isArray(content.highlights)) {
+      content.highlights = content.highlights.map((h) => {
+        if (!h || typeof h !== "object") return h;
+        const title = String(h.title || "");
+        if (/0\s*kil/i.test(title) || /^0km$/i.test(title)) return { ...h, title: "0 km" };
+        if (/usados seleccion/i.test(title)) return { ...h, title: "Usados" };
+        return h;
+      });
+    }
+    if (content.ctaPrimary && /ver\s*0km/i.test(String(content.ctaPrimary.label || ""))) {
+      content.ctaPrimary = { ...content.ctaPrimary, label: "Ver 0 km" };
+    }
+    next.content = content;
+    return reescribirMarcaEn(next);
+  }
+
+  function normalizeData(data) {
+    const raw = data && typeof data === "object" ? data : {};
+    const site = reescribirMarcaEn({ ...defaultSite(), ...(raw.site || {}) });
+    if (!site.whatsapp && cfg().WHATSAPP_NUMBER) site.whatsapp = cfg().WHATSAPP_NUMBER;
+    if (!site.contactoTitulo) site.contactoTitulo = "Contactanos";
+
+    let pages = Array.isArray(raw.pages) && raw.pages.length ? raw.pages : defaultPages();
+    pages = pages
+      .map((p, i) => ({
+        id: p.id || `page-${i}`,
+        slug: p.slug == null ? String(p.id || "") : String(p.slug),
+        title: p.title || p.navLabel || p.id || "Página",
+        navLabel: p.navLabel || p.title || p.id || "Página",
+        type: p.type || "stock",
+        visible: p.visible !== false,
+        order: Number.isFinite(Number(p.order)) ? Number(p.order) : i,
+        filter: p.filter && typeof p.filter === "object" ? p.filter : {},
+        content: p.content && typeof p.content === "object" ? p.content : {},
+      }))
+      .sort((a, b) => a.order - b.order);
+    pages = ensureVenderPage(pages).map(normalizePageCopy);
+
+    const vehicles = Array.isArray(raw.vehicles)
+      ? raw.vehicles.map((v) => ({
+          ...v,
+          categoria: v.categoria || (Number(v.km) <= 100 ? "0km" : "usado"),
+          mostrarPrecio: v.mostrarPrecio === true || v.mostrar_precio === true,
+        }))
+      : [];
+
+    return { meta: raw.meta || {}, site, pages, vehicles };
+  }
+
+  function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => {
+      try {
+        ctrl.abort();
+      } catch (_) {}
+    }, ms || 8000);
+    return fetch(url, { cache: "no-store", credentials: "omit", signal: ctrl.signal }).finally(() => {
+      clearTimeout(t);
+    });
+  }
+
+  async function fetchJsonUrl(url) {
+    const res = await fetchWithTimeout(url, 8000);
+    if (!res.ok) throw new Error(`No se pudo leer el Gist (${res.status})`);
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      throw new Error("El catálogo no es JSON válido");
+    }
+  }
+
+  function firstOk(producers) {
+    return new Promise((resolve, reject) => {
+      const list = Array.isArray(producers) ? producers : [];
+      let pending = list.length;
+      let lastErr;
+      if (!pending) {
+        reject(new Error("No se pudo descargar el catálogo"));
+        return;
+      }
+      let settled = false;
+      list.forEach((make) => {
+        Promise.resolve()
+          .then(make)
+          .then((value) => {
+            if (settled) return;
+            settled = true;
+            resolve(value);
+          })
+          .catch((err) => {
+            lastErr = err;
+            pending -= 1;
+            if (!settled && pending < 1) reject(lastErr || new Error("No se pudo descargar el catálogo"));
+          });
+      });
+    });
+  }
+
+  async function fetchViaRaw(gistId, filename) {
+    const urls = gistRawUrls(gistId, filename);
+    return firstOk(urls.map((url) => () => fetchJsonUrl(url)));
+  }
+
+  async function fetchViaApi(gistId, filename) {
+    const res = await fetchWithTimeout(`https://api.github.com/gists/${gistId}`, 8000);
+    if (!res.ok) throw new Error(`No se pudo leer el Gist (${res.status})`);
+    const data = await res.json();
+    const file = data.files && data.files[filename];
+    if (!file) throw new Error(`No existe el archivo ${filename} en el Gist`);
+    if (file.content && !file.truncated) return JSON.parse(file.content);
+    const raw = file.raw_url;
+    if (!raw) throw new Error(`No se pudo descargar ${filename}`);
+    return fetchJsonUrl(`${raw}${raw.includes("?") ? "&" : "?"}t=${Date.now()}`);
+  }
+
+  function fetchViaJsonp(gistId, filename) {
+    return new Promise((resolve, reject) => {
+      const cb = `gygGistCb${Date.now()}`;
+      const script = document.createElement("script");
+      let done = false;
+      const timer = setTimeout(() => finish(new Error("Gist JSONP timeout")), 8000);
+      function finish(err, data) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        try {
+          delete window[cb];
+        } catch (_) {
+          window[cb] = undefined;
+        }
+        if (script.parentNode) script.parentNode.removeChild(script);
+        if (err) reject(err);
+        else resolve(data);
+      }
+      window[cb] = (payload) => {
+        try {
+          const gist = payload && payload.data ? payload.data : payload;
+          const file = gist && gist.files && gist.files[filename];
+          if (!file) throw new Error(`No existe el archivo ${filename} en el Gist`);
+          if (file.content && !file.truncated) {
+            finish(null, JSON.parse(file.content));
+            return;
+          }
+          throw new Error("Gist truncado");
+        } catch (err) {
+          finish(err);
+        }
+      };
+      script.onerror = () => finish(new Error("Gist JSONP error"));
+      script.src = `https://api.github.com/gists/${encodeURIComponent(gistId)}?callback=${cb}`;
+      document.head.appendChild(script);
+    });
+  }
+
+  async function fetchLocalSample() {
+    const path = cfg().LOCAL_SAMPLE_PATH || "data/stock.sample.json";
+    const res = await fetch(`${path}?t=${Date.now()}`);
+    if (!res.ok) throw new Error("No se encontró el stock de ejemplo local");
+    return res.json();
+  }
+
+  function buildPayload(stock) {
+    const normalized = normalizeData(stock);
+    return {
+      ...normalized,
+      meta: {
+        ...(normalized.meta || {}),
+        concesionaria: normalized.site.name || cfg().DEALERSHIP_NAME || "Concesionaria",
+        updatedAt: new Date().toISOString(),
+      },
+    };
+  }
+
+  async function loadGistOnce(gistId, filename) {
+    try {
+      return await fetchViaRaw(gistId, filename);
+    } catch (rawErr) {
+      try {
+        return await fetchViaApi(gistId, filename);
+      } catch (apiErr) {
+        try {
+          return await fetchViaJsonp(gistId, filename);
+        } catch (jsonpErr) {
+          throw jsonpErr || apiErr || rawErr;
+        }
+      }
+    }
+  }
+
+  async function loadStock() {
+    const filename = cfg().GIST_FILENAME || "stock.json";
+    const ids = gistIdCandidates();
+    if (!ids.length) {
+      const cached = readStockCache();
+      if (cached) return normalizeData(cached);
+      const err = new Error("MISSING_GIST_ID");
+      err.code = "MISSING_GIST_ID";
+      throw err;
+    }
+    let lastErr;
+    for (let i = 0; i < ids.length; i += 1) {
+      const gistId = ids[i];
+      try {
+        const raw = await loadGistOnce(gistId, filename);
+        writeStockCache(raw);
+        return normalizeData(raw);
+      } catch (err) {
+        lastErr = err;
+      }
+    }
+    const cached = readStockCache();
+    if (cached) return normalizeData(cached);
+    const localPath = (cfg().LOCAL_SAMPLE_PATH || "").trim();
+    if (localPath) {
+      try {
+        return normalizeData(await fetchLocalSample());
+      } catch (_) {}
+    }
+    const err = new Error((lastErr && lastErr.message) || "No se pudo leer el Gist");
+    err.code = "GIST_LOAD_FAILED";
+    err.cause = lastErr;
+    throw err;
+  }
+
+  async function createGist(stock, tokenOverride) {
+    const filename = cfg().GIST_FILENAME || "stock.json";
+    const token = (tokenOverride || getToken() || "").trim();
+    if (!token) throw new Error("Ingresá un Personal Access Token de GitHub con permiso gist.");
+    const payload = buildPayload(stock);
+    const res = await fetch("https://api.github.com/gists", {
+      method: "POST",
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      body: JSON.stringify({
+        description: "G\u0026G Automotores — sitio + stock",
+        public: true,
+        files: { [filename]: { content: JSON.stringify(payload, null, 2) } },
+      }),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      if (res.status === 401 || res.status === 403) {
+        throw new Error("Token inválido o sin permiso gist. Revisá el Personal Access Token.");
+      }
+      throw new Error(`No se pudo crear el Gist (${res.status}): ${errText.slice(0, 200)}`);
+    }
+    const created = await res.json();
+    if (!created.id) throw new Error("GitHub no devolvió un ID de Gist.");
+    setGistId(created.id);
+    return { id: created.id, html_url: created.html_url, payload };
+  }
+
+  async function saveStock(stock, tokenOverride) {
+    const gistId = getGistId();
+    const filename = cfg().GIST_FILENAME || "stock.json";
+    const token = (tokenOverride || getToken() || "").trim();
+    if (!gistId) {
+      throw new Error("Falta el GIST_ID. Pegá el ID arriba o usá «Crear Gist en la nube» con tu token.");
+    }
+    if (!token) throw new Error("Ingresá un Personal Access Token de GitHub con permiso gist.");
+    const payload = buildPayload(stock);
+    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
+      method: "PATCH",
+      headers: {
+        Accept: "application/vnd.github+json",
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json",
+        "X-GitHub-Api-Version": "2022-11-28",
+      },
+      body: JSON.stringify({ files: { [filename]: { content: JSON.stringify(payload, null, 2) } } }),
+    });
+    if (!res.ok) {
+      const errText = await res.text();
+      if (res.status === 401 || res.status === 403) {
+        throw new Error("Token inválido o sin permiso gist. Revisá el Personal Access Token.");
+      }
+      throw new Error(`Error al guardar (${res.status}): ${errText.slice(0, 200)}`);
+    }
+    return payload;
+  }
+
+  function downloadBackup(stock, name) {
+    const blob = new Blob([JSON.stringify(normalizeData(stock), null, 2)], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = name || `stock-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function muestraPrecio(v) {
+    if (!v) return false;
+    return v.mostrarPrecio === true || v.mostrar_precio === true;
+  }
+
+  function tienePrecioOferta(v) {
+    return (
+      !!v &&
+      v.precio_oferta != null &&
+      Number.isFinite(Number(v.precio_oferta)) &&
+      Number(v.precio_oferta) > 0 &&
+      Number(v.precio_oferta) < Number(v.precio)
+    );
+  }
+
+  function formatPrice(precio, moneda) {
+    const m = moneda || "ARS";
+    try {
+      return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: m === "USD" ? "USD" : "ARS",
+        maximumFractionDigits: 0,
+      }).format(Number(precio) || 0);
+    } catch {
+      return `${m} ${Number(precio || 0).toLocaleString("es-AR")}`;
+    }
+  }
+
+  function formatKm(km) {
+    return `${Number(km || 0).toLocaleString("es-AR")} km`;
+  }
+
+  function navPages(data) {
+    return (data.pages || []).filter((p) => p.visible !== false);
+  }
+
+  function findPageBySlug(data, slug) {
+    const s = slug == null ? "" : String(slug).replace(/^\/+|\/+$/g, "");
+    return (data.pages || []).find((p) => String(p.slug || "") === s) || null;
+  }
+
+  function pageHref(page) {
+    const slug = page && page.slug ? String(page.slug) : "";
+    return slug ? `#/${slug}` : "#/";
+  }
+
+  function publicVehicles(data, pageFilter) {
+    const list = (data && data.vehicles) || [];
+    const filter = pageFilter || {};
+    return list.filter((v) => {
+      if (v.status !== "disponible" && v.status !== "reservado") return false;
+      if (filter.categoria && v.categoria !== filter.categoria) return false;
+      return true;
+    });
+  }
+
+  function mapsEmbedUrl(direccion) {
+    const q = String(direccion || "").trim();
+    if (!q) return "";
+    return `https://maps.google.com/maps?q=${encodeURIComponent(q)}&hl=es&z=15&output=embed`;
+  }
+
+  function mapsSearchUrl(direccion) {
+    const q = String(direccion || "").trim();
+    if (!q) return "";
+    return `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(q)}`;
+  }
+
+  function pickSimilarVehicles(data, vehicle, limit) {
+    if (!vehicle) return [];
+    const cap = Math.max(1, Math.min(8, Number(limit) || 3));
+    const list = publicVehicles(data, {}).filter((v) => v && v.id !== vehicle.id);
+    const marca = String(vehicle.marca || "").toLowerCase();
+    const sameBrand = marca ? list.filter((v) => String(v.marca || "").toLowerCase() === marca) : [];
+    const pool = sameBrand.length ? sameBrand : list;
+    const precio = Number(vehicle.precio_oferta || vehicle.precio) || 0;
+    return [...pool]
+      .sort((a, b) => {
+        const catA = a.categoria === vehicle.categoria ? 0 : 1;
+        const catB = b.categoria === vehicle.categoria ? 0 : 1;
+        const pa = Math.abs((Number(a.precio_oferta || a.precio) || 0) - precio);
+        const pb = Math.abs((Number(b.precio_oferta || b.precio) || 0) - precio);
+        return catA - catB || pa - pb;
+      })
+      .slice(0, cap);
+  }
+
+  // Destacados primero; completa con el resto del stock público (hasta `limit`).
+  function pickCarouselVehicles(data, limit) {
+    const cap = Math.max(1, Math.min(24, Number(limit) || 8));
+    const list = publicVehicles(data, {});
+    const peso = (v) => {
+      if (v.destacado) return 2;
+      if (v.status === "disponible") return 1;
+      return 0;
+    };
+    return [...list]
+      .sort((a, b) => peso(b) - peso(a) || Number(b.anio) - Number(a.anio))
+      .slice(0, cap);
+  }
+
+  function findVehicle(data, id) {
+    return ((data && data.vehicles) || []).find((v) => v.id === id) || null;
+  }
+
+  function whatsappPhone(data) {
+    const fromSite = data && data.site && data.site.whatsapp;
+    return String(fromSite || cfg().WHATSAPP_NUMBER || "").replace(/\D/g, "");
+  }
+
+  function whatsappUrl(data, vehicle, opts) {
+    const phone = whatsappPhone(data);
+    const nameBrand = displayBrandName(
+      (data && data.site && data.site.name) || cfg().DEALERSHIP_NAME || "Concesionaria"
+    );
+    if (vehicle) {
+      const name = `${vehicle.marca} ${vehicle.modelo} ${vehicle.version || ""} ${vehicle.anio}`.trim();
+      const consultarPrecio = opts && opts.consultarPrecio;
+      const text = encodeURIComponent(
+        consultarPrecio
+          ? `Hola ${nameBrand}, consulto el precio del ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
+          : `Hola ${nameBrand}, consulto por el ${name} (ref: ${vehicle.id}). ¿Sigue disponible?`
+      );
+      return `https://wa.me/${phone}?text=${text}`;
+    }
+    const text = encodeURIComponent(`Hola ${nameBrand}, quiero consultar por el stock.`);
+    return `https://wa.me/${phone}?text=${text}`;
+  }
+
+  function createId(vehicles) {
+    const n = (vehicles || []).length + 1;
+    const stamp = Date.now().toString(36).slice(-4);
+    return `v-${String(n).padStart(3, "0")}-${stamp}`;
+  }
+
+  function emptyVehicle() {
+    const now = new Date().toISOString();
+    return {
+      id: "",
+      status: "disponible",
+      categoria: "usado",
+      marca: "",
+      modelo: "",
+      version: "",
+      anio: new Date().getFullYear(),
+      km: 0,
+      precio: 0,
+      moneda: "ARS",
+      combustible: "Nafta",
+      transmision: "Manual",
+      traccion: "Delantera",
+      puertas: 4,
+      color: "",
+      motor: "",
+      potencia: "",
+      carroceria: "Sedán",
+      patente: "",
+      destacado: false,
+      mostrarPrecio: false,
+      descripcion: "",
+      equipamiento: [],
+      fotos: [],
+      ingreso: now.slice(0, 10),
+      updatedAt: now,
+    };
+  }
+
+  function emptyPage() {
+    return {
+      id: `page-${Date.now().toString(36)}`,
+      slug: "nueva",
+      title: "Nueva página",
+      navLabel: "Nueva",
+      type: "content",
+      visible: true,
+      order: 99,
+      filter: {},
+      content: {
+        eyebrow: "",
+        headline: "Nueva página",
+        subtitle: "",
+        body: "",
+        showWhatsapp: false,
+        heroImage: "",
+        ctaPrimary: { label: "", href: "" },
+        ctaSecondary: { label: "", href: "" },
+        highlights: [],
+      },
+    };
+  }
+
+  global.GyGStock = {
+    getToken,
+    setToken,
+    clearToken,
+    getGistId,
+    setGistId,
+    clearStoredGistId,
+    loadStock,
+    saveStock,
+    createGist,
+    downloadBackup,
+    normalizeData,
+    formatPrice,
+    muestraPrecio,
+    tienePrecioOferta,
+    formatKm,
+    navPages,
+    findPageBySlug,
+    pageHref,
+    publicVehicles,
+    pickCarouselVehicles,
+    pickSimilarVehicles,
+    mapsEmbedUrl,
+    mapsSearchUrl,
+    findVehicle,
+    whatsappPhone,
+    whatsappUrl,
+    createId,
+    emptyVehicle,
+    emptyPage,
+    defaultSite,
+    defaultPages,
+    displayBrandName,
+    reescribirMarca,
+  };
+})(window);
+
+(function () {
+  const app = document.getElementById("app");
+  const toastEl = document.getElementById("toast");
+  const navEl = document.getElementById("navLinks");
+
+  let data = { meta: {}, site: {}, pages: [], vehicles: [] };
+  let filters = blankFilters();
+  let activeStockSlug = "stock";
+  let lightboxZoom = 1;
+  let carouselTimer = null;
+  let carouselResize = null;
+
+  function blankFilters() {
+    return {
+      q: "",
+      marca: "",
+      combustible: "",
+      transmision: "",
+      carroceria: "",
+      anioMin: "",
+      anioMax: "",
+      precioMax: "",
+      kmMax: "",
+    };
+  }
+
+  function toast(message, type) {
+    if (!toastEl) return;
+    toastEl.textContent = message;
+    toastEl.className = `toast is-visible ${type === "error" ? "is-error" : type === "ok" ? "is-ok" : ""}`;
+    clearTimeout(toast._t);
+    toast._t = setTimeout(() => toastEl.classList.remove("is-visible"), 3200);
+  }
+
+  function escapeHtml(str) {
+    return String(str ?? "")
+      .replace(/&/g, "&amp;")
+      .replace(/</g, "&lt;")
+      .replace(/>/g, "&gt;")
+      .replace(/"/g, "&quot;");
+  }
+
+  function markupPrecio(v, clase) {
+    if (!GyGStock.muestraPrecio(v)) {
+      const texto = clase.indexOf("detail") === 0 ? "Precio a consultar" : "Consultar";
+      return `<div class="${clase} ${clase}--consulta">${texto}</div>`;
+    }
+    if (GyGStock.tienePrecioOferta(v)) {
+      return `<div class="${clase} ${clase}--oferta"><span class="${clase}-antes">${escapeHtml(
+        GyGStock.formatPrice(v.precio, v.moneda)
+      )}</span><span class="${clase}-ahora">${escapeHtml(
+        GyGStock.formatPrice(v.precio_oferta, v.moneda)
+      )}</span></div>`;
+    }
+    return `<div class="${clase}">${escapeHtml(GyGStock.formatPrice(v.precio, v.moneda))}</div>`;
+  }
+
+  function displayBrandName(value) {
+    return GyGStock.displayBrandName(value);
+  }
+
+  function brandMarkup(value) {
+    return escapeHtml(displayBrandName(value)).replace(
+      /&amp;/g,
+      "<span class=\"brand-sep\" aria-hidden=\"true\">&amp;</span>"
+    );
+  }
+
+  function esSoloMarca(value) {
+    const n = String(value || "")
+      .replace(/\s/g, "")
+      .replace(/&amp;/gi, "&")
+      .toLowerCase();
+    return n === "g&g" || n === "gyg" || n === "g+g" || n === "g&gautomotores" || n === "gygautomotores";
+  }
+
+  function escapeAttr(str) {
+    return escapeHtml(str).replace(/'/g, "&#39;");
+  }
+
+  function parseRoute() {
+    const hash = (location.hash || "#/").replace(/^#/, "");
+    const path = hash.replace(/^\/+|\/+$/g, "");
+    if (!path) return { kind: "page", slug: "" };
+    const auto = path.match(/^auto\/([^/]+)$/);
+    if (auto) return { kind: "auto", id: decodeURIComponent(auto[1]) };
+    return { kind: "page", slug: decodeURIComponent(path) };
+  }
+
+  let scrollArribaTimers = [];
+
+  function limpiarScrollArriba() {
+    for (let i = 0; i < scrollArribaTimers.length; i += 1) {
+      clearTimeout(scrollArribaTimers[i]);
+    }
+    scrollArribaTimers = [];
+  }
+
+  function forzarScrollCero() {
+    const html = document.documentElement;
+    html.style.setProperty("scroll-behavior", "auto", "important");
+    try {
+      window.scrollTo(0, 0);
+    } catch (_err) {}
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+    } catch (_err) {
+      try {
+        window.scrollTo({ top: 0, left: 0, behavior: "auto" });
+      } catch (_e2) {}
+    }
+    html.scrollTop = 0;
+    html.scrollLeft = 0;
+    if (document.body) {
+      document.body.scrollTop = 0;
+      document.body.scrollLeft = 0;
+    }
+    const se = document.scrollingElement;
+    if (se) se.scrollTop = 0;
+    let node = document.getElementById("app") || document.body;
+    while (node) {
+      try {
+        node.scrollTop = 0;
+        node.scrollLeft = 0;
+      } catch (_err) {}
+      node = node.parentElement;
+    }
+    const ancla = document.getElementById("gygTop");
+    if (ancla && ancla.scrollIntoView) {
+      try {
+        ancla.scrollIntoView({ block: "start", inline: "nearest", behavior: "auto" });
+      } catch (_err) {
+        ancla.scrollIntoView(true);
+      }
+    }
+  }
+
+  function scrollPaginaArriba() {
+    limpiarScrollArriba();
+    const html = document.documentElement;
+    html.style.overflowAnchor = "none";
+    if (document.body) document.body.style.overflowAnchor = "none";
+    if (document.activeElement && document.activeElement.blur) {
+      try {
+        document.activeElement.blur();
+      } catch (_err) {}
+    }
+    forzarScrollCero();
+    requestAnimationFrame(() => {
+      forzarScrollCero();
+      requestAnimationFrame(forzarScrollCero);
+    });
+    [50, 120, 250, 450].forEach((ms) => {
+      scrollArribaTimers.push(setTimeout(forzarScrollCero, ms));
+    });
+  }
+
+  function marcarInicio(esInicio) {
+    document.body.classList.toggle("is-home", !!esInicio);
+  }
+
+  function actualizarWhatsappBar(vehicle) {
+    const wa = document.getElementById("waBar");
+    if (!wa) return;
+    const phone = GyGStock.whatsappPhone(data);
+    if (!phone) {
+      wa.classList.add("hidden");
+      document.body.classList.remove("has-wa-bar");
+      return;
+    }
+    wa.href = GyGStock.whatsappUrl(data, vehicle || null);
+    wa.classList.remove("hidden");
+    document.body.classList.add("has-wa-bar");
+  }
+
+  function route() {
+    stopCarousel();
+    const r = parseRoute();
+    if (r.kind === "auto") {
+      marcarInicio(false);
+      const v = GyGStock.findVehicle(data, r.id);
+      renderDetail(r.id);
+      updateNavActive("__auto__");
+      actualizarWhatsappBar(v);
+      scrollPaginaArriba();
+      return;
+    }
+    if (r.slug === "privacidad") {
+      marcarInicio(false);
+      renderPrivacidad();
+      updateNavActive("");
+      actualizarWhatsappBar(null);
+      scrollPaginaArriba();
+      return;
+    }
+    const page = GyGStock.findPageBySlug(data, r.slug);
+    if (!page || page.visible === false) {
+      marcarInicio(false);
+      app.innerHTML = `
+        <section class="detail">
+          <div class="empty-state">Página no encontrada. <a href="#/">Volver al inicio</a></div>
+        </section>`;
+      updateNavActive("");
+      actualizarWhatsappBar(null);
+      scrollPaginaArriba();
+      return;
+    }
+    marcarInicio(page.type === "home");
+    updateNavActive(page.slug || "");
+    if (page.type === "home") renderHome(page);
+    else if (page.type === "stock") renderStockPage(page);
+    else if (page.type === "vender" || page.id === "vender" || page.slug === "vender") renderVenderPage(page);
+    else renderContentPage(page);
+    actualizarWhatsappBar(null);
+    scrollPaginaArriba();
+  }
+
+  function updateChrome() {
+    const site = data.site || {};
+    const nombre = displayBrandName(site.name);
+    const logo = String(cfg().LOGO_URL || site.logoUrl || site.logo || "").trim();
+    const nameEl = document.getElementById("brandName");
+    const logoEl = document.getElementById("brandLogo");
+    const brandLink = document.querySelector("a.brand");
+    if (brandLink) brandLink.setAttribute("aria-label", `${nombre} inicio`);
+    if (nameEl) {
+      nameEl.innerHTML = brandMarkup(nombre);
+      nameEl.classList.toggle("hidden", Boolean(logo));
+    }
+    if (logoEl) {
+      if (logo) {
+        logoEl.src = logo;
+        logoEl.alt = nombre;
+        logoEl.classList.remove("hidden");
+      } else {
+        logoEl.removeAttribute("src");
+        logoEl.alt = "";
+        logoEl.classList.add("hidden");
+      }
+    }
+    const footerBrand = document.getElementById("footerBrand");
+    if (footerBrand) footerBrand.textContent = nombre;
+    const tag = document.getElementById("brandTag");
+    if (tag) tag.textContent = site.tagline || GYG_CONFIG.TAGLINE || "";
+    const year = document.getElementById("year");
+    if (year) year.textContent = String(new Date().getFullYear());
+    const footer = document.getElementById("footerUpdated");
+    if (footer) {
+      const bits = [];
+      const pie = GyGStock.reescribirMarca(site.footerText || "");
+      if (pie) bits.push(pie);
+      if (data.meta && data.meta.updatedAt) {
+        bits.push(`Actualizado ${new Date(data.meta.updatedAt).toLocaleString("es-AR")}`);
+      }
+      footer.textContent = bits.join(" · ") || "Stock en vivo";
+    }
+    document.title = `${nombre} — ${site.tagline || "Stock"}`;
+    renderNav();
+    actualizarWhatsappBar(null);
+  }
+
+  function renderNav() {
+    if (!navEl) return;
+    const pages = GyGStock.navPages(data);
+    navEl.innerHTML = pages
+      .map((p) => {
+        const href = GyGStock.pageHref(p);
+        return `<a href="${escapeAttr(href)}" data-slug="${escapeAttr(p.slug || "")}">${escapeHtml(p.navLabel)}</a>`;
+      })
+      .join("");
+  }
+
+  function updateNavActive(slug) {
+    if (!navEl) return;
+    navEl.querySelectorAll("a").forEach((a) => {
+      a.classList.toggle("is-active", a.dataset.slug === String(slug));
+    });
+  }
+
+  function cerrarMenu() {
+    const header = document.querySelector(".site-header");
+    const btn = document.getElementById("navToggle");
+    if (header) header.classList.remove("is-open");
+    if (btn) {
+      btn.setAttribute("aria-expanded", "false");
+      btn.setAttribute("aria-label", "Abrir menú");
+    }
+  }
+
+  function setupNavToggle() {
+    const header = document.querySelector(".site-header");
+    const btn = document.getElementById("navToggle");
+    if (!header || !btn || btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    btn.addEventListener("click", () => {
+      const open = header.classList.toggle("is-open");
+      btn.setAttribute("aria-expanded", open ? "true" : "false");
+      btn.setAttribute("aria-label", open ? "Cerrar menú" : "Abrir menú");
+    });
+    navEl?.addEventListener("click", (ev) => {
+      if (ev.target.closest("a")) cerrarMenu();
+    });
+    window.addEventListener("hashchange", cerrarMenu);
+  }
+
+  function setupBackTop() {
+    const btn = document.getElementById("backTop");
+    if (!btn || btn.dataset.bound === "1") return;
+    btn.dataset.bound = "1";
+    const sync = () => {
+      const y = window.scrollY || document.documentElement.scrollTop || 0;
+      btn.classList.toggle("is-visible", y > 420);
+    };
+    btn.addEventListener("click", () => scrollPaginaArriba());
+    window.addEventListener("scroll", sync, { passive: true });
+    sync();
+  }
+
+  function placeholderImg() {
+    return (
+      "data:image/svg+xml," +
+      encodeURIComponent(
+        `<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750">
+        <defs><linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+          <stop stop-color="#1a1f28"/><stop offset="1" stop-color="#0b3d6e"/>
+        </linearGradient></defs>
+        <rect width="100%" height="100%" fill="url(#g)"/>
+        <text x="50%" y="50%" fill="#c5ccd6" font-family="Arial" font-size="42"
+          text-anchor="middle" dominant-baseline="middle">G\u0026amp;G</text>
+      </svg>`
+      )
+    );
+  }
+
+  function stopCarousel() {
+    if (carouselTimer) {
+      clearInterval(carouselTimer);
+      carouselTimer = null;
+    }
+    if (carouselResize) {
+      window.removeEventListener("resize", carouselResize);
+      carouselResize = null;
+    }
+  }
+
+  function carouselPageSize() {
+    if (window.matchMedia("(max-width: 640px)").matches) return 1;
+    if (window.matchMedia("(max-width: 980px)").matches) return 2;
+    return 3;
+  }
+
+  function prefersReducedMotion() {
+    return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  }
+
+  function carouselMarkup(vehicles) {
+    if (!vehicles.length) return "";
+    const hayDestacados = vehicles.some((v) => v.destacado);
+    const countClass =
+      vehicles.length === 1 ? " carousel--solo" : vehicles.length === 2 ? " carousel--duo" : "";
+    return `
+      <section class="carousel${countClass}" id="homeCarousel" aria-roledescription="carousel" aria-label="Vehículos en vitrina">
+        <div class="carousel__head">
+          <div>
+            <p class="carousel__eyebrow">${hayDestacados ? "Destacados" : "En vitrina"}</p>
+            <h2>Selección del showroom</h2>
+          </div>
+          <div class="carousel__toolbar">
+            <a class="btn btn--ghost btn--sm" href="#/stock">Ver stock</a>
+            <div class="carousel__controls">
+              <button type="button" class="carousel__nav" id="carouselPrev" aria-label="Vehículo anterior">‹</button>
+              <button type="button" class="carousel__nav" id="carouselNext" aria-label="Vehículo siguiente">›</button>
+            </div>
+          </div>
+        </div>
+        <div class="carousel__viewport" id="carouselViewport" tabindex="0">
+          <div class="carousel__track" id="carouselTrack">
+            ${vehicles.map((v) => `<div class="carousel__slide">${vehicleCard(v, false)}</div>`).join("")}
+          </div>
+        </div>
+        <div class="carousel__dots" id="carouselDots" role="tablist" aria-label="Elegir vehículo"></div>
+      </section>
+    `;
+  }
+
+  function bindCarousel(total) {
+    const track = document.getElementById("carouselTrack");
+    const viewport = document.getElementById("carouselViewport");
+    const prev = document.getElementById("carouselPrev");
+    const next = document.getElementById("carouselNext");
+    const dotsEl = document.getElementById("carouselDots");
+    if (!track || !viewport || total < 1) return;
+
+    let index = 0;
+
+    function maxIndex() {
+      return Math.max(0, total - Math.min(carouselPageSize(), total));
+    }
+
+    function stepPx() {
+      const slide = track.querySelector(".carousel__slide");
+      if (!slide) return 0;
+      const gap = parseFloat(getComputedStyle(track).gap) || 0;
+      return slide.getBoundingClientRect().width + gap;
+    }
+
+    function renderDots() {
+      if (!dotsEl) return;
+      const pages = maxIndex() + 1;
+      if (pages <= 1) {
+        dotsEl.innerHTML = "";
+        return;
+      }
+      dotsEl.innerHTML = Array.from({ length: pages }, (_, i) => {
+        const active = i === index ? " is-active" : "";
+        return `<button type="button" class="carousel__dot${active}" data-page="${i}" aria-label="Grupo ${i + 1} de ${pages}" ${i === index ? 'aria-current="true"' : ""}></button>`;
+      }).join("");
+    }
+
+    function apply() {
+      const max = maxIndex();
+      if (index > max) index = max;
+      track.style.transform = `translateX(-${index * stepPx()}px)`;
+      const hide = max < 1;
+      prev?.parentElement?.classList.toggle("hidden", hide);
+      dotsEl?.classList.toggle("hidden", hide);
+      renderDots();
+    }
+
+    function go(delta) {
+      const pages = maxIndex() + 1;
+      if (pages <= 1) return;
+      index = (index + delta + pages) % pages;
+      apply();
+    }
+
+    function startAutoplay() {
+      if (carouselTimer) clearInterval(carouselTimer);
+      if (prefersReducedMotion() || maxIndex() < 1) {
+        carouselTimer = null;
+        return;
+      }
+      carouselTimer = setInterval(() => go(1), 5200);
+    }
+
+    prev?.addEventListener("click", () => {
+      go(-1);
+      startAutoplay();
+    });
+    next?.addEventListener("click", () => {
+      go(1);
+      startAutoplay();
+    });
+    dotsEl?.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("[data-page]");
+      if (!btn) return;
+      index = Number(btn.getAttribute("data-page")) || 0;
+      apply();
+      startAutoplay();
+    });
+
+    viewport.addEventListener("keydown", (ev) => {
+      if (ev.key === "ArrowLeft") {
+        ev.preventDefault();
+        go(-1);
+        startAutoplay();
+      }
+      if (ev.key === "ArrowRight") {
+        ev.preventDefault();
+        go(1);
+        startAutoplay();
+      }
+    });
+
+    let touchX = 0;
+    viewport.addEventListener(
+      "touchstart",
+      (ev) => {
+        touchX = ev.touches[0].clientX;
+      },
+      { passive: true }
+    );
+    viewport.addEventListener(
+      "touchend",
+      (ev) => {
+        const dx = ev.changedTouches[0].clientX - touchX;
+        if (Math.abs(dx) < 40) return;
+        go(dx > 0 ? -1 : 1);
+        startAutoplay();
+      },
+      { passive: true }
+    );
+
+    viewport.addEventListener("mouseenter", () => {
+      if (carouselTimer) {
+        clearInterval(carouselTimer);
+        carouselTimer = null;
+      }
+    });
+    viewport.addEventListener("mouseleave", startAutoplay);
+
+    track.addEventListener("click", onCardActivate);
+    track.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onCardActivate(e);
+      }
+    });
+
+    carouselResize = () => apply();
+    window.addEventListener("resize", carouselResize);
+    apply();
+    startAutoplay();
+  }
+
+  function renderHome(page) {
+    const c = page.content || {};
+    const site = data.site || {};
+    const hero = site.heroImage || c.heroImage || placeholderImg();
+    const primary = c.ctaPrimary || { label: "Ver stock", href: "#/stock" };
+    const secondary = c.ctaSecondary || null;
+    const highlights = Array.isArray(c.highlights) ? c.highlights : [];
+    const carouselVehicles = GyGStock.pickCarouselVehicles(data, 8);
+
+    app.innerHTML = `
+      <section class="home-hero">
+        <img class="home-hero__photo" src="${escapeAttr(hero)}" alt="" />
+        <div class="home-hero__veil"></div>
+        <div class="home-hero__content">
+          <div class="home-hero__copy">
+            <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
+            ${esSoloMarca(c.headline || site.name) ? "" : `<h1 class="home-hero__brand">${brandMarkup(c.headline || site.name)}</h1>`}
+            <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
+            <div class="home-hero__cta">
+              <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>
+              ${
+                secondary && secondary.label
+                  ? `<a class="btn btn--ghost home-hero__ghost" href="${escapeAttr(secondary.href || "#/")}">${escapeHtml(secondary.label)}</a>`
+                  : ""
+              }
+              <a class="btn btn--ghost home-hero__ghost" href="#/vender">Vendé tu auto</a>
+            </div>
+          </div>
+        </div>
+      </section>
+      ${carouselMarkup(carouselVehicles)}
+      <section class="sell-band" aria-label="Vendé tu auto">
+        <div class="sell-band__copy">
+          <p class="sell-band__eyebrow">Compra directa o consignación</p>
+          <h2>Vendé tu auto</h2>
+          <p>Completá los datos, lo vemos en el showroom y te hacemos una propuesta. Sin vueltas.</p>
+        </div>
+        <a class="btn btn--primary" href="#/vender">Cotizar mi auto</a>
+      </section>
+      ${
+        highlights.length
+          ? `<section class="home-links" aria-label="Secciones">
+              ${highlights
+                .map(
+                  (h) => `
+                <a class="home-link" href="${escapeAttr(h.href || "#/")}">
+                  <span class="home-link__title">${escapeHtml(h.title || "")}</span>
+                  <span class="home-link__text">${escapeHtml(h.text || "")}</span>
+                </a>`
+                )
+                .join("")}
+            </section>`
+          : ""
+      }
+    `;
+    bindCarousel(carouselVehicles.length);
+  }
+
+  function unique(values) {
+    return [...new Set(values.filter(Boolean))].sort((a, b) => String(a).localeCompare(String(b), "es"));
+  }
+
+  function applyFilters(list) {
+    return list.filter((v) => {
+      if (filters.marca && v.marca !== filters.marca) return false;
+      if (filters.combustible && v.combustible !== filters.combustible) return false;
+      if (filters.transmision && v.transmision !== filters.transmision) return false;
+      if (filters.carroceria && v.carroceria !== filters.carroceria) return false;
+      if (filters.anioMin && Number(v.anio) < Number(filters.anioMin)) return false;
+      if (filters.anioMax && Number(v.anio) > Number(filters.anioMax)) return false;
+      if (filters.precioMax && Number(v.precio) > Number(filters.precioMax)) return false;
+      if (filters.kmMax && Number(v.km) > Number(filters.kmMax)) return false;
+      if (filters.q) {
+        const hay = [
+          v.marca, v.modelo, v.version, v.color, v.combustible, v.carroceria, v.categoria,
+          ...(v.equipamiento || []), v.descripcion,
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (!hay.includes(filters.q.toLowerCase().trim())) return false;
+      }
+      return true;
+    });
+  }
+
+  function sortVehicles(list) {
+    return [...list].sort((a, b) => {
+      if (!!b.destacado - !!a.destacado) return !!b.destacado - !!a.destacado;
+      if ((a.status === "reservado") !== (b.status === "reservado")) {
+        return a.status === "reservado" ? 1 : -1;
+      }
+      return Number(b.anio) - Number(a.anio);
+    });
+  }
+
+  function formatCategoria(cat) {
+    if (!cat) return "";
+    const c = String(cat).toLowerCase();
+    if (c === "0km") return "0 km";
+    if (c === "usado") return "Usado";
+    return cat;
+  }
+
+  function vehicleCard(v, featured) {
+    const img = (v.fotos && v.fotos[0]) || placeholderImg();
+    const cls = featured ? "vehicle vehicle--featured" : "vehicle";
+    const catClass = String(v.categoria || "").toLowerCase() === "0km" ? "chip--0km" : "chip--usado";
+    const statusClass = v.status === "reservado" ? "chip--reservado" : "chip--disponible";
+    return `
+      <article class="${cls}" data-id="${escapeAttr(v.id)}" tabindex="0" role="link"
+        aria-label="${escapeAttr(v.marca + " " + v.modelo)}">
+        <div class="vehicle__media">
+          <img src="${escapeAttr(img)}" alt="${escapeAttr(v.marca + " " + v.modelo)}" loading="lazy" />
+          <div class="vehicle__chips">
+            ${v.categoria ? `<span class="chip ${catClass}">${escapeHtml(formatCategoria(v.categoria))}</span>` : ""}
+            <span class="chip ${statusClass}">${escapeHtml(v.status)}</span>
+          </div>
+          ${v.destacado ? '<span class="chip chip--destacado">Destacado</span>' : ""}
+        </div>
+        <div class="vehicle__body">
+          <h2 class="vehicle__title">${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</h2>
+          <div class="vehicle__version">${escapeHtml(v.version || "")} · ${escapeHtml(String(v.anio))}</div>
+          <div class="vehicle__specs">
+            <span>${escapeHtml(GyGStock.formatKm(v.km))}</span>
+            <span>${escapeHtml(v.combustible || "")}</span>
+            <span>${escapeHtml(v.transmision || "")}</span>
+            <span>${escapeHtml(v.carroceria || "")}</span>
+          </div>
+          ${markupPrecio(v, "vehicle__price")}
+        </div>
+      </article>
+    `;
+  }
+
+  function renderStockPage(page) {
+    if (activeStockSlug !== page.slug) {
+      filters = blankFilters();
+      activeStockSlug = page.slug;
+    }
+    const c = page.content || {};
+    const publicList = GyGStock.publicVehicles(data, page.filter || {});
+    const filtered = sortVehicles(applyFilters(publicList));
+    const marcas = unique(publicList.map((v) => v.marca));
+    const combustibles = unique(publicList.map((v) => v.combustible));
+    const transmisiones = unique(publicList.map((v) => v.transmision));
+    const carrocerias = unique(publicList.map((v) => v.carroceria));
+    const featuredIds = new Set(filtered.filter((v) => v.destacado).slice(0, 2).map((v) => v.id));
+
+    app.innerHTML = `
+      <section class="hero">
+        <div class="hero__eyebrow">${escapeHtml(c.eyebrow || "Catálogo")}</div>
+        <h1>${escapeHtml(c.headline || page.title)}</h1>
+        <p>${escapeHtml(c.subtitle || "")}</p>
+        <div class="hero__meta">
+          <span><strong>${filtered.length}</strong> en vitrina</span>
+        </div>
+      </section>
+
+      <section class="filters" aria-label="Filtros">
+        <div class="filters__panel">
+          <input id="f-q" type="search" placeholder="Buscar marca, modelo, equipamiento…" value="${escapeAttr(filters.q)}" />
+          <select id="f-marca">
+            <option value="">Marca</option>
+            ${marcas.map((m) => `<option value="${escapeAttr(m)}" ${filters.marca === m ? "selected" : ""}>${escapeHtml(m)}</option>`).join("")}
+          </select>
+          <select id="f-combustible">
+            <option value="">Combustible</option>
+            ${combustibles.map((m) => `<option value="${escapeAttr(m)}" ${filters.combustible === m ? "selected" : ""}>${escapeHtml(m)}</option>`).join("")}
+          </select>
+          <select id="f-transmision">
+            <option value="">Transmisión</option>
+            ${transmisiones.map((m) => `<option value="${escapeAttr(m)}" ${filters.transmision === m ? "selected" : ""}>${escapeHtml(m)}</option>`).join("")}
+          </select>
+          <select id="f-carroceria">
+            <option value="">Carrocería</option>
+            ${carrocerias.map((m) => `<option value="${escapeAttr(m)}" ${filters.carroceria === m ? "selected" : ""}>${escapeHtml(m)}</option>`).join("")}
+          </select>
+        </div>
+        <div class="filters__row">
+          <input id="f-anioMin" type="number" placeholder="Año desde" value="${escapeAttr(filters.anioMin)}" />
+          <input id="f-anioMax" type="number" placeholder="Año hasta" value="${escapeAttr(filters.anioMax)}" />
+          <input id="f-precioMax" type="number" placeholder="Precio máx." value="${escapeAttr(filters.precioMax)}" />
+          <input id="f-kmMax" type="number" placeholder="Km máx." value="${escapeAttr(filters.kmMax)}" />
+        </div>
+        <div class="filters__actions">
+          <div class="results-count">${filtered.length} vehículo${filtered.length === 1 ? "" : "s"}</div>
+          <button type="button" class="btn btn--ghost btn--sm" id="f-reset">Limpiar filtros</button>
+        </div>
+      </section>
+
+      <section class="stock" aria-label="Stock">
+        <div class="stock-grid" id="stockGrid">
+          ${
+            filtered.length
+              ? filtered.map((v) => vehicleCard(v, featuredIds.has(v.id))).join("")
+              : `<div class="empty-state">No hay vehículos en esta sección.</div>`
+          }
+        </div>
+      </section>
+    `;
+
+    bindFilters();
+    document.getElementById("stockGrid")?.addEventListener("click", onCardActivate);
+    document.getElementById("stockGrid")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onCardActivate(e);
+      }
+    });
+  }
+
+  function bindFilters() {
+    const map = {
+      "f-q": "q",
+      "f-marca": "marca",
+      "f-combustible": "combustible",
+      "f-transmision": "transmision",
+      "f-carroceria": "carroceria",
+      "f-anioMin": "anioMin",
+      "f-anioMax": "anioMax",
+      "f-precioMax": "precioMax",
+      "f-kmMax": "kmMax",
+    };
+    Object.entries(map).forEach(([id, key]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const evt = el.tagName === "INPUT" && el.type === "search" ? "input" : "change";
+      el.addEventListener(evt, () => {
+        filters[key] = el.value;
+        const page = GyGStock.findPageBySlug(data, activeStockSlug);
+        if (page) renderStockPage(page);
+      });
+    });
+    document.getElementById("f-reset")?.addEventListener("click", () => {
+      filters = blankFilters();
+      const page = GyGStock.findPageBySlug(data, activeStockSlug);
+      if (page) renderStockPage(page);
+    });
+  }
+
+  function onCardActivate(e) {
+    const card = e.target.closest(".vehicle");
+    if (!card) return;
+    scrollPaginaArriba();
+    location.hash = `#/auto/${encodeURIComponent(card.dataset.id)}`;
+  }
+
+  function scrollToSellForm(ev) {
+    ev.preventDefault();
+    document.getElementById("sell-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
+
+  function renderVenderPage(page) {
+    const c = page.content || {};
+    const site = data.site || {};
+    const titulo = c.headline || page.title || "Vendé tu auto";
+    const texto =
+      c.subtitle ||
+      "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación.";
+    const anioMax = new Date().getFullYear() + 1;
+    const brand = displayBrandName(site.name);
+
+    app.innerHTML = `
+      <section class="hero hero--sell">
+        <div class="hero__eyebrow">${escapeHtml(c.eyebrow || "Compra y consignación")}</div>
+        <h1>${escapeHtml(titulo)}</h1>
+        <p>${escapeHtml(texto)}</p>
+        <div class="hero__cta">
+          <button type="button" class="btn btn--primary" id="sell-hero-cta">Cotizá tu usado</button>
+        </div>
+      </section>
+      <section class="sell-page">
+        <ol class="sell-steps">
+          <li>
+            <span class="sell-steps__n">01</span>
+            <h3>Completá el formulario</h3>
+            <p>Marca, modelo, año y kilómetros. En dos minutos armamos una primera idea de valor.</p>
+          </li>
+          <li>
+            <span class="sell-steps__n">02</span>
+            <h3>Visitanos en el showroom</h3>
+            <p>Coordinamos una visita. Revisamos el auto y te confirmamos la propuesta el mismo día.</p>
+          </li>
+          <li>
+            <span class="sell-steps__n">03</span>
+            <h3>Recibí tu cotización</h3>
+            <p>Compra directa si querés cerrar ya, o consignación si preferís que lo mostremos en el stock.</p>
+          </li>
+        </ol>
+        <form id="sell-form" class="sell-form" novalidate>
+          <h2>Cotizá tu vehículo</h2>
+          <p class="sell-form__lead">Te respondemos por WhatsApp con una estimación. Sin compromiso.</p>
+          <div class="sell-form__grid">
+            <label>Marca
+              <input name="marca" required placeholder="Toyota" autocomplete="off" />
+            </label>
+            <label>Modelo
+              <input name="modelo" required placeholder="Hilux" autocomplete="off" />
+            </label>
+            <label>Año
+              <input name="anio" type="number" required min="1990" max="${anioMax}" placeholder="2018" />
+            </label>
+            <label>Kilómetros
+              <input name="km" type="number" required min="0" step="1" placeholder="80000" />
+            </label>
+            <label>Estado general
+              <select name="estado">
+                <option value="Excelente">Excelente</option>
+                <option value="Muy bueno" selected>Muy bueno</option>
+                <option value="Bueno">Bueno</option>
+                <option value="Regular">Regular</option>
+              </select>
+            </label>
+            <label>¿Cómo preferís venderlo?
+              <select name="modalidad">
+                <option value="No sé todavía">No sé todavía</option>
+                <option value="Compra directa">Que me lo compren</option>
+                <option value="Consignación">Consignación (lo muestran ustedes)</option>
+              </select>
+            </label>
+            <label>Tu nombre
+              <input name="nombre" required placeholder="Nombre y apellido" autocomplete="name" />
+            </label>
+            <label>Teléfono
+              <input name="telefono" required placeholder="Ej. 3735..." autocomplete="tel" />
+            </label>
+            <label class="sell-form__full">Comentario (opcional)
+              <textarea name="comentario" rows="3" placeholder="Único dueño, service al día, permuta..."></textarea>
+            </label>
+          </div>
+          <label class="sell-form__check">
+            <input name="acepto" type="checkbox" required />
+            <span>Acepto que me contacten por WhatsApp para esta cotización.</span>
+          </label>
+          <button type="submit" class="btn btn--primary">Enviar cotización</button>
+          <p class="sell-form__hint">La cotización es orientativa. El valor final se confirma al ver el vehículo.</p>
+        </form>
+        <section class="sell-block" aria-labelledby="sell-how-title">
+          <h2 class="sell-section-title" id="sell-how-title">¿Cómo vender tu auto?</h2>
+          <div class="sell-modes">
+            <button type="button" class="sell-mode" data-modalidad="Compra directa">
+              <span class="sell-mode__tag">Opción 1</span>
+              <h3>Compra directa</h3>
+              <p>Te lo compramos nosotros. Tasamos, acordamos el valor y cobrás sin esperar a que aparezca un comprador.</p>
+              <span class="sell-mode__cta">Elegir compra directa</span>
+            </button>
+            <button type="button" class="sell-mode" data-modalidad="Consignación">
+              <span class="sell-mode__tag">Opción 2</span>
+              <h3>Consignación</h3>
+              <p>Lo mostramos en el showroom y en la web. Vos seguís siendo el dueño hasta que se vende, con nuestra exposición.</p>
+              <span class="sell-mode__cta">Elegir consignación</span>
+            </button>
+          </div>
+        </section>
+        <section class="sell-block" aria-labelledby="sell-why-title">
+          <h2 class="sell-section-title" id="sell-why-title">¿Por qué vender con nosotros?</h2>
+          <div class="sell-why">
+            <article>
+              <h3>Tasación en el showroom</h3>
+              <p>Vemos el auto en persona y te damos una propuesta el mismo día, sin formularios eternos.</p>
+            </article>
+            <article>
+              <h3>Dos formas de vender</h3>
+              <p>Compra directa si querés cerrar ya, o consignación si preferís apuntar a un mejor precio.</p>
+            </article>
+            <article>
+              <h3>Exposición real</h3>
+              <p>En consignación entra al stock, a la web y a las redes. No queda parado en un portón.</p>
+            </article>
+            <article>
+              <h3>Papeles y trámites</h3>
+              <p>Te orientamos con la documentación. El cierre se hace con todo en regla.</p>
+            </article>
+          </div>
+        </section>
+        <section class="sell-block" aria-labelledby="sell-faq-title">
+          <h2 class="sell-section-title" id="sell-faq-title">Preguntas frecuentes</h2>
+          <div class="sell-faq">
+            <details>
+              <summary>¿Cuánto tarda la cotización?</summary>
+              <p>Con el formulario te damos una primera idea por WhatsApp. El valor final se confirma cuando vemos el auto en el showroom, generalmente el mismo día de la visita.</p>
+            </details>
+            <details>
+              <summary>¿Tengo que dejar el auto?</summary>
+              <p>No. Coordinamos una visita, lo revisamos y te hacemos la propuesta. Si cerrás compra directa o consignación, ahí vemos la entrega.</p>
+            </details>
+            <details>
+              <summary>¿Qué diferencia hay entre compra directa y consignación?</summary>
+              <p>En compra directa te lo compramos nosotros y cobrás al cerrar. En consignación lo exhibimos hasta que aparece un comprador; el precio de venta lo acordamos juntos.</p>
+            </details>
+            <details>
+              <summary>¿Puedo permutar por otro auto del stock?</summary>
+              <p>Sí. Indicá en el comentario qué unidad te interesa o pedilo por WhatsApp. Tomamos tu usado como parte de pago.</p>
+            </details>
+            <details>
+              <summary>¿Qué documentación necesito?</summary>
+              <p>Título, cédula, DNI y, si aplica, informe de dominio o prenda. Si falta algo, te decimos cómo completarlo antes del cierre.</p>
+            </details>
+          </div>
+        </section>
+        <section class="sell-cta-end" aria-label="Cotizar ahora">
+          <div>
+            <h2>¿Listo para vender tu auto?</h2>
+            <p>Completá los datos y te respondemos por WhatsApp.</p>
+          </div>
+          <button type="button" class="btn btn--primary" id="sell-end-cta">Cotizá tu usado</button>
+        </section>
+      </section>
+    `;
+
+    document.getElementById("sell-hero-cta")?.addEventListener("click", scrollToSellForm);
+    document.getElementById("sell-end-cta")?.addEventListener("click", scrollToSellForm);
+    document.querySelectorAll(".sell-mode").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const sel = document.querySelector("#sell-form select[name='modalidad']");
+        if (sel) sel.value = btn.getAttribute("data-modalidad") || "No sé todavía";
+        document.getElementById("sell-form")?.scrollIntoView({ behavior: "smooth", block: "start" });
+        sel?.focus();
+      });
+    });
+
+    document.getElementById("sell-form")?.addEventListener("submit", (ev) => {
+      ev.preventDefault();
+      const form = ev.currentTarget;
+      const val = (name) => String((form.elements[name] && form.elements[name].value) || "").trim();
+      const marca = val("marca");
+      const modelo = val("modelo");
+      const anio = val("anio");
+      const km = val("km");
+      const nombre = val("nombre");
+      const telefono = val("telefono");
+      if (!marca || !modelo || !anio || !km || !nombre || !telefono) {
+        toast("Completá marca, modelo, año, kilómetros, nombre y teléfono.", "error");
+        return;
+      }
+      if (!form.elements.acepto || !form.elements.acepto.checked) {
+        toast("Marcá que aceptás el contacto por WhatsApp.", "error");
+        return;
+      }
+      const phone = GyGStock.whatsappPhone(data);
+      if (!phone) {
+        toast("Falta el WhatsApp de la concesionaria en Configuración del sitio.", "error");
+        return;
+      }
+      const lineas = [
+        `Hola ${brand}, quiero vender mi auto:`,
+        `${marca} ${modelo} ${anio}`,
+        `Km: ${km}`,
+        `Estado: ${val("estado")}`,
+        `Modalidad: ${val("modalidad")}`,
+        `Nombre: ${nombre}`,
+        `Tel: ${telefono}`,
+      ];
+      if (val("comentario")) lineas.push(`Comentario: ${val("comentario")}`);
+      const url = `https://wa.me/${phone}?text=${encodeURIComponent(lineas.join("\n"))}`;
+      window.open(url, "_blank", "noopener");
+    });
+  }
+
+  function renderContentPage(page) {
+    const c = page.content || {};
+    const site = data.site || {};
+    const isContacto = page.id === "contacto" || page.slug === "contacto";
+    const titulo = isContacto
+      ? site.contactoTitulo || c.headline || "Contactanos"
+      : c.headline || page.title;
+    const texto = isContacto ? site.contactoTexto || c.subtitle || "" : c.subtitle || "";
+    const ig = (site.instagram || "").trim();
+    const fb = (site.facebook || "").trim();
+    const showWa = c.showWhatsapp || isContacto;
+    const direccion = isContacto ? String(site.direccion || "").trim() : "";
+    const mapa = direccion ? GyGStock.mapsEmbedUrl(direccion) : "";
+    const mapaLink = direccion ? GyGStock.mapsSearchUrl(direccion) : "";
+
+    app.innerHTML = `
+      <section class="hero">
+        <div class="hero__eyebrow">${escapeHtml(c.eyebrow || (isContacto ? "Contacto" : ""))}</div>
+        <h1>${escapeHtml(titulo)}</h1>
+        <p>${escapeHtml(texto)}</p>
+      </section>
+      <section class="content-page">
+        ${c.body ? `<p class="content-page__body">${escapeHtml(c.body)}</p>` : ""}
+        ${
+          direccion
+            ? `<p class="contact-address">${escapeHtml(direccion)}${
+                mapaLink
+                  ? ` · <a href="${escapeAttr(mapaLink)}" target="_blank" rel="noopener">Abrir en Maps</a>`
+                  : ""
+              }</p>`
+            : ""
+        }
+        <div class="detail__cta content-page__cta">
+          ${
+            showWa
+              ? `<a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data))}">WhatsApp</a>`
+              : ""
+          }
+          ${ig ? `<a class="btn btn--instagram" target="_blank" rel="noopener" href="${escapeAttr(ig)}">Instagram</a>` : ""}
+          ${fb ? `<a class="btn btn--facebook" target="_blank" rel="noopener" href="${escapeAttr(fb)}">Facebook</a>` : ""}
+        </div>
+        ${
+          mapa
+            ? `<div class="contact-map"><iframe title="Mapa del local" src="${escapeAttr(mapa)}" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe></div>`
+            : ""
+        }
+      </section>
+    `;
+  }
+
+  function renderPrivacidad() {
+    const site = data.site || {};
+    const marca = displayBrandName(site.name);
+    const phone = GyGStock.whatsappPhone(data);
+    document.title = `Privacidad — ${marca}`;
+    app.innerHTML = `
+      <section class="hero">
+        <div class="hero__eyebrow">Legal</div>
+        <h1>Privacidad</h1>
+        <p>Cómo usamos los datos en este sitio.</p>
+      </section>
+      <section class="content-page privacy">
+        <p>${escapeHtml(marca)} publica el stock de vehículos en este sitio y en un catálogo público en la nube.</p>
+        <p>Si nos escribís por WhatsApp o el formulario “Vendé tu auto”, el mensaje llega a nuestro WhatsApp. No guardamos ese formulario en una base de datos de internet.</p>
+        <p>En el navegador puede quedar un identificador técnico del catálogo para que el sitio cargue. No usamos publicidad de terceros.</p>
+        <p>Las fotos de los autos se alojan en el servicio de imágenes que usa la concesionaria.</p>
+        <p>Para consultas sobre tus datos, escribinos por WhatsApp.</p>
+        <div class="detail__cta content-page__cta">
+          <a class="btn btn--ghost" href="#/">Volver al inicio</a>
+          ${
+            phone
+              ? `<a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data))}">WhatsApp</a>`
+              : ""
+          }
+        </div>
+      </section>
+    `;
+  }
+
+  function applyLightboxZoom() {
+    const img = document.querySelector("#gygLightbox img");
+    if (img) img.style.transform = "scale(" + lightboxZoom + ")";
+  }
+
+  function closeLightbox() {
+    document.getElementById("gygLightbox")?.remove();
+    lightboxZoom = 1;
+  }
+
+  function openLightbox(src) {
+    closeLightbox();
+    lightboxZoom = 1;
+    const box = document.createElement("div");
+    box.id = "gygLightbox";
+    box.className = "lightbox";
+    box.innerHTML = `
+      <div class="lightbox__bar">
+        <div>
+          <button type="button" class="btn btn--ghost btn--sm" data-z="out">−</button>
+          <button type="button" class="btn btn--ghost btn--sm" data-z="in">+</button>
+        </div>
+        <button type="button" class="btn btn--dark btn--sm" data-z="close">Cerrar</button>
+      </div>
+      <div class="lightbox__stage"><img src="${escapeAttr(src)}" alt="Foto ampliada"></div>
+    `;
+    document.body.appendChild(box);
+
+    function dist(a, b) {
+      const dx = a.clientX - b.clientX;
+      const dy = a.clientY - b.clientY;
+      return Math.sqrt(dx * dx + dy * dy);
+    }
+
+    let startDist = 0;
+    let startZoom = 1;
+
+    box.addEventListener("click", (ev) => {
+      const btn = ev.target.closest("button[data-z]");
+      if (!btn) {
+        if (ev.target.classList.contains("lightbox__stage")) closeLightbox();
+        return;
+      }
+      const z = btn.getAttribute("data-z");
+      if (z === "close") closeLightbox();
+      if (z === "in") lightboxZoom = Math.min(4, lightboxZoom + 0.4);
+      if (z === "out") lightboxZoom = Math.max(1, lightboxZoom - 0.4);
+      applyLightboxZoom();
+    });
+    box.addEventListener(
+      "touchstart",
+      (ev) => {
+        if (ev.touches.length === 2) {
+          startDist = dist(ev.touches[0], ev.touches[1]);
+          startZoom = lightboxZoom;
+        }
+      },
+      { passive: true }
+    );
+    box.addEventListener(
+      "touchmove",
+      (ev) => {
+        if (ev.touches.length === 2 && startDist) {
+          ev.preventDefault();
+          lightboxZoom = Math.min(4, Math.max(1, startZoom * (dist(ev.touches[0], ev.touches[1]) / startDist)));
+          applyLightboxZoom();
+        }
+      },
+      { passive: false }
+    );
+    box.addEventListener(
+      "wheel",
+      (ev) => {
+        ev.preventDefault();
+        lightboxZoom = Math.min(4, Math.max(1, lightboxZoom + (ev.deltaY < 0 ? 0.2 : -0.2)));
+        applyLightboxZoom();
+      },
+      { passive: false }
+    );
+    document.addEventListener("keydown", function onEsc(ev) {
+      if (ev.key === "Escape") {
+        closeLightbox();
+        document.removeEventListener("keydown", onEsc);
+      }
+    });
+  }
+
+  function youtubeId(url) {
+    const match = String(url || "").match(
+      /(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/
+    );
+    return match ? match[1] : null;
+  }
+
+  function vimeoId(url) {
+    const match = String(url || "").match(/vimeo\.com\/(?:video\/)?(\d+)/);
+    return match ? match[1] : null;
+  }
+
+  function driveFileId(url) {
+    const match = String(url || "").match(/\/file\/d\/([a-zA-Z0-9_-]+)/);
+    return match ? match[1] : null;
+  }
+
+  function galleryItems(v) {
+    if (Array.isArray(v.media) && v.media.length) return v.media;
+    const fotos = v.fotos && v.fotos.length ? v.fotos : [];
+    const videos = Array.isArray(v.videos) ? v.videos : [];
+    const items = fotos.map((url) => ({ tipo: "foto", url, thumbnail: url }));
+    for (const vid of videos) {
+      if (typeof vid === "string") items.push({ tipo: "video", url: vid, thumbnail: "" });
+      else items.push({ tipo: "video", url: vid.url, thumbnail: vid.thumbnail || "", embed: vid.embed });
+    }
+    return items.length ? items : [{ tipo: "foto", url: placeholderImg(), thumbnail: placeholderImg() }];
+  }
+
+  function embedSrc(item) {
+    if (item.embed) return item.embed;
+    const yt = youtubeId(item.url);
+    if (yt) return `https://www.youtube.com/embed/${yt}`;
+    const vimeo = vimeoId(item.url);
+    if (vimeo) return `https://player.vimeo.com/video/${vimeo}`;
+    const drive = driveFileId(item.url);
+    if (drive && /preview|video/i.test(item.url || "")) {
+      return `https://drive.google.com/file/d/${drive}/preview`;
+    }
+    return item.url;
+  }
+
+  function mainMediaHtml(item, alt) {
+    if (!item) return "";
+    if (item.tipo === "video") {
+      const src = embedSrc(item);
+      if (/youtube\.com\/embed|vimeo\.com\/video|drive\.google\.com/.test(src)) {
+        return `<iframe id="mainPhoto" src="${escapeAttr(src)}" title="${escapeAttr(alt)}" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      }
+      return `<video id="mainPhoto" src="${escapeAttr(src)}" controls playsinline></video>`;
+    }
+    return `<img id="mainPhoto" src="${escapeAttr(item.url)}" alt="${escapeAttr(alt)}" />`;
+  }
+
+  function renderDetail(id) {
+    const v = GyGStock.findVehicle(data, id);
+    if (!v || (v.status !== "disponible" && v.status !== "reservado")) {
+      app.innerHTML = `
+        <section class="detail">
+          <button type="button" class="btn btn--ghost detail__back" id="backBtn">← Volver</button>
+          <div class="empty-state">Este vehículo ya no está disponible.</div>
+        </section>`;
+      document.getElementById("backBtn")?.addEventListener("click", () => history.back());
+      return;
+    }
+
+    const items = galleryItems(v);
+    const specs = [
+      ["Categoría", v.categoria],
+      ["Año", v.anio],
+      ["Kilómetros", GyGStock.formatKm(v.km)],
+      ["Combustible", v.combustible],
+      ["Transmisión", v.transmision],
+      ["Tracción", v.traccion],
+      ["Motor", v.motor],
+      ["Potencia", v.potencia],
+      ["Carrocería", v.carroceria],
+      ["Puertas", v.puertas],
+      ["Color", v.color],
+      ["Versión", v.version],
+      ["Referencia", v.id],
+    ];
+
+    const similares = GyGStock.pickSimilarVehicles(data, v, 3);
+    const stockSlug =
+      String(v.categoria || "").toLowerCase() === "0km"
+        ? GyGStock.findPageBySlug(data, "0km")
+          ? "0km"
+          : "stock"
+        : GyGStock.findPageBySlug(data, "usados")
+          ? "usados"
+          : "stock";
+    const stockLabel = stockSlug === "0km" ? "0 km" : stockSlug === "usados" ? "Usados" : "Stock";
+    const stockHref = `#/${stockSlug}`;
+    const nombreAuto = `${v.marca} ${v.modelo}`.trim();
+
+    app.innerHTML = `
+      <section class="detail">
+        <nav class="crumbs" aria-label="Ubicación">
+          <a href="#/">Inicio</a>
+          <span class="crumbs__sep" aria-hidden="true">/</span>
+          <a href="${escapeAttr(stockHref)}">${escapeHtml(stockLabel)}</a>
+          <span class="crumbs__sep" aria-hidden="true">/</span>
+          <span class="crumbs__current">${escapeHtml(nombreAuto)}</span>
+        </nav>
+        <div class="detail__layout">
+          <div class="gallery">
+            <div class="gallery__main" id="galleryMain">
+              ${mainMediaHtml(items[0], v.marca + " " + v.modelo)}
+            </div>
+            <p class="gallery__hint">${items[0] && items[0].tipo === "video" ? "Reproducí el video o elegí otra miniatura" : "Tocá la foto para ampliar y hacer zoom"}</p>
+            <div class="gallery__thumbs" id="thumbs">
+              ${items
+                .map(
+                  (item, i) => `
+                <button type="button" class="${i === 0 ? "is-active" : ""} ${item.tipo === "video" ? "is-video" : ""}" data-i="${i}">
+                  <img src="${escapeAttr(item.thumbnail || item.url || placeholderImg())}" alt="" />
+                </button>`
+                )
+                .join("")}
+            </div>
+          </div>
+          <aside class="detail__info">
+            <div class="detail__status is-${escapeAttr(v.status)}">${escapeHtml(v.status)}</div>
+            <h1>${escapeHtml(v.marca)} ${escapeHtml(v.modelo)}</h1>
+            <div class="vehicle__version">${escapeHtml(v.version || "")} · ${escapeHtml(String(v.anio))} · ${escapeHtml(v.categoria || "")}</div>
+            ${markupPrecio(v, "detail__price")}
+            <p class="detail__desc">${escapeHtml(v.descripcion || "")}</p>
+            <table class="specs-table">
+              <tbody>
+                ${specs
+                  .filter(([, val]) => val !== "" && val != null)
+                  .map(([k, val]) => `<tr><th>${escapeHtml(k)}</th><td>${escapeHtml(String(val))}</td></tr>`)
+                  .join("")}
+              </tbody>
+            </table>
+            ${
+              (v.equipamiento || []).length
+                ? `<ul class="equip-list">${v.equipamiento.map((e) => `<li>${escapeHtml(e)}</li>`).join("")}</ul>`
+                : ""
+            }
+            <div class="detail__cta">
+              <a class="btn btn--whatsapp" target="_blank" rel="noopener" href="${escapeAttr(GyGStock.whatsappUrl(data, v, { consultarPrecio: !GyGStock.muestraPrecio(v) }))}">
+                ${GyGStock.muestraPrecio(v) ? "Consultar por WhatsApp" : "Consultar este vehículo"}
+              </a>
+            </div>
+          </aside>
+        </div>
+      </section>
+      ${
+        similares.length
+          ? `<section class="similar" aria-label="También te puede interesar">
+              <h2 class="similar__title">También te puede interesar</h2>
+              <div class="stock-grid" id="similarGrid">
+                ${similares.map((item) => vehicleCard(item, false)).join("")}
+              </div>
+            </section>`
+          : ""
+      }
+    `;
+
+    document.getElementById("similarGrid")?.addEventListener("click", onCardActivate);
+    document.getElementById("similarGrid")?.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        onCardActivate(e);
+      }
+    });
+
+    const galleryMain = document.getElementById("galleryMain");
+    const hint = document.querySelector(".gallery__hint");
+    document.getElementById("thumbs")?.addEventListener("click", (e) => {
+      const btn = e.target.closest("button[data-i]");
+      if (!btn || !galleryMain) return;
+      const idx = Number(btn.getAttribute("data-i"));
+      const item = items[idx];
+      if (!item) return;
+      galleryMain.innerHTML = mainMediaHtml(item, v.marca + " " + v.modelo);
+      if (hint) {
+        hint.textContent = item.tipo === "video" ? "Reproducí el video o elegí otra miniatura" : "Tocá la foto para ampliar y hacer zoom";
+      }
+      document.querySelectorAll("#thumbs button").forEach((b) => b.classList.remove("is-active"));
+      btn.classList.add("is-active");
+      const main = document.getElementById("mainPhoto");
+      if (main && main.tagName === "IMG") {
+        main.addEventListener("click", () => openLightbox(main.src));
+      }
+    });
+    const main = document.getElementById("mainPhoto");
+    if (main && main.tagName === "IMG") {
+      main.addEventListener("click", () => openLightbox(main.src));
+    }
+  }
+
+  function esInstalador() {
+    try {
+      const params = new URLSearchParams(location.search || "");
+      if (params.get("setup") === "1") return true;
+      const hash = String(location.hash || "");
+      return hash === "#/conectar" || hash.indexOf("#/conectar?") === 0;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  function renderCatalogoCaido() {
+    app.innerHTML = `
+      <section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">
+        <h1>El catálogo no se pudo cargar</h1>
+        <p>Recargá la página en un rato. Si sigue, avisá al que te instaló el sistema.</p>
+        <p>
+          <button type="button" class="btn btn--primary" id="gistRetryBtn">Reintentar</button>
+        </p>
+      </section>`;
+    document.getElementById("gistRetryBtn")?.addEventListener("click", () => {
+      GyGStock.clearStoredGistId();
+      try {
+        sessionStorage.removeItem("gyg_gist_auto_retry");
+      } catch (_) {}
+      location.reload();
+    });
+  }
+
+  function renderGistSetup(err) {
+    const missing = err && err.code === "MISSING_GIST_ID";
+    if (!missing || !esInstalador()) {
+      renderCatalogoCaido();
+      return;
+    }
+    const current = GyGStock.getGistId() || "";
+    app.innerHTML = `
+      <section class="hero" style="max-width:640px">
+        <div class="hero__eyebrow">Configuración</div>
+        <h1>Conectar Gist</h1>
+        <p>El tema está online, pero falta el GIST_ID. Pegá el ID del Gist donde está el stock.json.</p>
+        <div class="field" style="margin:1rem 0">
+          <label for="setupGistId">GIST_ID</label>
+          <input id="setupGistId" type="text" value="${escapeAttr(current)}" placeholder="ej: a1b2c3d4e5f6..." style="width:100%;padding:0.7rem;border:1px solid var(--line)" />
+        </div>
+        <div class="detail__cta">
+          <button type="button" class="btn btn--primary" id="setupSaveBtn">Guardar y cargar</button>
+        </div>
+      </section>
+    `;
+    document.getElementById("setupSaveBtn")?.addEventListener("click", () => {
+      let id = (document.getElementById("setupGistId").value || "").trim();
+      const match = id.match(/gist\.github\.com\/[^/]+\/([a-f0-9]+)/i);
+      if (match) id = match[1];
+      if (!id) {
+        toast("Pegá un GIST_ID válido", "error");
+        return;
+      }
+      GyGStock.setGistId(id);
+      toast("GIST_ID guardado", "ok");
+      init();
+    });
+  }
+
+  async function init() {
+    try {
+      try {
+        if ((window.GYG_CONFIG && String(window.GYG_CONFIG.GIST_ID || "").trim()) || document.getElementById("gyg-blogger-root")?.getAttribute("data-gist-id")) {
+          localStorage.removeItem("gyg_gist_id");
+        }
+        sessionStorage.removeItem("gyg_gist_auto_retry");
+      } catch (_) {}
+      data = await GyGStock.loadStock();
+      updateChrome();
+      if (!location.hash || location.hash === "#") location.hash = "#/";
+      route();
+    } catch (err) {
+      console.error(err);
+      renderGistSetup(err);
+      toast("No se pudo cargar el catálogo. Tocá Reintentar.", "error");
+    }
+  }
+
+  try {
+    if ("scrollRestoration" in history) history.scrollRestoration = "manual";
+  } catch (_err) {}
+  window.addEventListener("hashchange", route);
+  setupNavToggle();
+  setupBackTop();
+  init();
+})();
+
+//]]>
+    </script>
+  </body>
+</html>

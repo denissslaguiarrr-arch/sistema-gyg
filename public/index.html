@@ -1,0 +1,954 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-brand-title="Stock de Vehículos">Stock de Vehículos</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+  <div class="max-w-7xl mx-auto px-4 py-6">
+    <header class="flex flex-wrap items-center justify-between gap-4 mb-6">
+      <div class="flex items-center gap-3 min-w-0">
+        <img data-brand-logo alt="" class="hidden h-10 w-auto max-w-[220px] object-contain object-left" />
+        <div data-brand-wordmark class="marca-wordmark">Concesionaria</div>
+        <div>
+          <h1 class="text-2xl font-bold text-slate-900">Stock de Vehículos</h1>
+          <p class="text-sm text-slate-500">Panel de administración — <span data-brand-name>Concesionaria</span></p>
+        </div>
+      </div>
+      <div class="flex items-center gap-2">
+        <span id="usuario-actual" class="text-sm text-slate-500 mr-1"></span>
+        <button
+          id="btn-cambiar-password"
+          class="text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Cambiar contraseña
+        </button>
+        <button
+          id="btn-config-sitio"
+          class="hidden text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Configuración del sitio
+        </button>
+        <button
+          id="btn-usuarios"
+          class="hidden text-sm text-slate-500 hover:text-slate-700 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Usuarios
+        </button>
+        <button
+          id="btn-traer"
+          class="hidden text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 px-3 py-2 rounded-lg border border-slate-200"
+        >
+          Traer de la web
+        </button>
+        <button
+          id="btn-publicar"
+          class="hidden text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-2 rounded-lg"
+        >
+          Publicar en la web
+        </button>
+        <button
+          id="btn-tasador"
+          class="text-sm font-medium text-slate-700 bg-white hover:bg-slate-50 px-3 py-2 rounded-lg border border-slate-200"
+        >
+          Tasador
+        </button>
+        <button
+          id="btn-logout"
+          class="text-sm text-slate-500 hover:text-red-600 px-3 py-2 rounded-lg hover:bg-white border border-transparent hover:border-slate-200"
+        >
+          Cerrar sesión
+        </button>
+        <button
+          id="btn-nuevo"
+          class="hidden inline-flex items-center gap-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium px-4 py-2 rounded-lg shadow-sm transition"
+        >
+          <span class="text-lg leading-none">+</span> Nuevo vehículo
+        </button>
+      </div>
+    </header>
+
+    <div id="aviso-web-vieja" class="hidden mb-4 rounded-xl border border-amber-300 bg-amber-50 px-4 py-3 flex flex-wrap items-center justify-between gap-3">
+      <p id="aviso-web-vieja-texto" class="text-sm text-amber-950">El sitio web tiene stock viejo.</p>
+      <div class="flex flex-wrap items-center gap-2">
+        <span id="aviso-web-ultima" class="text-xs text-amber-800"></span>
+        <button type="button" id="btn-publicar-aviso" class="hidden text-sm font-medium text-white bg-emerald-600 hover:bg-emerald-700 px-3 py-1.5 rounded-lg">
+          Publicar ahora
+        </button>
+      </div>
+    </div>
+
+    <!-- KPIs -->
+    <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 mb-4">
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4">
+        <p class="text-xs text-slate-400 uppercase font-medium">Total en stock</p>
+        <p id="kpi-total" class="text-2xl font-bold text-slate-900 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 border-l-4 border-l-green-500">
+        <p class="text-xs text-slate-400 uppercase font-medium">Disponibles</p>
+        <p id="kpi-disponibles" class="text-2xl font-bold text-green-700 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 border-l-4 border-l-yellow-500">
+        <p class="text-xs text-slate-400 uppercase font-medium">Reservados</p>
+        <p id="kpi-reservados" class="text-2xl font-bold text-yellow-700 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 border-l-4 border-l-gray-400">
+        <p class="text-xs text-slate-400 uppercase font-medium">Vendidos</p>
+        <p id="kpi-vendidos" class="text-2xl font-bold text-gray-600 mt-1">—</p>
+      </div>
+      <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 col-span-2 sm:col-span-1">
+        <p class="text-xs text-slate-400 uppercase font-medium">Valor de stock activo</p>
+        <p id="kpi-valor-ars" class="text-sm font-semibold text-slate-900 mt-1">ARS —</p>
+        <p id="kpi-valor-usd" class="text-sm font-semibold text-slate-900">USD —</p>
+      </div>
+    </div>
+
+    <section id="alertas-papeles" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4">
+      <h2 class="text-sm font-semibold text-slate-800">Papeles por vencer</h2>
+      <p class="text-xs text-slate-500 mt-0.5 mb-2">VTV y verificación policial de los autos en stock (vencidos o dentro de 30 días).</p>
+      <ul id="alertas-papeles-lista" class="divide-y divide-slate-100"></ul>
+    </section>
+
+    <!-- Toolbar: búsqueda y filtros -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-4 mb-4 flex flex-wrap gap-3 items-end">
+      <div class="flex-1 min-w-[220px]">
+        <label class="block text-xs font-medium text-slate-500 mb-1">Buscar</label>
+        <input
+          id="filtro-q"
+          type="text"
+          placeholder="Marca, modelo o patente..."
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        />
+      </div>
+      <div class="min-w-[160px]">
+        <label class="block text-xs font-medium text-slate-500 mb-1">Estado</label>
+        <select
+          id="filtro-estado"
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          <option value="">Todos</option>
+          <option value="Disponible">Disponible</option>
+          <option value="Reservado">Reservado</option>
+          <option value="Vendido">Vendido</option>
+        </select>
+      </div>
+      <div class="min-w-[160px]">
+        <label class="block text-xs font-medium text-slate-500 mb-1">Condición</label>
+        <select
+          id="filtro-km"
+          class="w-full border border-slate-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+        >
+          <option value="">Todos</option>
+          <option value="0km">Solo 0KM</option>
+          <option value="usado">Solo usados</option>
+        </select>
+      </div>
+      <button
+        id="btn-limpiar-filtros"
+        class="text-sm text-slate-500 hover:text-slate-700 underline px-2 py-2"
+      >
+        Limpiar filtros
+      </button>
+      <div class="flex-1"></div>
+      <a
+        id="btn-exportar"
+        href="/api/vehiculos/export.csv"
+        class="text-sm font-medium text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-lg border border-indigo-200 hover:bg-indigo-50"
+      >
+        Exportar CSV
+      </a>
+      <button
+        id="btn-importar"
+        class="hidden text-sm font-medium text-indigo-600 hover:text-indigo-800 px-3 py-2 rounded-lg border border-indigo-200 hover:bg-indigo-50"
+      >
+        Importar CSV
+      </button>
+      <button
+        id="btn-papelera"
+        class="hidden text-sm font-medium text-slate-600 hover:text-slate-800 px-3 py-2 rounded-lg border border-slate-200 hover:bg-slate-50"
+      >
+        Ver papelera
+      </button>
+    </div>
+
+    <!-- Alertas -->
+    <div id="alerta" class="hidden mb-4 px-4 py-3 rounded-lg text-sm font-medium"></div>
+
+    <!-- Tabla de stock -->
+    <div class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="w-full text-sm">
+          <thead class="bg-slate-50 text-slate-500 uppercase text-xs">
+            <tr>
+              <th class="px-4 py-3 text-left"></th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="marca">Vehículo <span class="orden-indicador"></span></th>
+              <th class="px-4 py-3 text-left">Patente</th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="anio">Año <span class="orden-indicador"></span></th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="kilometraje">Kilometraje <span class="orden-indicador"></span></th>
+              <th class="px-4 py-3 text-left cursor-pointer select-none hover:text-slate-700" data-orden="precio">Precio <span class="orden-indicador"></span></th>
+              <th class="px-4 py-3 text-left">Días</th>
+              <th class="px-4 py-3 text-left">Estado</th>
+              <th class="px-4 py-3 text-right">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tabla-body" class="divide-y divide-slate-100">
+            <!-- filas generadas por app.js -->
+          </tbody>
+        </table>
+      </div>
+      <div id="tabla-vacio" class="hidden py-12 text-center text-slate-400">
+        No hay vehículos que coincidan con la búsqueda.
+      </div>
+    </div>
+
+    <div class="flex flex-wrap items-center justify-between gap-3 mt-3">
+      <p id="contador" class="text-xs text-slate-400"></p>
+      <div class="flex items-center gap-2">
+        <select
+          id="selector-porpagina"
+          class="text-xs border border-slate-300 rounded-lg px-2 py-1.5"
+        >
+          <option value="12">12 por página</option>
+          <option value="24" selected>24 por página</option>
+          <option value="48">48 por página</option>
+          <option value="96">96 por página</option>
+        </select>
+        <button id="btn-pagina-anterior" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">
+          ← Anterior
+        </button>
+        <span id="texto-pagina" class="text-xs text-slate-500 min-w-[90px] text-center"></span>
+        <button id="btn-pagina-siguiente" class="text-xs font-medium px-3 py-1.5 rounded-lg border border-slate-200 hover:bg-white disabled:opacity-40 disabled:cursor-not-allowed">
+          Siguiente →
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de carga / edición -->
+  <div id="modal-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-2xl rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <form id="form-vehiculo">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+          <h2 id="modal-titulo" class="text-lg font-semibold text-slate-900">Nuevo vehículo</h2>
+          <button type="button" id="btn-cerrar-modal" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div class="px-6 py-5 grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input type="hidden" id="f-id" />
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Marca *</label>
+            <input id="f-marca" required class="campo" placeholder="Toyota" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Modelo *</label>
+            <input id="f-modelo" required class="campo" placeholder="Hilux" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Año *</label>
+            <input id="f-anio" type="number" required class="campo" placeholder="2024" min="1900" max="2100" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Patente (dominio) *</label>
+            <input id="f-dominio" required class="campo uppercase" placeholder="AB123CD" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Kilometraje</label>
+            <input id="f-kilometraje" type="number" min="0" class="campo" placeholder="0" />
+            <p class="text-[11px] text-slate-400 mt-1">Dejar en 0 para marcar como 0KM.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Estado</label>
+            <select id="f-estado" class="campo">
+              <option value="Disponible">Disponible</option>
+              <option value="Reservado">Reservado</option>
+              <option value="Vendido">Vendido</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio de lista *</label>
+            <input id="f-precio" type="number" step="0.01" min="0" required class="campo" placeholder="45000" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio oferta</label>
+            <input id="f-precio-oferta" type="number" step="0.01" min="0" class="campo" placeholder="Opcional" />
+            <p class="text-[11px] text-slate-400 mt-1">Si lo cargás, se tacha el de lista y este queda como oferta. Tiene que ser más bajo.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Moneda</label>
+            <select id="f-moneda" class="campo">
+              <option value="ARS">ARS (Pesos)</option>
+              <option value="USD">USD (Dólares)</option>
+            </select>
+          </div>
+          <div class="sm:col-span-2">
+            <label class="inline-flex items-start gap-2 text-sm text-slate-700">
+              <input id="f-mostrar-precio" type="checkbox" class="mt-0.5 rounded border-slate-300" />
+              <span>
+                Mostrar el precio en el sitio
+                <span class="block text-[11px] text-slate-400 font-normal">Si no lo tildás, en la web se ve un botón para consultar ese auto. El precio igual queda acá en el panel.</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="sm:col-span-2 border-t border-slate-100 pt-4 mt-1">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              Costo e ingreso (interno, no se publica en la web)
+            </p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Origen</label>
+            <select id="f-origen" class="campo">
+              <option value="Compra">Compra</option>
+              <option value="Consignación">Consignación</option>
+              <option value="Permuta">Permuta</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio de costo</label>
+            <input id="f-precio-compra" type="number" step="0.01" min="0" class="campo" placeholder="Lo que pagamos" />
+            <p class="text-[11px] text-slate-400 mt-1">Sirve para calcular la rentabilidad. No sale en el catálogo.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Fecha de ingreso</label>
+            <input id="f-fecha-ingreso" type="date" class="campo" />
+          </div>
+
+          <div class="sm:col-span-2 border-t border-slate-100 pt-4 mt-1">
+            <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              Especificaciones (opcional, para la ficha pública)
+            </p>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Versión</label>
+            <input id="f-version" class="campo" placeholder="SRX 4x4" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Carrocería</label>
+            <select id="f-carroceria" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Sedán">Sedán</option>
+              <option value="Hatchback">Hatchback</option>
+              <option value="SUV">SUV</option>
+              <option value="Pickup">Pickup</option>
+              <option value="Coupé">Coupé</option>
+              <option value="Furgón">Furgón</option>
+              <option value="Rural/Wagon">Rural / Wagon</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Combustible</label>
+            <select id="f-combustible" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Nafta">Nafta</option>
+              <option value="Diesel">Diesel</option>
+              <option value="GNC">GNC</option>
+              <option value="Eléctrico">Eléctrico</option>
+              <option value="Híbrido">Híbrido</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Transmisión</label>
+            <select id="f-transmision" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Manual">Manual</option>
+              <option value="Automática">Automática</option>
+              <option value="CVT">CVT</option>
+            </select>
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Tracción</label>
+            <select id="f-traccion" class="campo">
+              <option value="">Sin especificar</option>
+              <option value="Delantera">Delantera</option>
+              <option value="Trasera">Trasera</option>
+              <option value="4x4">4x4 / AWD</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Puertas</label>
+            <input id="f-puertas" type="number" min="1" max="6" class="campo" placeholder="4" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Color</label>
+            <input id="f-color" class="campo" placeholder="Blanco" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Motor</label>
+            <input id="f-motor" class="campo" placeholder="2.8L" />
+          </div>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Potencia</label>
+            <input id="f-potencia" class="campo" placeholder="204cv" />
+          </div>
+          <div class="flex items-end pb-2">
+            <label class="inline-flex items-center gap-2 text-sm text-slate-700">
+              <input id="f-destacado" type="checkbox" class="rounded border-slate-300" />
+              Destacar en el catálogo (carrusel del inicio)
+            </label>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Equipamiento</label>
+            <input
+              id="f-equipamiento"
+              class="campo"
+              placeholder="Aire acondicionado, Bluetooth, Cámara de retroceso"
+            />
+            <p class="text-[11px] text-slate-400 mt-1">Separado por comas.</p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Fotos</label>
+            <div id="galeria-imagenes" class="flex flex-wrap gap-3 mb-2"></div>
+
+            <div
+              id="dropzone-imagenes"
+              class="rounded-xl border-2 border-dashed border-slate-300 bg-slate-50 hover:border-indigo-400 hover:bg-indigo-50/60 transition-colors cursor-pointer px-4 py-8 text-center"
+            >
+              <input id="f-imagen-archivo" type="file" accept="image/*,video/mp4,video/webm,video/quicktime,.mp4,.webm,.mov" multiple class="hidden" />
+              <p class="text-sm font-medium text-slate-700">Arrastrá fotos o videos acá o hacé clic para elegirlos</p>
+              <p class="text-xs text-slate-500 mt-1">Fotos JPG, PNG, WEBP o GIF · videos MP4, WEBM o MOV (máx. 40 MB). Se guardan en este panel.</p>
+              <p class="text-xs text-slate-500 mt-1">Para el sitio: arrastrá la foto si cargaste la clave de ImgBB (Configuración del sitio), o pegá el link directo de la imagen. Imgur ya no da API a cuentas nuevas.</p>
+              <p id="dropzone-estado" class="hidden text-xs font-medium text-indigo-600 mt-3">Subiendo imagen...</p>
+            </div>
+
+            <div class="flex flex-wrap gap-2 items-center mt-3">
+              <input
+                id="f-imagen-url"
+                type="text"
+                placeholder="Pegar link de la foto (clic derecho → copiar dirección de imagen) o YouTube"
+                class="campo flex-1 min-w-[200px]"
+              />
+              <label class="inline-flex items-center gap-1.5 text-xs text-slate-600 whitespace-nowrap">
+                <input id="f-es-video" type="checkbox" class="rounded border-slate-300" />
+                Es un video
+              </label>
+              <button
+                type="button"
+                id="btn-agregar-url"
+                class="text-xs font-medium text-slate-700 hover:text-slate-900 border border-slate-300 hover:bg-slate-50 rounded-lg px-3 py-1.5"
+              >
+                Agregar URL
+              </button>
+            </div>
+            <p id="imagenes-estado" class="text-[11px] text-slate-400 mt-1"></p>
+          </div>
+
+          <div class="sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Notas</label>
+            <textarea id="f-notas" rows="3" class="campo" placeholder="Detalle en puerta derecha, único dueño, etc."></textarea>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+          <button type="button" id="btn-cancelar" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Ficha gerencial del vehículo -->
+  <div id="modal-gestion-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-gestion" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-3xl rounded-xl shadow-xl max-h-[92vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white z-10">
+        <div>
+          <h2 id="gestion-titulo" class="text-lg font-semibold text-slate-900">Ficha del vehículo</h2>
+          <p id="gestion-subtitulo" class="text-xs text-slate-500"></p>
+        </div>
+        <button type="button" id="btn-cerrar-gestion" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+      <div id="gestion-cuerpo" class="px-6 py-5 space-y-5 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Modal de venta -->
+  <div id="modal-venta-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-venta" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl">
+      <form id="form-venta">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+          <h2 class="text-lg font-semibold text-slate-900">Cerrar venta</h2>
+          <button type="button" id="btn-cerrar-venta" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+          <p id="venta-vehiculo" class="text-sm text-slate-600"></p>
+          <input type="hidden" id="v-id" />
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Nombre del cliente *</label>
+            <input id="v-cliente" required class="campo" placeholder="Ana Pérez" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Teléfono</label>
+            <input id="v-telefono" class="campo" placeholder="3735 46-2914" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Precio final cerrado *</label>
+            <input id="v-precio" type="number" step="0.01" min="0" required class="campo" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Fecha de venta</label>
+            <input id="v-fecha" type="date" class="campo" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Fin de garantía</label>
+            <input id="v-garantia" type="date" class="campo" />
+            <p class="text-[11px] text-slate-400 mt-1">Por defecto, 3 meses después de la venta.</p>
+          </div>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+          <button type="button" id="btn-cancelar-venta" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-orange-600 hover:bg-orange-700 text-white shadow-sm">
+            Confirmar venta
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div id="modal-historial-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-historial" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-md rounded-xl shadow-xl max-h-[80vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+        <h2 id="historial-titulo" class="text-lg font-semibold text-slate-900">Historial de estados</h2>
+        <button type="button" id="btn-cerrar-historial" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+      <div id="historial-lista" class="px-6 py-4 space-y-3 text-sm"></div>
+    </div>
+  </div>
+
+  <!-- Modal de cambio de contraseña -->
+  <div id="modal-password-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-password" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-sm rounded-xl shadow-xl">
+      <form id="form-password">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200">
+          <h2 class="text-lg font-semibold text-slate-900">Cambiar contraseña</h2>
+          <button type="button" id="btn-cerrar-password" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+        <div class="px-6 py-5 space-y-4">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Contraseña actual</label>
+            <input id="p-actual" type="password" required class="campo" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Contraseña nueva</label>
+            <input id="p-nueva" type="password" required minlength="6" class="campo" />
+            <p class="text-[11px] text-slate-400 mt-1">Mínimo 6 caracteres.</p>
+          </div>
+        </div>
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3">
+          <button type="button" id="btn-cancelar-password" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de gestión de usuarios (solo admin) -->
+  <div id="modal-usuarios-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-usuarios" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+        <h2 class="text-lg font-semibold text-slate-900">Usuarios del panel</h2>
+        <button type="button" id="btn-cerrar-usuarios" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="px-6 py-4">
+        <div id="lista-usuarios" class="space-y-2 mb-5"></div>
+
+        <form id="form-nuevo-usuario" class="border-t border-slate-200 pt-4">
+          <p class="text-xs font-medium text-slate-600 mb-2">Agregar usuario</p>
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-2">
+            <input id="u-username" required placeholder="Usuario" class="campo" />
+            <input id="u-password" required type="password" placeholder="Contraseña" minlength="6" class="campo" />
+            <select id="u-rol" class="campo">
+              <option value="vendedor">Vendedor</option>
+              <option value="admin">Administrador</option>
+            </select>
+          </div>
+          <button type="submit" class="mt-3 w-full bg-indigo-600 hover:bg-indigo-700 text-white font-medium py-2 rounded-lg text-sm">
+            Crear usuario
+          </button>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tasador: el vendedor llena el auto; el encargado carga la guía -->
+  <div id="modal-tasador-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-tasador" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-xl rounded-xl shadow-xl max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+        <div>
+          <h2 class="text-lg font-semibold text-slate-900">Tasador</h2>
+          <p class="text-xs text-slate-500 mt-0.5">Una guía para cuando no está el encargado. No es una oferta en firme.</p>
+        </div>
+        <button type="button" id="btn-cerrar-tasador" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+      </div>
+
+      <div class="px-6 py-5 space-y-4">
+        <p id="tasador-guia-estado" class="text-sm text-slate-600"></p>
+
+        <form id="form-tasador" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Marca</label>
+            <input id="t-marca" required class="campo" placeholder="Toyota" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Modelo</label>
+            <input id="t-modelo" required class="campo" placeholder="Hilux" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Año</label>
+            <input id="t-anio" type="number" required min="1900" max="2100" class="campo" placeholder="2015" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Kilómetros</label>
+            <input id="t-km" type="number" required min="0" class="campo" placeholder="100000" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Estado del auto</label>
+            <select id="t-estado" class="campo">
+              <option value="Excelente">Excelente</option>
+              <option value="Muy bueno">Muy bueno</option>
+              <option value="Bueno" selected>Bueno</option>
+              <option value="Regular">Regular</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Versión (si la sabés)</label>
+            <input id="t-version" class="campo" placeholder="SRV 4x4" />
+          </div>
+          <div id="t-version-pick-wrap" class="hidden sm:col-span-2">
+            <label class="block text-xs font-medium text-slate-600 mb-1">Elegí la versión</label>
+            <select id="t-version-pick" class="campo"></select>
+          </div>
+          <div class="sm:col-span-2 flex justify-end">
+            <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+              Ver precio orientativo
+            </button>
+          </div>
+        </form>
+
+        <div id="tasador-resultado" class="hidden rounded-xl border border-slate-200 bg-slate-50 px-4 py-4 space-y-2"></div>
+
+        <div id="tasador-admin" class="hidden border-t border-slate-100 pt-4 space-y-4">
+          <p class="text-xs font-semibold text-slate-500 uppercase tracking-wide">Solo el encargado</p>
+          <p class="text-sm text-slate-600">
+            Cargá la guía del mes (los precios de revista de los autos que suelen traer).
+            El resto del equipo no toca esto: solo llena el formulario de arriba.
+          </p>
+
+          <form id="form-guia-uno" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Marca</label>
+              <input id="g-marca" required class="campo" placeholder="Toyota" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Modelo</label>
+              <input id="g-modelo" required class="campo" placeholder="Hilux" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Versión</label>
+              <input id="g-version" class="campo" placeholder="SRV 4x4" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Año</label>
+              <input id="g-anio" type="number" required min="1900" max="2100" class="campo" placeholder="2015" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Precio de revista</label>
+              <input id="g-precio" type="number" required min="1" step="0.01" class="campo" placeholder="18500" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Moneda</label>
+              <select id="g-moneda" class="campo">
+                <option value="USD">USD</option>
+                <option value="ARS">ARS</option>
+              </select>
+            </div>
+            <div class="sm:col-span-2 flex justify-end">
+              <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-slate-800 hover:bg-slate-900 text-white">
+                Sumar a la guía
+              </button>
+            </div>
+          </form>
+
+          <div>
+            <a href="/api/tasacion/plantilla.csv" class="text-sm font-medium text-indigo-600 hover:underline">
+              Descargar plantilla CSV
+            </a>
+            <form id="form-guia-import" class="mt-2 flex flex-wrap items-end gap-2">
+              <input id="g-archivo" type="file" accept=".csv,text/csv" required class="text-sm" />
+              <button type="submit" class="px-3 py-1.5 rounded-lg text-sm font-medium border border-slate-200 hover:bg-slate-50">
+                Reemplazar guía con este CSV
+              </button>
+            </form>
+            <p class="text-[11px] text-slate-400 mt-1">El CSV nuevo pisa el mes anterior. Columnas: marca, modelo, version, anio, precio_revista, moneda, edicion.</p>
+          </div>
+
+          <form id="form-tasador-config" class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">Km por año (promedio)</label>
+              <input id="t-km-anio" type="number" min="1000" max="40000" class="campo" />
+            </div>
+            <div>
+              <label class="block text-xs font-medium text-slate-600 mb-1">% de la revista para decirle</label>
+              <input id="t-margen" type="number" min="50" max="110" class="campo" />
+              <p class="text-[11px] text-slate-400 mt-1">Ej. 90 = le dicen alrededor del 90% de revista, ya ajustado por km y estado.</p>
+            </div>
+            <div class="sm:col-span-2 flex justify-end">
+              <button type="submit" class="px-3 py-1.5 rounded-lg text-sm font-medium border border-slate-200 hover:bg-slate-50">
+                Guardar criterios
+              </button>
+            </div>
+          </form>
+
+          <div>
+            <p class="text-xs font-medium text-slate-500 mb-1">Autos en la guía</p>
+            <ul id="tasador-guia-lista" class="text-sm divide-y divide-slate-100 max-h-40 overflow-y-auto"></ul>
+          </div>
+        </div>
+      </div>
+
+      <div class="px-6 py-4 border-t border-slate-200 flex justify-end sticky bottom-0 bg-white">
+        <button type="button" id="btn-cancelar-tasador" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+          Cerrar
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal de importación de vehículos por CSV (solo admin) -->
+  <div id="modal-importar-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-importar" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+      <form id="form-importar">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+          <h2 class="text-lg font-semibold text-slate-900">Importar vehículos desde CSV</h2>
+          <button type="button" id="btn-cerrar-importar" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+          <p class="text-sm text-slate-600">
+            Subí un archivo CSV (coma o punto y coma). Puede ser el export del sistema, con o sin la fila de encabezados.
+            También acepta <code>patente</code> en vez de <code>dominio</code>, y <code>km</code> en vez de <code>kilometraje</code>.
+            Los links de fotos van en <code>imagenes_url</code> separados por <code> | </code> (el primero es la foto principal).
+            Si la patente ya existe, se <strong>actualiza</strong> ese vehículo; si no, se crea uno nuevo.
+            Si una fila viene sin patente, se le asigna una temporal (<code>SD-MODELO-AÑO</code>).
+            Al actualizar, si <code>imagenes_url</code> viene vacío, se conservan las fotos que ya tenía el vehículo.
+            Las fotos subidas solo a la otra PC (<code>/uploads/</code>) no viajan en el CSV: copiá también la carpeta <code>public\uploads</code>, o volvé a arrastrar las fotos con ImgBB para generar el link https.
+          </p>
+          <a
+            href="/api/vehiculos/plantilla.csv"
+            class="inline-block text-sm font-medium text-indigo-600 hover:text-indigo-800 underline"
+          >
+            Descargar plantilla de ejemplo
+          </a>
+
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Archivo CSV</label>
+            <input id="i-archivo" type="file" accept=".csv,text/csv" required class="campo" />
+          </div>
+
+          <div id="importar-resultado" class="hidden text-sm space-y-2"></div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+          <button type="button" id="btn-cancelar-importar" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cerrar
+          </button>
+          <button type="submit" id="btn-confirmar-importar" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Importar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal de configuración del sitio público (solo admin) -->
+  <div id="modal-config-overlay" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-40"></div>
+  <div id="modal-config" class="hidden fixed inset-0 z-50 flex items-center justify-center px-4">
+    <div class="bg-white w-full max-w-lg rounded-xl shadow-xl max-h-[85vh] overflow-y-auto">
+      <form id="form-config">
+        <div class="flex items-center justify-between px-6 py-4 border-b border-slate-200 sticky top-0 bg-white">
+          <h2 class="text-lg font-semibold text-slate-900">Configuración del sitio público</h2>
+          <button type="button" id="btn-cerrar-config" class="text-slate-400 hover:text-slate-600 text-2xl leading-none">&times;</button>
+        </div>
+
+        <div class="px-6 py-5 space-y-4">
+          <p class="text-sm text-slate-600">
+            Estos datos se publican junto con el stock en el catálogo web (por ejemplo, tu sitio de Blogger).
+          </p>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Nombre de la concesionaria</label>
+            <input id="c-nombre" class="campo" placeholder="Ej. Automotores del Sur" maxlength="80" />
+            <p class="text-[11px] text-slate-400 mt-1">Este nombre se ve en el panel, el login, la ficha y el sitio (encabezado, inicio y pie), igual que se veía la marca en este sistema.</p>
+            <div id="c-nombre-preview" class="mt-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3">
+              <p class="text-[10px] uppercase tracking-[0.16em] text-slate-400 mb-1">Así se ve</p>
+              <div id="c-nombre-wordmark" class="marca-wordmark">Concesionaria</div>
+            </div>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Logo (opcional)</label>
+            <input id="c-logo" class="campo" placeholder="https://..." />
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <input id="c-logo-archivo" type="file" accept="image/jpeg,image/png,image/webp,image/gif,image/svg+xml" class="hidden" />
+              <button type="button" id="btn-logo-subir" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Subir logo
+              </button>
+            </div>
+            <img id="c-logo-preview" alt="Vista previa del logo" class="hidden mt-2 max-h-16 object-contain" />
+            <p id="c-logo-estado" class="text-[11px] text-slate-400 mt-1">
+              Si no subís logo, el sitio muestra el nombre con la misma tipografía grande del inicio.
+            </p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Frase / tagline</label>
+            <input id="c-tagline" class="campo" placeholder="Selección premium de vehículos" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">WhatsApp (con código de país, sin +)</label>
+            <input id="c-whatsapp" class="campo" placeholder="5491123456789" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Instagram (link o @usuario)</label>
+            <input id="c-instagram" class="campo" placeholder="@tunegocio" />
+            <p class="text-[11px] text-slate-400 mt-1">Si lo dejás vacío, no aparece en el sitio.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Facebook (link o nombre de página)</label>
+            <input id="c-facebook" class="campo" placeholder="https://facebook.com/..." />
+            <p class="text-[11px] text-slate-400 mt-1">Si lo dejás vacío, no aparece en el sitio.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Título de la página Contacto</label>
+            <input id="c-contacto-titulo" class="campo" placeholder="Contactanos" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Texto de contacto</label>
+            <textarea id="c-contacto-texto" class="campo" rows="3" placeholder="Consultá disponibilidad, financiación o una visita al showroom."></textarea>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Dirección del local</label>
+            <input id="c-direccion" class="campo" placeholder="Ej. Av. San Martín 123, Resistencia" />
+            <p class="text-[11px] text-slate-400 mt-1">Si hay dirección, en Contacto aparece el mapa. Guardá y después Publicar en la web.</p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Texto de pie de página</label>
+            <input id="c-footer" class="campo" placeholder="Automotores del Sur — stock en vivo" />
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Imagen de portada (inicio del sitio)</label>
+            <input id="c-hero" class="campo" placeholder="https://..." />
+            <div class="mt-2 flex flex-wrap items-center gap-2">
+              <input id="c-hero-archivo" type="file" accept="image/jpeg,image/png,image/webp,image/gif" class="hidden" />
+              <button type="button" id="btn-hero-subir" class="px-3 py-1.5 rounded-lg text-sm font-medium bg-slate-100 hover:bg-slate-200 text-slate-700">
+                Subir foto del local
+              </button>
+            </div>
+            <img id="c-hero-preview" alt="Vista previa de la portada" class="hidden mt-2 rounded-lg max-h-36 object-cover w-full border border-slate-200" />
+            <p id="c-hero-estado" class="text-[11px] text-slate-400 mt-1">
+              Esta foto se ve en la pantalla de inicio. Subila acá (hace falta la clave ImgBB), Guardá, y después Publicar en la web.
+            </p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Clave ImgBB (fotos del sitio)</label>
+            <input id="c-imgbb" type="password" autocomplete="off" class="campo" placeholder="Pegá la clave de api.imgbb.com" />
+            <p id="c-imgbb-estado" class="text-[11px] text-slate-400 mt-1">
+              Imgur ya no da API. Creá una clave gratis en
+              <a href="https://api.imgbb.com/" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">api.imgbb.com</a>
+              y pegala acá para que el arrastre publique las fotos en el sitio.
+            </p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">ID del Gist (catálogo web)</label>
+            <input id="c-gist" class="campo" placeholder="ID o URL del Gist" />
+            <p id="c-gist-estado" class="text-[11px] text-slate-400 mt-1">
+              Creá un Gist público con un archivo stock.json y pegá el ID o la URL. Sin esto no se puede publicar el catálogo.
+            </p>
+          </div>
+          <div>
+            <label class="block text-xs font-medium text-slate-600 mb-1">Token de GitHub (permiso gist)</label>
+            <input id="c-github-token" type="password" autocomplete="off" class="campo" placeholder="ghp_..." />
+            <p id="c-github-token-estado" class="text-[11px] text-slate-400 mt-1">
+              Creá un token <strong>classic</strong> en
+              <a href="https://github.com/settings/tokens/new?scopes=gist" target="_blank" rel="noopener" class="text-indigo-600 hover:underline">github.com/settings/tokens</a>
+              con permiso <code>gist</code>, de la <strong>misma cuenta</strong> que creó el Gist, y pegalo acá.
+              Un token de otra cuenta no publica y antes parecía que se cerraba la sesión.
+            </p>
+          </div>
+        </div>
+
+        <div class="px-6 py-4 border-t border-slate-200 flex justify-end gap-3 sticky bottom-0 bg-white">
+          <button type="button" id="btn-cancelar-config" class="px-4 py-2 rounded-lg text-sm font-medium text-slate-600 hover:bg-slate-100">
+            Cancelar
+          </button>
+          <button type="submit" class="px-4 py-2 rounded-lg text-sm font-medium bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm">
+            Guardar
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <style>
+    .marca-wordmark {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 800;
+      font-size: 1.65rem;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: #0e1116;
+      white-space: nowrap;
+    }
+    .marca-sep {
+      color: #e85d23;
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 700;
+    }
+    .campo {
+      width: 100%;
+      border: 1px solid rgb(203 213 225);
+      border-radius: 0.5rem;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.875rem;
+    }
+    .campo:focus {
+      outline: none;
+      box-shadow: 0 0 0 2px rgb(165 180 252);
+      border-color: rgb(129 140 248);
+    }
+  </style>
+
+  <script src="brand.js"></script>
+  <script src="media.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

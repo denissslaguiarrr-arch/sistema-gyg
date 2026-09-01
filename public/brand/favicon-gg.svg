@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="G&amp;G">
+  <rect width="64" height="64" fill="#F7F8FA" rx="8"/>
+  <path d="M10 20 C 22 10 42 10 54 20" fill="none" stroke="#E85D23" stroke-linecap="round" stroke-width="4"/>
+  <text x="6" y="50" fill="#111111" font-family="Georgia, 'Times New Roman', Times, serif" font-size="28" font-weight="700">G</text>
+  <text x="26" y="48" fill="#E85D23" font-family="Georgia, 'Times New Roman', Times, serif" font-size="20" font-weight="700">&amp;</text>
+  <text x="40" y="50" fill="#111111" font-family="Georgia, 'Times New Roman', Times, serif" font-size="28" font-weight="700">G</text>
+</svg>

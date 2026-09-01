@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-brand-title="Ficha del vehículo">Ficha del vehículo</title>
+  <link rel="icon" type="image/svg+xml" href="/brand/favicon.svg" />
+  <link rel="icon" type="image/png" href="/favicon.png" />
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+  <div class="max-w-2xl mx-auto px-4 py-6">
+    <div id="contenido" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+      <div class="flex items-center gap-3 px-6 pt-5 ficha-marca">
+        <img data-brand-logo alt="" class="hidden h-10 w-auto max-w-[220px] object-contain" />
+        <div data-brand-wordmark class="marca-wordmark">Concesionaria</div>
+        <p class="text-sm font-medium text-slate-500"><span data-brand-name>Concesionaria</span></p>
+      </div>
+      <p id="aviso-vendido" class="hidden mx-6 mt-4 rounded-lg bg-slate-100 border border-slate-200 px-3 py-2 text-sm text-slate-700">
+        Este vehículo ya está vendido. No se muestra en el sitio.
+      </p>
+      <button type="button" id="marco-foto" class="block w-full bg-slate-900 cursor-zoom-in mt-4">
+        <img id="foto-principal" class="w-full max-h-[32rem] object-contain bg-slate-900" alt="Foto del vehículo" />
+      </button>
+      <div id="miniaturas" class="flex gap-2 p-3 overflow-x-auto no-imprimir"></div>
+
+      <div class="p-6">
+        <div class="flex items-start justify-between gap-3">
+          <div>
+            <h1 id="titulo" class="text-2xl font-bold text-slate-900"></h1>
+            <p id="subtitulo" class="text-sm text-slate-500 mt-1"></p>
+          </div>
+          <span id="badge-estado" class="shrink-0 inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold"></span>
+        </div>
+
+        <div class="mt-4">
+          <p id="precio-anterior" class="hidden text-lg text-slate-400 line-through"></p>
+          <p id="precio" class="text-3xl font-bold text-indigo-700"></p>
+          <span id="badge-oferta" class="hidden mt-2 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-100 text-emerald-700">Oferta</span>
+        </div>
+
+        <div id="grid-specs" class="grid grid-cols-2 gap-3 mt-4 text-sm">
+          <div class="bg-slate-50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-400">Año</p>
+            <p id="dato-anio" class="font-semibold"></p>
+          </div>
+          <div class="bg-slate-50 rounded-lg px-3 py-2">
+            <p class="text-xs text-slate-400">Kilometraje</p>
+            <p id="dato-km" class="font-semibold"></p>
+          </div>
+        </div>
+
+        <div id="bloque-equipamiento" class="hidden mt-4">
+          <p class="text-xs text-slate-400 uppercase font-medium mb-1">Equipamiento</p>
+          <ul id="lista-equipamiento" class="flex flex-wrap gap-1.5"></ul>
+        </div>
+
+        <div id="bloque-notas" class="mt-4">
+          <p class="text-xs text-slate-400 uppercase font-medium mb-1">Detalles</p>
+          <p id="notas" class="text-sm text-slate-600 whitespace-pre-line"></p>
+        </div>
+
+        <div class="flex flex-wrap gap-2 mt-6 no-imprimir">
+          <a id="btn-consultar" class="hidden flex-1 min-w-[140px] text-center bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg text-sm" target="_blank" rel="noopener">
+            Consultar por WhatsApp
+          </a>
+          <button id="btn-whatsapp" class="flex-1 min-w-[140px] bg-green-600 hover:bg-green-700 text-white font-medium px-4 py-2 rounded-lg text-sm">
+            Compartir por WhatsApp
+          </button>
+          <button id="btn-copiar" class="flex-1 min-w-[140px] border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm">
+            Copiar enlace
+          </button>
+          <button id="btn-imprimir" class="flex-1 min-w-[140px] border border-slate-300 hover:bg-slate-50 text-slate-700 font-medium px-4 py-2 rounded-lg text-sm">
+            Imprimir
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div id="error" class="hidden bg-white rounded-xl shadow-sm border border-slate-200 p-8 text-center text-slate-500">
+      No se encontró el vehículo solicitado.
+    </div>
+  </div>
+
+  <style>
+    @media print {
+      body { background: white; }
+      .no-imprimir { display: none !important; }
+      #aviso-vendido { display: none !important; }
+      #marco-foto { background: white; cursor: default; }
+      #foto-principal { max-height: none; background: white; }
+      .ficha-marca { margin-bottom: 0.5rem; }
+    }
+    .marca-wordmark {
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 800;
+      font-size: 1.4rem;
+      letter-spacing: 0.06em;
+      line-height: 1;
+      color: #0e1116;
+    }
+    .marca-sep {
+      color: #e85d23;
+      font-family: Georgia, "Times New Roman", Times, serif;
+      font-weight: 700;
+    }
+  </style>
+
+  <script src="brand.js"></script>
+  <script src="media.js"></script>
+  <script src="ficha.js"></script>
+</body>
+</html>
