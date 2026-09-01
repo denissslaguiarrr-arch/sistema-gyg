@@ -2273,6 +2273,7 @@ window.GYG_CONFIG = {
 (function (global) {
   const TOKEN_KEY = "gyg_gh_token";
   const GIST_KEY = "gyg_gist_id";
+  const CACHE_KEY = "gyg_stock_cache";
 
   function cfg() {
     return global.GYG_CONFIG || {};
@@ -2322,6 +2323,11 @@ window.GYG_CONFIG = {
   }
 
   function getGistId() {
+    const fromCfg = (cfg().GIST_ID || "").trim();
+    if (fromCfg) return fromCfg;
+    const fromDom = gistFromDom("data-gist-id");
+    if (fromDom) return fromDom;
+
     try {
       const params = new URLSearchParams(location.search || "");
       const fromQuery = (params.get("gist") || "").trim();
@@ -2331,10 +2337,6 @@ window.GYG_CONFIG = {
       }
     } catch (_) {}
 
-    const fromCfg = (cfg().GIST_ID || "").trim();
-    if (fromCfg) return fromCfg;
-    const fromDom = gistFromDom("data-gist-id");
-    if (fromDom) return fromDom;
     try {
       return (localStorage.getItem(GIST_KEY) || "").trim();
     } catch (_) {
@@ -2366,10 +2368,30 @@ window.GYG_CONFIG = {
     };
     add(cfg().GIST_ID);
     add(gistFromDom("data-gist-id"));
-    try {
-      add(localStorage.getItem(GIST_KEY));
-    } catch (_) {}
+    if (!ids.length) {
+      try {
+        add(localStorage.getItem(GIST_KEY));
+      } catch (_) {}
+    }
     return ids;
+  }
+
+  function readStockCache() {
+    try {
+      const raw = localStorage.getItem(CACHE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== "object" || !parsed.data) return null;
+      return parsed.data;
+    } catch (_) {
+      return null;
+    }
+  }
+
+  function writeStockCache(data) {
+    try {
+      localStorage.setItem(CACHE_KEY, JSON.stringify({ savedAt: Date.now(), data }));
+    } catch (_) {}
   }
 
   function sleep(ms) {
@@ -2591,43 +2613,110 @@ window.GYG_CONFIG = {
     return { meta: raw.meta || {}, site, pages, vehicles };
   }
 
+  function fetchWithTimeout(url, ms) {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => {
+      try {
+        ctrl.abort();
+      } catch (_) {}
+    }, ms || 8000);
+    return fetch(url, { cache: "no-store", credentials: "omit", signal: ctrl.signal }).finally(() => {
+      clearTimeout(t);
+    });
+  }
+
   async function fetchJsonUrl(url) {
-    const res = await fetch(url, { cache: "no-store", credentials: "omit" });
+    const res = await fetchWithTimeout(url, 8000);
     if (!res.ok) throw new Error(`No se pudo leer el Gist (${res.status})`);
-    return res.json();
+    const text = await res.text();
+    try {
+      return JSON.parse(text);
+    } catch (_) {
+      throw new Error("El catálogo no es JSON válido");
+    }
+  }
+
+  function firstOk(producers) {
+    return new Promise((resolve, reject) => {
+      const list = Array.isArray(producers) ? producers : [];
+      let pending = list.length;
+      let lastErr;
+      if (!pending) {
+        reject(new Error("No se pudo descargar el catálogo"));
+        return;
+      }
+      let settled = false;
+      list.forEach((make) => {
+        Promise.resolve()
+          .then(make)
+          .then((value) => {
+            if (settled) return;
+            settled = true;
+            resolve(value);
+          })
+          .catch((err) => {
+            lastErr = err;
+            pending -= 1;
+            if (!settled && pending < 1) reject(lastErr || new Error("No se pudo descargar el catálogo"));
+          });
+      });
+    });
   }
 
   async function fetchViaRaw(gistId, filename) {
-    let lastErr;
     const urls = gistRawUrls(gistId, filename);
-    for (let i = 0; i < urls.length; i += 1) {
-      try {
-        return await fetchJsonUrl(urls[i]);
-      } catch (err) {
-        lastErr = err;
-      }
-    }
-    throw lastErr || new Error("No se pudo descargar el catálogo");
+    return firstOk(urls.map((url) => () => fetchJsonUrl(url)));
   }
 
   async function fetchViaApi(gistId, filename) {
-    const res = await fetch(`https://api.github.com/gists/${gistId}`, {
-      headers: { Accept: "application/vnd.github+json" },
-      cache: "no-store",
-      credentials: "omit",
-    });
+    const res = await fetchWithTimeout(`https://api.github.com/gists/${gistId}`, 8000);
     if (!res.ok) throw new Error(`No se pudo leer el Gist (${res.status})`);
     const data = await res.json();
     const file = data.files && data.files[filename];
     if (!file) throw new Error(`No existe el archivo ${filename} en el Gist`);
     if (file.content && !file.truncated) return JSON.parse(file.content);
     const raw = file.raw_url;
-    const rawRes = await fetch(`${raw}${raw.includes("?") ? "&" : "?"}t=${Date.now()}`, {
-      cache: "no-store",
-      credentials: "omit",
+    if (!raw) throw new Error(`No se pudo descargar ${filename}`);
+    return fetchJsonUrl(`${raw}${raw.includes("?") ? "&" : "?"}t=${Date.now()}`);
+  }
+
+  function fetchViaJsonp(gistId, filename) {
+    return new Promise((resolve, reject) => {
+      const cb = `gygGistCb${Date.now()}`;
+      const script = document.createElement("script");
+      let done = false;
+      const timer = setTimeout(() => finish(new Error("Gist JSONP timeout")), 8000);
+      function finish(err, data) {
+        if (done) return;
+        done = true;
+        clearTimeout(timer);
+        try {
+          delete window[cb];
+        } catch (_) {
+          window[cb] = undefined;
+        }
+        if (script.parentNode) script.parentNode.removeChild(script);
+        if (err) reject(err);
+        else resolve(data);
+      }
+      window[cb] = (payload) => {
+        try {
+          const gist = payload && payload.data ? payload.data : payload;
+          const file = gist && gist.files && gist.files[filename];
+          if (!file) throw new Error(`No existe el archivo ${filename} en el Gist`);
+          if (file.content && !file.truncated) {
+            finish(null, JSON.parse(file.content));
+            return;
+          }
+          throw new Error("Gist truncado");
+        } catch (err) {
+          finish(err);
+        }
+      };
+      script.onerror = () => finish(new Error("Gist JSONP error"));
+      script.src = `https://api.github.com/gists/${encodeURIComponent(gistId)}?callback=${cb}`;
+      document.head.appendChild(script);
     });
-    if (!rawRes.ok) throw new Error(`No se pudo descargar ${filename}`);
-    return rawRes.json();
   }
 
   async function fetchLocalSample() {
@@ -2656,7 +2745,11 @@ window.GYG_CONFIG = {
       try {
         return await fetchViaApi(gistId, filename);
       } catch (apiErr) {
-        throw apiErr || rawErr;
+        try {
+          return await fetchViaJsonp(gistId, filename);
+        } catch (jsonpErr) {
+          throw jsonpErr || apiErr || rawErr;
+        }
       }
     }
   }
@@ -2665,6 +2758,8 @@ window.GYG_CONFIG = {
     const filename = cfg().GIST_FILENAME || "stock.json";
     const ids = gistIdCandidates();
     if (!ids.length) {
+      const cached = readStockCache();
+      if (cached) return normalizeData(cached);
       const err = new Error("MISSING_GIST_ID");
       err.code = "MISSING_GIST_ID";
       throw err;
@@ -2672,16 +2767,16 @@ window.GYG_CONFIG = {
     let lastErr;
     for (let i = 0; i < ids.length; i += 1) {
       const gistId = ids[i];
-      for (let intento = 0; intento < 3; intento += 1) {
-        try {
-          return normalizeData(await loadGistOnce(gistId, filename));
-        } catch (err) {
-          lastErr = err;
-          await sleep(280 * (intento + 1));
-        }
+      try {
+        const raw = await loadGistOnce(gistId, filename);
+        writeStockCache(raw);
+        return normalizeData(raw);
+      } catch (err) {
+        lastErr = err;
       }
-      if (i === 0 && ids.length > 1) clearStoredGistId();
     }
+    const cached = readStockCache();
+    if (cached) return normalizeData(cached);
     const localPath = (cfg().LOCAL_SAMPLE_PATH || "").trim();
     if (localPath) {
       try {
@@ -4393,43 +4488,20 @@ window.GYG_CONFIG = {
 
   async function init() {
     try {
-      data = await GyGStock.loadStock();
       try {
+        if ((window.GYG_CONFIG && String(window.GYG_CONFIG.GIST_ID || "").trim()) || document.getElementById("gyg-blogger-root")?.getAttribute("data-gist-id")) {
+          localStorage.removeItem("gyg_gist_id");
+        }
         sessionStorage.removeItem("gyg_gist_auto_retry");
       } catch (_) {}
+      data = await GyGStock.loadStock();
       updateChrome();
       if (!location.hash || location.hash === "#") location.hash = "#/";
       route();
     } catch (err) {
       console.error(err);
-      if (!err || err.code !== "MISSING_GIST_ID") {
-        var auto = 0;
-        try {
-          auto = Number(sessionStorage.getItem("gyg_gist_auto_retry") || "0");
-        } catch (_) {
-          auto = 0;
-        }
-        if (auto < 2) {
-          try {
-            sessionStorage.setItem("gyg_gist_auto_retry", String(auto + 1));
-          } catch (_) {}
-          GyGStock.clearStoredGistId();
-          app.innerHTML =
-            '<section class="empty-state" style="margin:3rem 1.25rem;max-width:36rem">' +
-            "<h1>Cargando el catálogo…</h1>" +
-            "<p>Un momento, lo estamos bajando de nuevo.</p>" +
-            "</section>";
-          setTimeout(function () {
-            location.reload();
-          }, 2200);
-          return;
-        }
-        try {
-          sessionStorage.removeItem("gyg_gist_auto_retry");
-        } catch (_) {}
-      }
       renderGistSetup(err);
-      toast("No se pudo cargar el catálogo. Recargá en un momento.", "error");
+      toast("No se pudo cargar el catálogo. Tocá Reintentar.", "error");
     }
   }
 

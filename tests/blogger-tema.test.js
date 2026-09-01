@@ -131,18 +131,18 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   assert.doesNotMatch(gyg, /id='ggLockup'/);
 });
 
-test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {
+test("el catálogo se baja por URL cruda y no se queda en Cargando el catálogo", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(js, /GIST_OWNER/);
   assert.match(js, /function gistRawUrls/);
   assert.match(js, /function fetchViaRaw/);
   assert.match(js, /function gistIdCandidates/);
   assert.match(js, /gist\.githubusercontent\.com/);
-  assert.match(js, /gyg_gist_auto_retry/);
-  assert.match(js, /Cargando el catálogo/);
+  assert.match(js, /function fetchViaJsonp/);
+  assert.match(js, /gyg_stock_cache/);
   assert.match(js, /credentials: "omit"/);
+  assert.doesNotMatch(js, /Cargando el catálogo/);
   assert.match(tema, /gist\.githubusercontent\.com/);
-  assert.match(tema, /gyg_gist_auto_retry/);
 });
 
 test("el precio no se muestra si no está tildado y hay botón de consulta", () => {
