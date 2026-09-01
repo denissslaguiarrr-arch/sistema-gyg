@@ -108,20 +108,7 @@ const destino = path.join(dir, "tema.xml");
 fs.writeFileSync(destino, xml);
 console.log("Wrote", destino, "(" + xml.split("\n").length + " lines)");
 
-function stockFallbackJs() {
-  const stockPath = path.join(dir, "stock.gyg.json");
-  if (!fs.existsSync(stockPath)) return "";
-  const stock = JSON.parse(fs.readFileSync(stockPath, "utf8"));
-  const json = JSON.stringify(stock)
-    .replace(/</g, "\\u003c")
-    .replace(/\u2028/g, "\\u2028")
-    .replace(/\u2029/g, "\\u2029");
-  return `window.GYG_STOCK_FALLBACK = ${json};\n`;
-}
-
-const jsGyg = (
-  stockFallbackJs() +
-  js
+const jsGyg = js
   .replace(/GIST_ID: ""/, 'GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f"')
   .replace(/GIST_OWNER: ""/, 'GIST_OWNER: "denissslaguiarrr-arch"')
   .replace(/WHATSAPP_NUMBER: ""/, 'WHATSAPP_NUMBER: "+54 9 3735 46-2914"')
@@ -134,8 +121,7 @@ const jsGyg = (
     "function displayBrandName(value) {\n    const n = String(value == null ? \"\" : value).trim();\n    if (n) return n;\n    return String(cfg().DEALERSHIP_NAME || \"Concesionaria\").trim() || \"Concesionaria\";\n  }",
     "function displayBrandName(value) {\n    const n = reescribirMarca(value).trim();\n    if (!n) return \"G\\u0026G\";\n    return n;\n  }"
   )
-  .replace(/\n  LOGO_URL: ""/, `\n  LOGO_URL: ${JSON.stringify(logoGyg)}`)
-);
+  .replace(/\n  LOGO_URL: ""/, `\n  LOGO_URL: ${JSON.stringify(logoGyg)}`);
 const temaGyg = armarTema(jsGyg, {
   favicon: favGyg,
   faviconType: "image/png",
