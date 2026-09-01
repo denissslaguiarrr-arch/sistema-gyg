@@ -101,8 +101,18 @@ const jsGyg = js
   .replace(/GIST_ID: ""/, 'GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f"')
   .replace(/GIST_OWNER: ""/, 'GIST_OWNER: "denissslaguiarrr-arch"')
   .replace(/WHATSAPP_NUMBER: ""/, 'WHATSAPP_NUMBER: "+54 9 3735 46-2914"')
-  .replace(/DEALERSHIP_NAME: "Concesionaria"/, 'DEALERSHIP_NAME: "G\\u0026G"');
-const temaGyg = armarTema(jsGyg);
+  .replace(/DEALERSHIP_NAME: "Concesionaria"/, 'DEALERSHIP_NAME: "G\\u0026G"')
+  .replace(
+    "function reescribirMarca(texto) {\n    return String(texto == null ? \"\" : texto);\n  }",
+    "function reescribirMarca(texto) {\n    return String(texto == null ? \"\" : texto).replace(/\\bg\\s*y\\s*g\\b(?![\\w-])/gi, \"G\\u0026G\");\n  }"
+  )
+  .replace(
+    "function displayBrandName(value) {\n    const n = String(value == null ? \"\" : value).trim();\n    if (n) return n;\n    return String(cfg().DEALERSHIP_NAME || \"Concesionaria\").trim() || \"Concesionaria\";\n  }",
+    "function displayBrandName(value) {\n    const n = reescribirMarca(value).trim();\n    if (!n) return \"G\\u0026G\";\n    return n;\n  }"
+  );
+const temaGyg = armarTema(jsGyg)
+  .replace("id='brandName'>Concesionaria<", "id='brandName'>G&amp;G<")
+  .replace("id='footerBrand'>Concesionaria<", "id='footerBrand'>G&amp;G<");
 const destinoGyg = path.join(dir, "tema-gyg-automotores.xml");
 fs.writeFileSync(destinoGyg, temaGyg);
 console.log("Wrote", destinoGyg, "(" + temaGyg.split("\n").length + " lines)");

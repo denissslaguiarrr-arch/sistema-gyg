@@ -114,7 +114,10 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   assert.match(gyg, /\.home-hero__veil \{\s*display: none/);
   assert.match(gyg, /function esInstalador/);
   assert.match(gyg, /height: min\(72vh, 36rem\)/);
+  assert.match(gyg, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
+  assert.match(gyg, /id='brandName'>G&amp;G</);
   assert.match(tema, /GIST_ID: ""/);
+  assert.doesNotMatch(tema, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
 });
 
 test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {

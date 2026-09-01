@@ -2206,7 +2206,7 @@ body.has-wa-bar .site-footer {
           <div class='site-header__inner'>
             <a aria-label='Inicio' class='brand' href='#/'>
               <img alt='' class='brand__logo hidden' id='brandLogo'/>
-              <div class='brand__name' id='brandName'>Concesionaria</div>
+              <div class='brand__name' id='brandName'>G&amp;G</div>
               <div class='brand__tag' id='brandTag'>Selección premium</div>
             </a>
             <button aria-controls='navLinks' aria-expanded='false' aria-label='Abrir menú' class='nav-toggle' id='navToggle' type='button'>
@@ -2229,7 +2229,7 @@ body.has-wa-bar .site-footer {
         </main>
         <footer class='site-footer'>
           <div class='site-footer__main'>
-            <div><span id='footerBrand'>Concesionaria</span> <span id='year'/></div>
+            <div><span id='footerBrand'>G&amp;G</span> <span id='year'/></div>
             <div id='footerUpdated'>Stock en vivo</div>
           </div>
           <div class='site-footer__legal'>
@@ -2277,7 +2277,7 @@ window.GYG_CONFIG = {
   }
 
   function reescribirMarca(texto) {
-    return String(texto == null ? "" : texto);
+    return String(texto == null ? "" : texto).replace(/\bg\s*y\s*g\b(?![\w-])/gi, "G\u0026G");
   }
 
   function reescribirMarcaEn(valor) {
@@ -2296,9 +2296,9 @@ window.GYG_CONFIG = {
   }
 
   function displayBrandName(value) {
-    const n = String(value == null ? "" : value).trim();
-    if (n) return n;
-    return String(cfg().DEALERSHIP_NAME || "Concesionaria").trim() || "Concesionaria";
+    const n = reescribirMarca(value).trim();
+    if (!n) return "G\u0026G";
+    return n;
   }
 
   function getToken() {
