@@ -473,6 +473,10 @@ textarea {
   .carousel__track {
     transition: none;
   }
+
+  .home-hero__photo {
+    transform: none;
+  }
 }
 
 .home-links {
@@ -2075,39 +2079,29 @@ body.has-wa-bar .site-footer {
   }
 
   .home-hero__photo {
-    object-position: 22% 48%;
+    object-position: 18% 52%;
   }
 }
 
 @media (max-width: 640px) {
   .home-hero {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    height: auto;
-    min-height: 0;
+    min-height: min(78vh, 640px);
   }
 
   .home-hero__photo {
-    position: relative;
-    inset: auto;
-    width: 100%;
-    height: min(72vh, 36rem);
     object-fit: cover;
-    object-position: 22% 48%;
-    transform: none;
-    flex-shrink: 0;
+    object-position: 18% 52%;
+    transform: scale(1.28);
+    transform-origin: 18% 62%;
   }
 
   .home-hero__veil {
-    display: none;
+    background:
+      linear-gradient(180deg, rgba(14, 17, 22, 0.06) 0%, rgba(14, 17, 22, 0.1) 38%, rgba(14, 17, 22, 0.7) 100%);
   }
 
   .home-hero__content {
-    position: relative;
-    inset: auto;
-    padding: 1.15rem 1.1rem 1.4rem;
-    max-width: none;
+    padding: 2.1rem 1.1rem 1.45rem;
   }
 
   .home-hero__copy {

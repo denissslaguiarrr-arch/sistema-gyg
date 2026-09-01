@@ -114,9 +114,9 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   assert.match(gyg, /data-gist-owner='denissslaguiarrr-arch'/);
   assert.match(gyg, /function gistFromDom/);
   assert.doesNotMatch(tema, /data-gist-id='74837d1c1f0a9a3a67e6dc5cc4fa5b6f'/);
-  assert.match(gyg, /\.home-hero__veil \{\s*display: none/);
   assert.match(gyg, /function esInstalador/);
-  assert.match(gyg, /height: min\(72vh, 36rem\)/);
+  assert.match(gyg, /object-position: 18% 52%/);
+  assert.match(gyg, /transform: scale\(1\.28\)/);
   assert.match(gyg, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
   assert.match(gyg, /alt='G&amp;G Automotores'/);
   assert.match(gyg, /class='brand__logo'/);
@@ -217,20 +217,20 @@ test("en el celular el menú es un botón y la foto de inicio es una imagen real
 
 test("en el celular la portada muestra el cartel y el auto", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
-  assert.match(css, /object-position: 22% 48%/);
-  assert.match(css, /transform: none/);
+  assert.match(css, /object-position: 18% 52%/);
+  assert.match(css, /transform: scale\(1\.28\)/);
+  assert.match(css, /transform-origin: 18% 62%/);
   assert.doesNotMatch(css, /object-position: center 38%/);
-  assert.match(tema, /object-position: 22% 48%/);
+  assert.match(tema, /object-position: 18% 52%/);
 });
 
-test("en el celular el recuadro no tapa la foto de inicio", () => {
+test("en el celular el texto sigue sobre la foto y el recorte enfoca el auto", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
-  assert.match(css, /\.home-hero__veil \{\s*display: none/);
-  assert.match(css, /height: min\(72vh, 36rem\)/);
-  assert.match(css, /flex-shrink: 0/);
-  assert.match(css, /\.home-hero__content \{\s*position: relative;\s*inset: auto/);
+  assert.doesNotMatch(css, /\.home-hero__veil \{\s*display: none/);
+  assert.match(css, /min-height: min\(78vh, 640px\)/);
+  assert.match(css, /transform-origin: 18% 62%/);
   assert.match(css, /\.home-hero__copy \{[\s\S]*?background: transparent/);
-  assert.match(tema, /\.home-hero__veil \{\s*display: none/);
+  assert.match(tema, /transform: scale\(1\.28\)/);
 });
 
 test("los títulos 0 km y Usados caben en el celular", () => {
