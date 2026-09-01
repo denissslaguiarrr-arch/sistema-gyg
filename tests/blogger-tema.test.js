@@ -66,9 +66,7 @@ test("el hero muestra el nombre configurado como wordmark", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(css, /\.brand-sep/);
-  assert.match(css, /\.gg-lockup/);
   assert.match(js, /brand-sep/);
-  assert.match(js, /getElementById\("ggLockup"\)/);
   assert.match(js, /home-hero__brand/);
   assert.match(js, /Vendé tu auto<\/h2>/);
   assert.doesNotMatch(js, /Vendé tu auto con G/);
@@ -116,17 +114,17 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   assert.match(gyg, /function esInstalador/);
   assert.match(gyg, /height: min\(72vh, 36rem\)/);
   assert.match(gyg, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
-  assert.match(gyg, /id='ggLockup'/);
-  assert.match(gyg, /gg-lockup__amp/);
-  assert.match(gyg, /AUTOMOTORES/);
-  assert.match(gyg, /Playfair Display/);
+  assert.match(gyg, /alt='G&amp;G Automotores'/);
+  assert.match(gyg, /class='brand__logo'/);
+  assert.match(gyg, /LOGO_URL: "data:image\/png;base64,/);
   assert.match(gyg, /id='brandName'>G&amp;G</);
   assert.match(gyg, /rel='icon' type='image\/png'/);
+  assert.match(gyg, /mix-blend-mode: multiply/);
   assert.match(tema, /GIST_ID: ""/);
   assert.match(tema, /rel='icon' type='image\/svg\+xml'/);
   assert.doesNotMatch(tema, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
-  assert.doesNotMatch(tema, /id='ggLockup'/);
   assert.doesNotMatch(tema, /alt='G&amp;G Automotores'/);
+  assert.doesNotMatch(gyg, /id='ggLockup'/);
 });
 
 test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {

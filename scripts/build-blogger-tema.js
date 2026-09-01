@@ -15,18 +15,7 @@ function dataUri(filePath, mime) {
 const favSrc = dataUri(path.join(publicDir, "brand", "favicon.svg"), "image/svg+xml");
 const appleSrc = dataUri(path.join(publicDir, "apple-touch-icon.png"), "image/png");
 const favGyg = dataUri(path.join(publicDir, "favicon.png"), "image/png");
-
-const ggLockup = `<span aria-hidden='true' class='gg-lockup' id='ggLockup'>
-                <span class='gg-lockup__mark'>G<span class='gg-lockup__amp'>&amp;</span>G</span>
-                <span class='gg-lockup__aside'>
-                  <svg class='gg-lockup__roof' viewBox='0 0 220 28'>
-                    <path d='M6 22 C 58 4, 138 2, 214 16' fill='none' stroke='#e85d23' stroke-linecap='round' stroke-width='4'/>
-                  </svg>
-                  <span class='gg-lockup__word'>AUTOMOTORES</span>
-                </span>
-              </span>
-              <img alt='' class='brand__logo hidden' id='brandLogo'/>
-              <div class='brand__name hidden' id='brandName'>G&amp;G</div>`;
+const logoGyg = dataUri(path.join(publicDir, "brand", "logo-gg-automotores.png"), "image/png");
 
 function armarTema(jsEmbebido, extras = {}) {
   const iconHref = extras.favicon || favSrc;
@@ -34,12 +23,10 @@ function armarTema(jsEmbebido, extras = {}) {
   const appleHref = extras.apple || appleSrc;
   const brandName = extras.brandName || "Concesionaria";
   const footerName = extras.footerName || "Concesionaria";
-  const logoBlock = extras.useGgLockup
-    ? ggLockup
-    : extras.logoSrc
-      ? `<img alt='G&amp;G Automotores' class='brand__logo' id='brandLogo' src='${extras.logoSrc}'/>
+  const logoBlock = extras.logoSrc
+    ? `<img alt='G&amp;G Automotores' class='brand__logo' id='brandLogo' src='${extras.logoSrc}'/>
               <div class='brand__name hidden' id='brandName'>${brandName}</div>`
-      : `<img alt='' class='brand__logo hidden' id='brandLogo'/>
+    : `<img alt='' class='brand__logo hidden' id='brandLogo'/>
               <div class='brand__name' id='brandName'>${brandName}</div>`;
   return `<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
@@ -133,11 +120,12 @@ const jsGyg = js
     .replace(
     "function displayBrandName(value) {\n    const n = String(value == null ? \"\" : value).trim();\n    if (n) return n;\n    return String(cfg().DEALERSHIP_NAME || \"Concesionaria\").trim() || \"Concesionaria\";\n  }",
     "function displayBrandName(value) {\n    const n = reescribirMarca(value).trim();\n    if (!n) return \"G\\u0026G\";\n    return n;\n  }"
-  );
+  )
+  .replace(/\n  LOGO_URL: ""/, `\n  LOGO_URL: ${JSON.stringify(logoGyg)}`);
 const temaGyg = armarTema(jsGyg, {
   favicon: favGyg,
   faviconType: "image/png",
-  useGgLockup: true,
+  logoSrc: logoGyg,
   brandName: "G&amp;G",
   footerName: "G&amp;G",
 });
