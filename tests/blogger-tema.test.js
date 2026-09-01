@@ -116,8 +116,12 @@ test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => 
   assert.match(gyg, /height: min\(72vh, 36rem\)/);
   assert.match(gyg, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
   assert.match(gyg, /id='brandName'>G&amp;G</);
+  assert.match(gyg, /alt='G&amp;G Automotores'/);
+  assert.match(gyg, /rel='icon' type='image\/png'/);
   assert.match(tema, /GIST_ID: ""/);
+  assert.match(tema, /rel='icon' type='image\/svg\+xml'/);
   assert.doesNotMatch(tema, /replace\(\/\\bg\\s\*y\\s\*g\\b/);
+  assert.doesNotMatch(tema, /alt='G&amp;G Automotores'/);
 });
 
 test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {

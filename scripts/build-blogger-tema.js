@@ -14,8 +14,20 @@ function dataUri(filePath, mime) {
 
 const favSrc = dataUri(path.join(publicDir, "brand", "favicon.svg"), "image/svg+xml");
 const appleSrc = dataUri(path.join(publicDir, "apple-touch-icon.png"), "image/png");
+const favGyg = dataUri(path.join(publicDir, "favicon.png"), "image/png");
+const logoGyg = dataUri(path.join(publicDir, "brand", "logo-gg-automotores.png"), "image/png");
 
-function armarTema(jsEmbebido) {
+function armarTema(jsEmbebido, extras = {}) {
+  const iconHref = extras.favicon || favSrc;
+  const iconType = extras.faviconType || "image/svg+xml";
+  const appleHref = extras.apple || appleSrc;
+  const brandName = extras.brandName || "Concesionaria";
+  const footerName = extras.footerName || "Concesionaria";
+  const logoBlock = extras.logoSrc
+    ? `<img alt='G&amp;G Automotores' class='brand__logo' id='brandLogo' src='${extras.logoSrc}'/>
+              <div class='brand__name hidden' id='brandName'>${brandName}</div>`
+    : `<img alt='' class='brand__logo hidden' id='brandLogo'/>
+              <div class='brand__name' id='brandName'>${brandName}</div>`;
   return `<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
 <html b:css='false' b:defaultwidgets='false' b:layoutsVersion='3' b:responsive='true' b:templateVersion='1.0.0' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
@@ -23,8 +35,8 @@ function armarTema(jsEmbebido) {
     <meta charset='UTF-8'/>
     <meta content='width=device-width, initial-scale=1, viewport-fit=cover' name='viewport'/>
     <title><data:blog.pageTitle/></title>
-    <link href='${favSrc}' rel='icon' type='image/svg+xml'/>
-    <link href='${appleSrc}' rel='apple-touch-icon'/>
+    <link href='${iconHref}' rel='icon' type='${iconType}'/>
+    <link href='${appleHref}' rel='apple-touch-icon'/>
     <b:include data='blog' name='all-head-content'/>
     <b:skin version='1.0.0'><![CDATA[
 ${css}
@@ -40,8 +52,7 @@ ${css}
         <header class='site-header'>
           <div class='site-header__inner'>
             <a aria-label='Inicio' class='brand' href='#/'>
-              <img alt='' class='brand__logo hidden' id='brandLogo'/>
-              <div class='brand__name' id='brandName'>Concesionaria</div>
+              ${logoBlock}
               <div class='brand__tag' id='brandTag'>Selección premium</div>
             </a>
             <button aria-controls='navLinks' aria-expanded='false' aria-label='Abrir menú' class='nav-toggle' id='navToggle' type='button'>
@@ -64,7 +75,7 @@ ${css}
         </main>
         <footer class='site-footer'>
           <div class='site-footer__main'>
-            <div><span id='footerBrand'>Concesionaria</span> <span id='year'/></div>
+            <div><span id='footerBrand'>${footerName}</span> <span id='year'/></div>
             <div id='footerUpdated'>Stock en vivo</div>
           </div>
           <div class='site-footer__legal'>
@@ -106,13 +117,22 @@ const jsGyg = js
     "function reescribirMarca(texto) {\n    return String(texto == null ? \"\" : texto);\n  }",
     "function reescribirMarca(texto) {\n    return String(texto == null ? \"\" : texto).replace(/\\bg\\s*y\\s*g\\b(?![\\w-])/gi, \"G\\u0026G\");\n  }"
   )
-  .replace(
+    .replace(
     "function displayBrandName(value) {\n    const n = String(value == null ? \"\" : value).trim();\n    if (n) return n;\n    return String(cfg().DEALERSHIP_NAME || \"Concesionaria\").trim() || \"Concesionaria\";\n  }",
     "function displayBrandName(value) {\n    const n = reescribirMarca(value).trim();\n    if (!n) return \"G\\u0026G\";\n    return n;\n  }"
-  );
-const temaGyg = armarTema(jsGyg)
-  .replace("id='brandName'>Concesionaria<", "id='brandName'>G&amp;G<")
-  .replace("id='footerBrand'>Concesionaria<", "id='footerBrand'>G&amp;G<");
+  )
+  .replace(
+    'const logo = String(site.logoUrl || site.logo || "").trim();',
+    'const logo = String(site.logoUrl || site.logo || GYG_CONFIG.LOGO_URL || "").trim();'
+  )
+  .replace(/LOCAL_SAMPLE_PATH: ""/, `LOCAL_SAMPLE_PATH: "",\n  LOGO_URL: ${JSON.stringify(logoGyg)}`);
+const temaGyg = armarTema(jsGyg, {
+  favicon: favGyg,
+  faviconType: "image/png",
+  logoSrc: logoGyg,
+  brandName: "G&amp;G",
+  footerName: "G&amp;G",
+});
 const destinoGyg = path.join(dir, "tema-gyg-automotores.xml");
 fs.writeFileSync(destinoGyg, temaGyg);
 console.log("Wrote", destinoGyg, "(" + temaGyg.split("\n").length + " lines)");
