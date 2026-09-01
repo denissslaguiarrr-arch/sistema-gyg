@@ -227,6 +227,8 @@ test("en el celular el recuadro no tapa la foto de inicio", () => {
   const css = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.css"), "utf8");
   assert.match(css, /\.home-hero__veil \{\s*display: none/);
   assert.match(css, /height: min\(72vh, 36rem\)/);
+  assert.match(css, /flex-shrink: 0/);
+  assert.match(css, /\.home-hero__content \{\s*position: relative;\s*inset: auto/);
   assert.match(css, /\.home-hero__copy \{[\s\S]*?background: transparent/);
   assert.match(tema, /\.home-hero__veil \{\s*display: none/);
 });

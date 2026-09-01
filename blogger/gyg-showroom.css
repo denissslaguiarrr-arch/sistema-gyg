@@ -2096,6 +2096,7 @@ body.has-wa-bar .site-footer {
     object-fit: cover;
     object-position: 22% 48%;
     transform: none;
+    flex-shrink: 0;
   }
 
   .home-hero__veil {
@@ -2103,6 +2104,8 @@ body.has-wa-bar .site-footer {
   }
 
   .home-hero__content {
+    position: relative;
+    inset: auto;
     padding: 1.15rem 1.1rem 1.4rem;
     max-width: none;
   }

@@ -1271,18 +1271,18 @@ window.GYG_CONFIG = {
         <div class="home-hero__veil"></div>
         <div class="home-hero__content">
           <div class="home-hero__copy">
-          <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
-          ${esSoloMarca(c.headline || site.name) ? "" : `<h1 class="home-hero__brand">${brandMarkup(c.headline || site.name)}</h1>`}
-          <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
-          <div class="home-hero__cta">
-            <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>
-            ${
-              secondary && secondary.label
-                ? `<a class="btn btn--ghost home-hero__ghost" href="${escapeAttr(secondary.href || "#/")}">${escapeHtml(secondary.label)}</a>`
-                : ""
-            }
-            <a class="btn btn--ghost home-hero__ghost" href="#/vender">Vendé tu auto</a>
-          </div>
+            <div class="home-hero__eyebrow">${escapeHtml(c.eyebrow || site.tagline || "")}</div>
+            ${esSoloMarca(c.headline || site.name) ? "" : `<h1 class="home-hero__brand">${brandMarkup(c.headline || site.name)}</h1>`}
+            <p class="home-hero__sub">${escapeHtml(c.subtitle || "")}</p>
+            <div class="home-hero__cta">
+              <a class="btn btn--primary" href="${escapeAttr(primary.href || "#/stock")}">${escapeHtml(primary.label || "Ver stock")}</a>
+              ${
+                secondary && secondary.label
+                  ? `<a class="btn btn--ghost home-hero__ghost" href="${escapeAttr(secondary.href || "#/")}">${escapeHtml(secondary.label)}</a>`
+                  : ""
+              }
+              <a class="btn btn--ghost home-hero__ghost" href="#/vender">Vendé tu auto</a>
+            </div>
           </div>
         </div>
       </section>
