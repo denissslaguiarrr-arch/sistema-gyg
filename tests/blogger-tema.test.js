@@ -107,6 +107,16 @@ test("si el catálogo no carga, el visitante ve reintentar y no un formulario de
   assert.doesNotMatch(js, /Falta configurar el catálogo/);
 });
 
+test("el tema para pegar en G&G trae el Gist viejo y los cambios nuevos", () => {
+  const gyg = fs.readFileSync(path.join(__dirname, "../blogger/tema-gyg-automotores.xml"), "utf8");
+  assert.match(gyg, /GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f"/);
+  assert.match(gyg, /GIST_OWNER: "denissslaguiarrr-arch"/);
+  assert.match(gyg, /\.home-hero__veil \{\s*display: none/);
+  assert.match(gyg, /function esInstalador/);
+  assert.match(gyg, /height: min\(72vh, 36rem\)/);
+  assert.match(tema, /GIST_ID: ""/);
+});
+
 test("el catálogo se baja por URL cruda y se reintenta solo en el celular", () => {
   const js = fs.readFileSync(path.join(__dirname, "../blogger/gyg-showroom.js"), "utf8");
   assert.match(js, /GIST_OWNER/);

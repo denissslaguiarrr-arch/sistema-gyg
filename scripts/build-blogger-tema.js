@@ -15,7 +15,8 @@ function dataUri(filePath, mime) {
 const favSrc = dataUri(path.join(publicDir, "brand", "favicon.svg"), "image/svg+xml");
 const appleSrc = dataUri(path.join(publicDir, "apple-touch-icon.png"), "image/png");
 
-const xml = `<?xml version="1.0" encoding="UTF-8" ?>
+function armarTema(jsEmbebido) {
+  return `<?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE html>
 <html b:css='false' b:defaultwidgets='false' b:layoutsVersion='3' b:responsive='true' b:templateVersion='1.0.0' expr:dir='data:blog.languageDirection' xmlns='http://www.w3.org/1999/xhtml' xmlns:b='http://www.google.com/2005/gml/b' xmlns:data='http://www.google.com/2005/gml/data' xmlns:expr='http://www.google.com/2005/gml/expr'>
   <head>
@@ -83,13 +84,25 @@ ${css}
 
     <script type='text/javascript'>
 //<![CDATA[
-${js}
+${jsEmbebido}
 //]]>
     </script>
   </body>
 </html>
 `;
+}
 
+const xml = armarTema(js);
 const destino = path.join(dir, "tema.xml");
 fs.writeFileSync(destino, xml);
 console.log("Wrote", destino, "(" + xml.split("\n").length + " lines)");
+
+const jsGyg = js
+  .replace(/GIST_ID: ""/, 'GIST_ID: "74837d1c1f0a9a3a67e6dc5cc4fa5b6f"')
+  .replace(/GIST_OWNER: ""/, 'GIST_OWNER: "denissslaguiarrr-arch"')
+  .replace(/WHATSAPP_NUMBER: ""/, 'WHATSAPP_NUMBER: "+54 9 3735 46-2914"')
+  .replace(/DEALERSHIP_NAME: "Concesionaria"/, 'DEALERSHIP_NAME: "G\\u0026G"');
+const temaGyg = armarTema(jsGyg);
+const destinoGyg = path.join(dir, "tema-gyg-automotores.xml");
+fs.writeFileSync(destinoGyg, temaGyg);
+console.log("Wrote", destinoGyg, "(" + temaGyg.split("\n").length + " lines)");
