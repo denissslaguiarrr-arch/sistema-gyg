@@ -2076,35 +2076,56 @@ body.has-wa-bar .site-footer {
     border-top: 1px solid var(--line);
   }
 
-  /* La foto del local se ve entera: cartel G&G arriba y el auto abajo.
-     En el celular el recuadro y los botones la tapaban. */
+  /* En el celular la foto se muestra entera (cartel G&G + auto).
+     Un recorte alto cortaba el cartel. Los botones van chicos abajo. */
   .home-hero {
     min-height: 0;
-    max-height: 85vh;
-    max-height: 85dvh;
-    aspect-ratio: 3 / 4;
-    align-items: stretch;
+    max-height: none;
+    aspect-ratio: auto;
+    display: block;
   }
 
   .home-hero__photo {
-    object-fit: cover;
-    object-position: center 30%;
+    position: relative;
+    inset: auto;
+    display: block;
+    width: 100%;
+    height: auto;
+    object-fit: contain;
+    object-position: center top;
   }
 
   .home-hero__veil {
-    background: transparent;
+    background: linear-gradient(180deg, transparent 58%, rgba(14, 17, 22, 0.5) 100%);
   }
 
   .home-hero__content {
-    padding: 0;
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0.5rem 0.8rem 0.7rem;
     pointer-events: none;
   }
 
   .home-hero__eyebrow,
   .home-hero__brand,
-  .home-hero__sub,
-  .home-hero__cta {
+  .home-hero__sub {
     display: none;
+  }
+
+  .home-hero__cta {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin: 0;
+    pointer-events: auto;
+  }
+
+  .home-hero__cta .btn {
+    padding: 0.38rem 0.65rem;
+    font-size: 0.7rem;
+    letter-spacing: 0.02em;
   }
 
   .home-hero__copy {
@@ -2113,6 +2134,8 @@ body.has-wa-bar .site-footer {
     background: none;
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
+    max-width: 100%;
+    width: 100%;
   }
 }
 

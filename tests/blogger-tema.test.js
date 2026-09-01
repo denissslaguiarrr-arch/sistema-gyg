@@ -178,8 +178,8 @@ test("en el celular el menú es un botón y la foto de inicio es una imagen real
   assert.match(css, /@media \(max-width: 920px\)/);
   assert.match(js, /home-hero__photo/);
   assert.match(js, /setupNavToggle/);
-  assert.match(css, /aspect-ratio: 3 \/ 4/);
-  assert.match(css, /\.home-hero__cta \{\s*display: none;/);
+  assert.match(css, /object-position: center top/);
+  assert.match(css, /\.home-hero__cta \.btn/);
   assert.match(tema, /nav-toggle/);
   assert.match(tema, /home-hero__photo/);
   assert.doesNotMatch(js, /--hero-image: url\(/);
