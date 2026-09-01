@@ -2388,6 +2388,17 @@ window.GYG_CONFIG = {
     } catch (_) {}
   }
 
+  function embeddedStock() {
+    if (global.GYG_STOCK_FALLBACK && typeof global.GYG_STOCK_FALLBACK === "object") {
+      return global.GYG_STOCK_FALLBACK;
+    }
+    return null;
+  }
+
+  function stockOnHand() {
+    return readStockCache() || embeddedStock();
+  }
+
   function sleep(ms) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
@@ -2748,39 +2759,51 @@ window.GYG_CONFIG = {
     }
   }
 
-  async function loadStock() {
-    const filename = cfg().GIST_FILENAME || "stock.json";
-    const ids = gistIdCandidates();
-    if (!ids.length) {
-      const cached = readStockCache();
-      if (cached) return normalizeData(cached);
-      const err = new Error("MISSING_GIST_ID");
-      err.code = "MISSING_GIST_ID";
-      throw err;
-    }
+  async function fetchLiveStock(ids, filename) {
     let lastErr;
     for (let i = 0; i < ids.length; i += 1) {
-      const gistId = ids[i];
       try {
-        const raw = await loadGistOnce(gistId, filename);
+        const raw = await loadGistOnce(ids[i], filename);
         writeStockCache(raw);
         return normalizeData(raw);
       } catch (err) {
         lastErr = err;
       }
     }
-    const cached = readStockCache();
-    if (cached) return normalizeData(cached);
-    const localPath = (cfg().LOCAL_SAMPLE_PATH || "").trim();
-    if (localPath) {
-      try {
-        return normalizeData(await fetchLocalSample());
-      } catch (_) {}
+    throw lastErr || new Error("No se pudo leer el Gist");
+  }
+
+  async function loadStock() {
+    const filename = cfg().GIST_FILENAME || "stock.json";
+    const ids = gistIdCandidates();
+    const ready = stockOnHand();
+    if (!ids.length) {
+      if (ready) return normalizeData(ready);
+      const err = new Error("MISSING_GIST_ID");
+      err.code = "MISSING_GIST_ID";
+      throw err;
     }
-    const err = new Error((lastErr && lastErr.message) || "No se pudo leer el Gist");
-    err.code = "GIST_LOAD_FAILED";
-    err.cause = lastErr;
-    throw err;
+    const live = fetchLiveStock(ids, filename);
+    if (ready) {
+      const winner = await Promise.race([live.catch(() => null), sleep(1800).then(() => null)]);
+      if (winner) return winner;
+      live.catch(() => {});
+      return normalizeData(ready);
+    }
+    try {
+      return await live;
+    } catch (lastErr) {
+      const localPath = (cfg().LOCAL_SAMPLE_PATH || "").trim();
+      if (localPath) {
+        try {
+          return normalizeData(await fetchLocalSample());
+        } catch (_) {}
+      }
+      const err = new Error((lastErr && lastErr.message) || "No se pudo leer el Gist");
+      err.code = "GIST_LOAD_FAILED";
+      err.cause = lastErr;
+      throw err;
+    }
   }
 
   async function createGist(stock, tokenOverride) {

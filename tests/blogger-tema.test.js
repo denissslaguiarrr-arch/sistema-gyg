@@ -140,9 +140,20 @@ test("el catálogo se baja por URL cruda y no se queda en Cargando el catálogo"
   assert.match(js, /gist\.githubusercontent\.com/);
   assert.match(js, /function fetchViaJsonp/);
   assert.match(js, /gyg_stock_cache/);
+  assert.match(js, /function writeStockCache/);
+  assert.match(js, /function embeddedStock/);
+  assert.match(js, /GYG_STOCK_FALLBACK/);
   assert.match(js, /credentials: "omit"/);
   assert.doesNotMatch(js, /Cargando el catálogo/);
   assert.match(tema, /gist\.githubusercontent\.com/);
+});
+
+test("el tema de G&G trae el catálogo adentro por si GitHub no responde", () => {
+  const gyg = fs.readFileSync(path.join(__dirname, "../blogger/tema-gyg-automotores.xml"), "utf8");
+  assert.match(gyg, /window\.GYG_STOCK_FALLBACK = /);
+  assert.match(gyg, /TAOS HIGHLINE/);
+  assert.match(gyg, /IMG-3426-jpeg/);
+  assert.doesNotMatch(tema, /window\.GYG_STOCK_FALLBACK/);
 });
 
 test("el precio no se muestra si no está tildado y hay botón de consulta", () => {

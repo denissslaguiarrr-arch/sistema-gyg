@@ -1,0 +1,1359 @@
+{
+  "meta": {
+    "concesionaria": "G&G",
+    "updatedAt": "2026-08-31T23:26:13.736Z"
+  },
+  "site": {
+    "name": "G&G",
+    "tagline": "Selección premium de vehículos",
+    "whatsapp": "+54 9 3735 46-2914",
+    "instagram": "https://www.instagram.com/automotoresgyg/",
+    "facebook": "",
+    "contactoTitulo": "Contactanos",
+    "contactoTexto": "",
+    "direccion": "",
+    "footerText": "Concesionaria G&G — stock en vivo desde la nube",
+    "heroImage": "https://i.ibb.co/Y4Ymhp6C/IMG-3426-jpeg.jpg"
+  },
+  "pages": [
+    {
+      "id": "home",
+      "slug": "",
+      "title": "Inicio",
+      "navLabel": "Inicio",
+      "type": "home",
+      "visible": true,
+      "order": 0,
+      "filter": {},
+      "content": {
+        "eyebrow": "Concesionaria",
+        "headline": "G&G",
+        "subtitle": "Showroom digital con stock 0km y usados, actualizado al instante.",
+        "ctaPrimary": {
+          "label": "Ver 0 km",
+          "href": "#/0km"
+        },
+        "ctaSecondary": {
+          "label": "Ver usados",
+          "href": "#/usados"
+        },
+        "heroImage": "https://i.ibb.co/Y4Ymhp6C/IMG-3426-jpeg.jpg",
+        "highlights": [
+          {
+            "title": "0 km",
+            "text": "Unidades nuevas listas para entregar.",
+            "href": "#/0km"
+          },
+          {
+            "title": "Usados",
+            "text": "Revisados, con ficha completa y consulta directa.",
+            "href": "#/usados"
+          },
+          {
+            "title": "Todo el stock",
+            "text": "Filtrá por marca, año, precio y más.",
+            "href": "#/stock"
+          }
+        ]
+      }
+    },
+    {
+      "id": "0km",
+      "slug": "0km",
+      "title": "0 km",
+      "navLabel": "0 km",
+      "type": "stock",
+      "visible": true,
+      "order": 1,
+      "filter": {
+        "categoria": "0km"
+      },
+      "content": {
+        "eyebrow": "Catálogo",
+        "headline": "0 km",
+        "subtitle": "Unidades nuevas con entrega inmediata."
+      }
+    },
+    {
+      "id": "usados",
+      "slug": "usados",
+      "title": "Usados",
+      "navLabel": "Usados",
+      "type": "stock",
+      "visible": true,
+      "order": 2,
+      "filter": {
+        "categoria": "usado"
+      },
+      "content": {
+        "eyebrow": "Catálogo",
+        "headline": "Usados",
+        "subtitle": "Vehículos revisados, con historial y equipamiento detallado."
+      }
+    },
+    {
+      "id": "stock",
+      "slug": "stock",
+      "title": "Stock completo",
+      "navLabel": "Stock",
+      "type": "stock",
+      "visible": true,
+      "order": 3,
+      "filter": {},
+      "content": {
+        "eyebrow": "Catálogo",
+        "headline": "Todo el stock",
+        "subtitle": "0km y usados en un solo listado."
+      }
+    },
+    {
+      "id": "vender",
+      "slug": "vender",
+      "title": "Vendé tu auto",
+      "navLabel": "Vendé tu auto",
+      "type": "vender",
+      "visible": true,
+      "order": 4,
+      "filter": {},
+      "content": {
+        "eyebrow": "Compra y consignación",
+        "headline": "Vendé tu auto",
+        "subtitle": "Lo tasamos, lo mostramos y te hacemos una propuesta. Compra directa o consignación."
+      }
+    },
+    {
+      "id": "contacto",
+      "slug": "contacto",
+      "title": "Contacto",
+      "navLabel": "Contacto",
+      "type": "content",
+      "visible": true,
+      "order": 5,
+      "filter": {},
+      "content": {
+        "eyebrow": "G&G",
+        "headline": "Contactanos",
+        "subtitle": "Consultá disponibilidad, financiación o una visita al showroom.",
+        "body": "Atención de lunes a sábado. Escribinos por WhatsApp y te respondemos con la ficha del vehículo que te interese.",
+        "showWhatsapp": true
+      }
+    }
+  ],
+  "vehicles": [
+    {
+      "id": "gyg-001",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "Renault",
+      "modelo": "kangoo confort",
+      "version": "",
+      "anio": 2013,
+      "km": 267,
+      "precio": 11900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "Nafta",
+      "transmision": "Manual",
+      "traccion": "Delantera",
+      "puertas": null,
+      "color": "BLANCO",
+      "motor": "1.6 CD",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "LYY531",
+      "destacado": true,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/7dqDjk7y/823ea3ba-3f73-4cbb-b9de-732b77797fa3-jpg.jpg",
+        "https://i.ibb.co/wNrZwjpk/843a1112-2cc0-4c20-bbf3-0b9033ac2c40-jpg.jpg",
+        "https://i.ibb.co/Cps5QLjh/44b8a52e-ece0-437d-8dfa-c279276d0cd7-jpg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/7dqDjk7y/823ea3ba-3f73-4cbb-b9de-732b77797fa3-jpg.jpg",
+          "thumbnail": "https://i.ibb.co/7dqDjk7y/823ea3ba-3f73-4cbb-b9de-732b77797fa3-jpg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/wNrZwjpk/843a1112-2cc0-4c20-bbf3-0b9033ac2c40-jpg.jpg",
+          "thumbnail": "https://i.ibb.co/wNrZwjpk/843a1112-2cc0-4c20-bbf3-0b9033ac2c40-jpg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/Cps5QLjh/44b8a52e-ece0-437d-8dfa-c279276d0cd7-jpg.jpg",
+          "thumbnail": "https://i.ibb.co/Cps5QLjh/44b8a52e-ece0-437d-8dfa-c279276d0cd7-jpg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-31T23:25:36.000Z"
+    },
+    {
+      "id": "gyg-002",
+      "status": "disponible",
+      "categoria": "0km",
+      "marca": "VOLKSWAGEN",
+      "modelo": "AMAROK TRENDLINE",
+      "version": "",
+      "anio": 2025,
+      "km": 0,
+      "precio": 49800000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "GRIS PLATA",
+      "motor": "2.0 TDI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AH893GH",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/1JKdXrB7/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg.jpg",
+        "https://i.ibb.co/LD52dhwg/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg-3-jpeg.jpg",
+        "https://i.ibb.co/SwF33dyN/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-4-jpeg.jpg",
+        "https://i.ibb.co/9311JGmY/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-5-jpeg.jpg",
+        "https://i.ibb.co/93nVtV8L/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-6-jpeg.jpg",
+        "https://i.ibb.co/XxMNL5nz/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg-2-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/1JKdXrB7/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/1JKdXrB7/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/LD52dhwg/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg-3-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/LD52dhwg/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg-3-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/SwF33dyN/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-4-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/SwF33dyN/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-4-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/9311JGmY/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-5-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/9311JGmY/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-5-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/93nVtV8L/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-6-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/93nVtV8L/Whats-App-Image-2026-08-14-at-11-25-37-AM-jpeg-6-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/XxMNL5nz/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg-2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/XxMNL5nz/Whats-App-Image-2026-08-14-at-11-25-36-AM-jpeg-2-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-003",
+      "status": "disponible",
+      "categoria": "0km",
+      "marca": "TOYOTA",
+      "modelo": "HILUX DX",
+      "version": "",
+      "anio": 2019,
+      "km": 0,
+      "precio": 41900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "BLANCO",
+      "motor": "2.4",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "SD-HILUXDX-2019",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/HD615B3G/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg-jpeg.jpg",
+        "https://i.ibb.co/TqYt1Ckg/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg22-jpeg.jpg",
+        "https://i.ibb.co/Z6dXK6my/Whats-App-Image-2026-08-14-at-11-13-17-AM-jpeg4-jpeg.jpg",
+        "https://i.ibb.co/5gjZXD13/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg3-jpeg.jpg",
+        "https://i.ibb.co/35dpBMTK/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg2-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/HD615B3G/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/HD615B3G/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/TqYt1Ckg/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg22-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/TqYt1Ckg/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg22-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/Z6dXK6my/Whats-App-Image-2026-08-14-at-11-13-17-AM-jpeg4-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/Z6dXK6my/Whats-App-Image-2026-08-14-at-11-13-17-AM-jpeg4-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/5gjZXD13/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg3-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/5gjZXD13/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg3-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/35dpBMTK/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/35dpBMTK/Whats-App-Image-2026-08-14-at-11-13-16-AM-jpeg2-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-004",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "TOYOTA",
+      "modelo": "HILUX SR",
+      "version": "",
+      "anio": 2023,
+      "km": 98000,
+      "precio": 44800000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "BLANCO",
+      "motor": "2.4 TDI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AG024IN",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/nNrShDKS/a9ccd40d-eac6-4796-9821-9ed9f74ffc77-jpg.jpg",
+        "https://i.ibb.co/spVRJnDg/Whats-App-Image-2026-08-14-at-10-56-54-AM-jpeg2-jpeg.jpg",
+        "https://i.ibb.co/3m9Hc3DD/Whats-App-Image-2026-08-14-at-10-56-54-AM-jpeg11-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/nNrShDKS/a9ccd40d-eac6-4796-9821-9ed9f74ffc77-jpg.jpg",
+          "thumbnail": "https://i.ibb.co/nNrShDKS/a9ccd40d-eac6-4796-9821-9ed9f74ffc77-jpg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/spVRJnDg/Whats-App-Image-2026-08-14-at-10-56-54-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/spVRJnDg/Whats-App-Image-2026-08-14-at-10-56-54-AM-jpeg2-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/3m9Hc3DD/Whats-App-Image-2026-08-14-at-10-56-54-AM-jpeg11-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/3m9Hc3DD/Whats-App-Image-2026-08-14-at-10-56-54-AM-jpeg11-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-31T23:23:07.000Z"
+    },
+    {
+      "id": "gyg-005",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "FORD",
+      "modelo": "RANGER",
+      "version": "",
+      "anio": 2012,
+      "km": 225000,
+      "precio": 19800000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "GRIS/CHAMPÁN",
+      "motor": "2.2L",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "LWQ138",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/qMc55QLt/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg.jpg",
+        "https://i.ibb.co/Jjnk7JWk/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg3-jpeg.jpg",
+        "https://i.ibb.co/Zp6pJbJd/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg22-jpeg.jpg",
+        "https://i.ibb.co/1GXd9YHq/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg2-jpeg.jpg",
+        "https://i.ibb.co/FLppvfbQ/Whats-App-Image-2026-08-14-at-10-47-18-AM-jpeg11-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/qMc55QLt/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/qMc55QLt/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/Jjnk7JWk/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg3-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/Jjnk7JWk/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg3-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/Zp6pJbJd/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg22-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/Zp6pJbJd/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg22-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/1GXd9YHq/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/1GXd9YHq/Whats-App-Image-2026-08-14-at-10-47-17-AM-jpeg2-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/FLppvfbQ/Whats-App-Image-2026-08-14-at-10-47-18-AM-jpeg11-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/FLppvfbQ/Whats-App-Image-2026-08-14-at-10-47-18-AM-jpeg11-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-006",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "TOYOTA",
+      "modelo": "HILUX",
+      "version": "",
+      "anio": 2016,
+      "km": 175000,
+      "precio": 44800000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "GRIS OSCURO",
+      "motor": "2.8 TDI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AA568QV",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/W4GbF6ny/Whats-App-Image-2026-08-14-at-10-33-20-AM-jpeg.jpg",
+        "https://i.ibb.co/C3WNhVQr/Whats-App-Image-2026-08-14-at-10-33-21-AM-jpeg1-jpeg.jpg",
+        "https://i.ibb.co/1fBsPgWH/Whats-App-Image-2026-08-14-at-10-33-20-AM-jpeg1-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/W4GbF6ny/Whats-App-Image-2026-08-14-at-10-33-20-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/W4GbF6ny/Whats-App-Image-2026-08-14-at-10-33-20-AM-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/C3WNhVQr/Whats-App-Image-2026-08-14-at-10-33-21-AM-jpeg1-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/C3WNhVQr/Whats-App-Image-2026-08-14-at-10-33-21-AM-jpeg1-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/1fBsPgWH/Whats-App-Image-2026-08-14-at-10-33-20-AM-jpeg1-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/1fBsPgWH/Whats-App-Image-2026-08-14-at-10-33-20-AM-jpeg1-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-007",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "AMAROK TRENDLINE",
+      "version": "",
+      "anio": 2023,
+      "km": 19000,
+      "precio": 39800000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "BLANCA",
+      "motor": "2.0L TDI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AG297OL",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/1JTrfnsT/Whats-App-Image-2026-08-14-at-10-23-06-AM-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/1JTrfnsT/Whats-App-Image-2026-08-14-at-10-23-06-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/1JTrfnsT/Whats-App-Image-2026-08-14-at-10-23-06-AM-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-008",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "AMAROK TRENDLINE",
+      "version": "",
+      "anio": 2024,
+      "km": 42000,
+      "precio": 46500000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "GRIS PLATA",
+      "motor": "2.0 TDI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AG913VP",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/KcpQR0Zc/Whats-App-Image-2026-08-14-at-10-16-53-AM-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/KcpQR0Zc/Whats-App-Image-2026-08-14-at-10-16-53-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/KcpQR0Zc/Whats-App-Image-2026-08-14-at-10-16-53-AM-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-009",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "AMAROK",
+      "version": "",
+      "anio": 2016,
+      "km": 175000,
+      "precio": 24900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 2,
+      "color": "BLANCO",
+      "motor": "2.0 TDI",
+      "potencia": "140 CV a 3.500 rpm",
+      "carroceria": "",
+      "patente": "AA415RR",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/JFRKJJXc/Whats-App-Image-2026-08-14-at-9-57-01-AM-jpeg.jpg",
+        "https://i.ibb.co/xqc7sYQF/Whats-App-Image-2026-08-14-at-9-57-01-AM-jpeg1-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/JFRKJJXc/Whats-App-Image-2026-08-14-at-9-57-01-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/JFRKJJXc/Whats-App-Image-2026-08-14-at-9-57-01-AM-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/xqc7sYQF/Whats-App-Image-2026-08-14-at-9-57-01-AM-jpeg1-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/xqc7sYQF/Whats-App-Image-2026-08-14-at-9-57-01-AM-jpeg1-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-010",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "FIAT",
+      "modelo": "STRADA FREEDOM",
+      "version": "",
+      "anio": 2024,
+      "km": 60976,
+      "precio": 27900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 4,
+      "color": "NEGRO",
+      "motor": "1.3 CD",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AG606BU",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/zVP1SLtb/Whats-App-Image-2026-08-14-at-9-56-44-AM-jpeg.jpg",
+        "https://i.ibb.co/DDPGpgt1/Whats-App-Image-2026-08-14-at-9-56-43-AM-jpeg.jpg",
+        "https://i.ibb.co/zTPPx8gT/Whats-App-Image-2026-08-14-at-9-56-43-AM-jpeg11-jpeg.jpg",
+        "https://i.ibb.co/1GKjJbGf/1-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/zVP1SLtb/Whats-App-Image-2026-08-14-at-9-56-44-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/zVP1SLtb/Whats-App-Image-2026-08-14-at-9-56-44-AM-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/DDPGpgt1/Whats-App-Image-2026-08-14-at-9-56-43-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/DDPGpgt1/Whats-App-Image-2026-08-14-at-9-56-43-AM-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/zTPPx8gT/Whats-App-Image-2026-08-14-at-9-56-43-AM-jpeg11-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/zTPPx8gT/Whats-App-Image-2026-08-14-at-9-56-43-AM-jpeg11-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/1GKjJbGf/1-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/1GKjJbGf/1-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-011",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "SAVEIRO",
+      "version": "",
+      "anio": 2015,
+      "km": 125000,
+      "precio": 16500000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 2,
+      "color": "GRIS OSCURO",
+      "motor": "1.6L",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "PBP988",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/NgbgmcgQ/Whats-App-Image-2026-08-14-at-9-56-00-AM-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/NgbgmcgQ/Whats-App-Image-2026-08-14-at-9-56-00-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/NgbgmcgQ/Whats-App-Image-2026-08-14-at-9-56-00-AM-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-012",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "TAOS COMFORTLINE",
+      "version": "",
+      "anio": 2024,
+      "km": 29478,
+      "precio": 45900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 5,
+      "color": "AZUL ATLÁNTICO",
+      "motor": "1.4 TSI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AG410WJ",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/j9Pjk25s/Whats-App-Image-2026-08-14-at-9-55-22-AM-jpeg4-jpeg.jpg",
+        "https://i.ibb.co/Z6yt9LTG/Whats-App-Image-2026-08-14-at-9-55-22-AM-jpeg3-jpeg.jpg",
+        "https://i.ibb.co/7Jvj2LT9/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg2-jpeg.jpg",
+        "https://i.ibb.co/2TB2Y19/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg1-jpeg.jpg",
+        "https://i.ibb.co/WNS7JR96/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/j9Pjk25s/Whats-App-Image-2026-08-14-at-9-55-22-AM-jpeg4-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/j9Pjk25s/Whats-App-Image-2026-08-14-at-9-55-22-AM-jpeg4-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/Z6yt9LTG/Whats-App-Image-2026-08-14-at-9-55-22-AM-jpeg3-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/Z6yt9LTG/Whats-App-Image-2026-08-14-at-9-55-22-AM-jpeg3-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/7Jvj2LT9/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/7Jvj2LT9/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg2-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/2TB2Y19/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg1-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/2TB2Y19/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg1-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/WNS7JR96/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/WNS7JR96/Whats-App-Image-2026-08-14-at-9-55-21-AM-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-013",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "TAOS HIGHLINE",
+      "version": "",
+      "anio": 2024,
+      "km": 57000,
+      "precio": 51500000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 5,
+      "color": "GRIS PLATA",
+      "motor": "1.4 TSI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AG440IZ",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/ch2yW5y1/Whats-App-Image-2026-08-14-at-9-55-03-AM-jpeg3-jpeg.jpg",
+        "https://i.ibb.co/nN3P4ntk/Whats-App-Image-2026-08-14-at-9-55-02-AM-jpeg2-jpeg.jpg",
+        "https://i.ibb.co/d0qV6D73/Whats-App-Image-2026-08-14-at-9-55-03-AM-jpeg2-jpeg.jpg",
+        "https://i.ibb.co/fVZC6njr/Whats-App-Image-2026-08-14-at-9-55-02-AM-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/ch2yW5y1/Whats-App-Image-2026-08-14-at-9-55-03-AM-jpeg3-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/ch2yW5y1/Whats-App-Image-2026-08-14-at-9-55-03-AM-jpeg3-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/nN3P4ntk/Whats-App-Image-2026-08-14-at-9-55-02-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/nN3P4ntk/Whats-App-Image-2026-08-14-at-9-55-02-AM-jpeg2-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/d0qV6D73/Whats-App-Image-2026-08-14-at-9-55-03-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/d0qV6D73/Whats-App-Image-2026-08-14-at-9-55-03-AM-jpeg2-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/fVZC6njr/Whats-App-Image-2026-08-14-at-9-55-02-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/fVZC6njr/Whats-App-Image-2026-08-14-at-9-55-02-AM-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-014",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "TOYOTA",
+      "modelo": "COROLLA XEI PACK",
+      "version": "",
+      "anio": 2018,
+      "km": 66000,
+      "precio": 28500000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 5,
+      "color": "BLANCO",
+      "motor": "1.8 CVT",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AC788QS",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://i.ibb.co/xSwVMfx2/3-jpeg.jpg",
+        "https://i.ibb.co/99chPgNk/222-jpeg.jpg",
+        "https://i.ibb.co/gLc9FB7W/Whats-App-Image-2026-08-14-at-9-54-38-AM-jpeg22-jpeg.jpg",
+        "https://i.ibb.co/0VMy4z0g/Whats-App-Image-2026-08-14-at-9-54-37-AM-jpeg2-jpeg.jpg",
+        "https://i.ibb.co/mrfs0QcR/Whats-App-Image-2026-08-14-at-9-54-37-AM-jpeg.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/xSwVMfx2/3-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/xSwVMfx2/3-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/99chPgNk/222-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/99chPgNk/222-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/gLc9FB7W/Whats-App-Image-2026-08-14-at-9-54-38-AM-jpeg22-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/gLc9FB7W/Whats-App-Image-2026-08-14-at-9-54-38-AM-jpeg22-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/0VMy4z0g/Whats-App-Image-2026-08-14-at-9-54-37-AM-jpeg2-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/0VMy4z0g/Whats-App-Image-2026-08-14-at-9-54-37-AM-jpeg2-jpeg.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://i.ibb.co/mrfs0QcR/Whats-App-Image-2026-08-14-at-9-54-37-AM-jpeg.jpg",
+          "thumbnail": "https://i.ibb.co/mrfs0QcR/Whats-App-Image-2026-08-14-at-9-54-37-AM-jpeg.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-015",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "GOL TREND",
+      "version": "",
+      "anio": 2017,
+      "km": 113385,
+      "precio": 16900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "",
+      "transmision": "",
+      "traccion": "",
+      "puertas": 3,
+      "color": "ROJO",
+      "motor": "1.6 MSI",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AB694YG",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhChJgq5oJWUkhcj9b5trD6Lq-vR3O9INkrujFK9G6fO3BJ7Mqj-7FApEAClmCxLBmXEdDYxbYN0TwUtDuEF-oF0XPtCdVX3SacrN49RaqiXrvuHvtWRe0IlbZC_MGhU_j6Bl8OaEo-beU2XUuNYLIz7wp65IqG4iLu6FafIY6t0-IC2n_1YoHTLiJW5Dw/s1600/PHOTO-2026-08-13-17-30-03.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhChJgq5oJWUkhcj9b5trD6Lq-vR3O9INkrujFK9G6fO3BJ7Mqj-7FApEAClmCxLBmXEdDYxbYN0TwUtDuEF-oF0XPtCdVX3SacrN49RaqiXrvuHvtWRe0IlbZC_MGhU_j6Bl8OaEo-beU2XUuNYLIz7wp65IqG4iLu6FafIY6t0-IC2n_1YoHTLiJW5Dw/s1600/PHOTO-2026-08-13-17-30-03.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhChJgq5oJWUkhcj9b5trD6Lq-vR3O9INkrujFK9G6fO3BJ7Mqj-7FApEAClmCxLBmXEdDYxbYN0TwUtDuEF-oF0XPtCdVX3SacrN49RaqiXrvuHvtWRe0IlbZC_MGhU_j6Bl8OaEo-beU2XUuNYLIz7wp65IqG4iLu6FafIY6t0-IC2n_1YoHTLiJW5Dw/s1600/PHOTO-2026-08-13-17-30-03.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-016",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "TOYOTA",
+      "modelo": "ETIOS XLS",
+      "version": "",
+      "anio": 2018,
+      "km": 89000,
+      "precio": 21900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "AUTOMÁTICO",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "GRIS OSCURO",
+      "motor": "1.5 4A/T",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AC556ZR",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieMscjLlsiUvCXSDPxfiyNan9mXc-WB_acuy3gGiXkhzh2aD6_XmUHK-bzyshBBe911g0PP_WTAcKjrOl2X_8ln2TSWjTEJMNbf6clhmzCtEvxgCqk47tqcD_q-wAVbIEe6Ur0hqt3m1rKneiAf49mY-CBXUUqJmghHztb9RF3cj3WOGLOA-8P9fjx-Mw/s1600/PHOTO-2026-08-13-17-04-18.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrRRR-3_je7vmRjFDwXPRpXYW4BAku1Azo9EpEgFSYbGd-L3InJDJsHtF2VMzAagVd8PfhomB0vdL2k5FCBnnlN9tptz7WBVQDv5FwxUplcy28orkbk5v-u3whQZnBvTEra7A5SKg22BMjHWxlmwt99W6FgMTfwEb6CFGPlKguH2jjKkE-lIC6R3hwLZs/s1600/PHOTO-2026-08-13-17-04-19.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrTnJad6aCwi3Uud6KHNtvhRHCGDwj4PQnzA3UkJK-Kvqf6oLCOe8qLWIoLivoy2qzdI1lRU-v3AxMTU0hUl2KFYkPytGjZZ5nzDB9zzFgtaEJS7CVWFPKM4Q0-Zc2fNfZkIPxOVG7S8lhag2iBGJflbzLlCG4eJNOZbk0UF9zp27sRHQOXMQD-IYYI6E/s1600/PHOTO-2026-08-13-17-04-20.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiWrxCLAM4ncwtavoqEwpFOyS0ro2_3_OxIaM7qts-75shlGJrMaJJjdUEF9qiXgyFe7Q7NQLaWF3Hzi8c5oAl7JSolVSFTQCfejldmW-iDoBlgVgdXJNMlH8-RzwwHX2B60gDMoQqRJzeaVMTaH3ebWMYqrtKMdx1BscNUtiJNFUYb7ruBcSXxWugYpMM/s1600/PHOTO-2026-08-13-17-04-20%202.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieMscjLlsiUvCXSDPxfiyNan9mXc-WB_acuy3gGiXkhzh2aD6_XmUHK-bzyshBBe911g0PP_WTAcKjrOl2X_8ln2TSWjTEJMNbf6clhmzCtEvxgCqk47tqcD_q-wAVbIEe6Ur0hqt3m1rKneiAf49mY-CBXUUqJmghHztb9RF3cj3WOGLOA-8P9fjx-Mw/s1600/PHOTO-2026-08-13-17-04-18.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEieMscjLlsiUvCXSDPxfiyNan9mXc-WB_acuy3gGiXkhzh2aD6_XmUHK-bzyshBBe911g0PP_WTAcKjrOl2X_8ln2TSWjTEJMNbf6clhmzCtEvxgCqk47tqcD_q-wAVbIEe6Ur0hqt3m1rKneiAf49mY-CBXUUqJmghHztb9RF3cj3WOGLOA-8P9fjx-Mw/s1600/PHOTO-2026-08-13-17-04-18.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrRRR-3_je7vmRjFDwXPRpXYW4BAku1Azo9EpEgFSYbGd-L3InJDJsHtF2VMzAagVd8PfhomB0vdL2k5FCBnnlN9tptz7WBVQDv5FwxUplcy28orkbk5v-u3whQZnBvTEra7A5SKg22BMjHWxlmwt99W6FgMTfwEb6CFGPlKguH2jjKkE-lIC6R3hwLZs/s1600/PHOTO-2026-08-13-17-04-19.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgrRRR-3_je7vmRjFDwXPRpXYW4BAku1Azo9EpEgFSYbGd-L3InJDJsHtF2VMzAagVd8PfhomB0vdL2k5FCBnnlN9tptz7WBVQDv5FwxUplcy28orkbk5v-u3whQZnBvTEra7A5SKg22BMjHWxlmwt99W6FgMTfwEb6CFGPlKguH2jjKkE-lIC6R3hwLZs/s1600/PHOTO-2026-08-13-17-04-19.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrTnJad6aCwi3Uud6KHNtvhRHCGDwj4PQnzA3UkJK-Kvqf6oLCOe8qLWIoLivoy2qzdI1lRU-v3AxMTU0hUl2KFYkPytGjZZ5nzDB9zzFgtaEJS7CVWFPKM4Q0-Zc2fNfZkIPxOVG7S8lhag2iBGJflbzLlCG4eJNOZbk0UF9zp27sRHQOXMQD-IYYI6E/s1600/PHOTO-2026-08-13-17-04-20.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjrTnJad6aCwi3Uud6KHNtvhRHCGDwj4PQnzA3UkJK-Kvqf6oLCOe8qLWIoLivoy2qzdI1lRU-v3AxMTU0hUl2KFYkPytGjZZ5nzDB9zzFgtaEJS7CVWFPKM4Q0-Zc2fNfZkIPxOVG7S8lhag2iBGJflbzLlCG4eJNOZbk0UF9zp27sRHQOXMQD-IYYI6E/s1600/PHOTO-2026-08-13-17-04-20.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiWrxCLAM4ncwtavoqEwpFOyS0ro2_3_OxIaM7qts-75shlGJrMaJJjdUEF9qiXgyFe7Q7NQLaWF3Hzi8c5oAl7JSolVSFTQCfejldmW-iDoBlgVgdXJNMlH8-RzwwHX2B60gDMoQqRJzeaVMTaH3ebWMYqrtKMdx1BscNUtiJNFUYb7ruBcSXxWugYpMM/s1600/PHOTO-2026-08-13-17-04-20%202.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEiWrxCLAM4ncwtavoqEwpFOyS0ro2_3_OxIaM7qts-75shlGJrMaJJjdUEF9qiXgyFe7Q7NQLaWF3Hzi8c5oAl7JSolVSFTQCfejldmW-iDoBlgVgdXJNMlH8-RzwwHX2B60gDMoQqRJzeaVMTaH3ebWMYqrtKMdx1BscNUtiJNFUYb7ruBcSXxWugYpMM/s1600/PHOTO-2026-08-13-17-04-20%202.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-017",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "CHEVROLET",
+      "modelo": "ONIX PREMIER",
+      "version": "",
+      "anio": 2022,
+      "km": 21000,
+      "precio": 26900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "AUTOMÁTICO",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "BLANCO",
+      "motor": "1.0T",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AF396KR",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhY-wo9Jsndky-ZA-hONTZcgWG6-ak2ahEIYESkUYPeKp-kAeBfKaLTriAyhC9TngmQQ3-nsnFpdnUzlSF7fTHbdfED_tyKwYcIYsgVbbsfneFm1JcQOYZ_qPpHSX2rYPCvXKedAxt4BqImkGztGxSRyxZeUiZTLiAI6-n-xiNXbu0La91OcfcPpsfzZgo/s1600/PHOTO-2026-08-13-17-44-38.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuS7qhiFUlRchhxSf9etzDRc1so1m0frLz_tlEx7oudXbCaq3vOX7LRxZrQTT0Z676Y5faSWjICAXLKbW8dOaOVs18uE-3lvTxyEAQEyUAFEvpxW-3Yo2CrADT6Bx7j6_Q9bd7mu8z6e1JTcDA-CNC3y2IFAFPqpRVPfwQBe6VqdhpPxLwiMpq7muk9TE/s1600/PHOTO-2026-08-13-17-44-37.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhL4X-WXcCljmi6SX4fOLKMwmUCdsgUj3ZMHBztNYoHI9Z-T8cJZ8ehvSVMhcJTDXwckOPghGsr68-bFNXNsFIKvB8OtidsmH_CXPek-5ahA9UpFV8wf8B9thnq8h1r7WzGG6bVWFbjPSvEMLc-JBCXZoCwD8M53geGun8WJrMEVH6bb8c8fn9-PTmQqt4/s1600/PHOTO-2026-08-13-17-44-37%203.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh6qdo1GYOh6BhtMR8FoRZxE9korgUjJrRdNEEzBYDkfwRs2hK-jUZtTlBj3pjCpUz0KR6jUYPLkQI-0nr27lCIuwx6RJ17zc6PjPKApx1ruMcWdeSkCbAC53NO6on1uBzlda0HSlEezU-44If-sYaiw0oD72gMByb55YSu35HZWviNTB9c241Xw9e8hiM/s1600/PHOTO-2026-08-13-17-44-37%202.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhY-wo9Jsndky-ZA-hONTZcgWG6-ak2ahEIYESkUYPeKp-kAeBfKaLTriAyhC9TngmQQ3-nsnFpdnUzlSF7fTHbdfED_tyKwYcIYsgVbbsfneFm1JcQOYZ_qPpHSX2rYPCvXKedAxt4BqImkGztGxSRyxZeUiZTLiAI6-n-xiNXbu0La91OcfcPpsfzZgo/s1600/PHOTO-2026-08-13-17-44-38.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhY-wo9Jsndky-ZA-hONTZcgWG6-ak2ahEIYESkUYPeKp-kAeBfKaLTriAyhC9TngmQQ3-nsnFpdnUzlSF7fTHbdfED_tyKwYcIYsgVbbsfneFm1JcQOYZ_qPpHSX2rYPCvXKedAxt4BqImkGztGxSRyxZeUiZTLiAI6-n-xiNXbu0La91OcfcPpsfzZgo/s1600/PHOTO-2026-08-13-17-44-38.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuS7qhiFUlRchhxSf9etzDRc1so1m0frLz_tlEx7oudXbCaq3vOX7LRxZrQTT0Z676Y5faSWjICAXLKbW8dOaOVs18uE-3lvTxyEAQEyUAFEvpxW-3Yo2CrADT6Bx7j6_Q9bd7mu8z6e1JTcDA-CNC3y2IFAFPqpRVPfwQBe6VqdhpPxLwiMpq7muk9TE/s1600/PHOTO-2026-08-13-17-44-37.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjuS7qhiFUlRchhxSf9etzDRc1so1m0frLz_tlEx7oudXbCaq3vOX7LRxZrQTT0Z676Y5faSWjICAXLKbW8dOaOVs18uE-3lvTxyEAQEyUAFEvpxW-3Yo2CrADT6Bx7j6_Q9bd7mu8z6e1JTcDA-CNC3y2IFAFPqpRVPfwQBe6VqdhpPxLwiMpq7muk9TE/s1600/PHOTO-2026-08-13-17-44-37.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhL4X-WXcCljmi6SX4fOLKMwmUCdsgUj3ZMHBztNYoHI9Z-T8cJZ8ehvSVMhcJTDXwckOPghGsr68-bFNXNsFIKvB8OtidsmH_CXPek-5ahA9UpFV8wf8B9thnq8h1r7WzGG6bVWFbjPSvEMLc-JBCXZoCwD8M53geGun8WJrMEVH6bb8c8fn9-PTmQqt4/s1600/PHOTO-2026-08-13-17-44-37%203.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhL4X-WXcCljmi6SX4fOLKMwmUCdsgUj3ZMHBztNYoHI9Z-T8cJZ8ehvSVMhcJTDXwckOPghGsr68-bFNXNsFIKvB8OtidsmH_CXPek-5ahA9UpFV8wf8B9thnq8h1r7WzGG6bVWFbjPSvEMLc-JBCXZoCwD8M53geGun8WJrMEVH6bb8c8fn9-PTmQqt4/s1600/PHOTO-2026-08-13-17-44-37%203.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh6qdo1GYOh6BhtMR8FoRZxE9korgUjJrRdNEEzBYDkfwRs2hK-jUZtTlBj3pjCpUz0KR6jUYPLkQI-0nr27lCIuwx6RJ17zc6PjPKApx1ruMcWdeSkCbAC53NO6on1uBzlda0HSlEezU-44If-sYaiw0oD72gMByb55YSu35HZWviNTB9c241Xw9e8hiM/s1600/PHOTO-2026-08-13-17-44-37%202.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEh6qdo1GYOh6BhtMR8FoRZxE9korgUjJrRdNEEzBYDkfwRs2hK-jUZtTlBj3pjCpUz0KR6jUYPLkQI-0nr27lCIuwx6RJ17zc6PjPKApx1ruMcWdeSkCbAC53NO6on1uBzlda0HSlEezU-44If-sYaiw0oD72gMByb55YSu35HZWviNTB9c241Xw9e8hiM/s1600/PHOTO-2026-08-13-17-44-37%202.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-018",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "VOLKSWAGEN",
+      "modelo": "GOL TREND",
+      "version": "",
+      "anio": 2011,
+      "km": 215000,
+      "precio": 11900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "MANUAL",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "GRIS",
+      "motor": "1.6",
+      "potencia": "",
+      "carroceria": "9BWAB05U6CT062943",
+      "patente": "KJP153",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhA1ctqArVLddtdZavhYSV49IPcIichn8Ek6aL59wyBTLoZU4BZ8wb0cyWY3LAKiIvX2MVD1MYd9BUFp4OaTeccJe_I02H5-pCOO5xsRwqXsceILAOxPcLQPjBymdU7Hw8f8LbRrnMqN7SuCvTOaZfTgTCIfRuA7sLEKSbdmq6nR44pv2C4q2JlyHL-EXc/s1600/PHOTO-2026-08-13-17-53-03.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirHPjkL9bm-ph0g7w1FaaTyI-rm-ydmnu-MLt7e6-VPFl0smTl1QHDB6Le1XGd-86-qP6-rfjFYcgi2NnhYvhswqrwNWI7TvGlLi7Y0teAYQJA_0QZIVhwq_N841JpJ_V3FU5LgHShdxf3AJ1g5s0TuIwr7hpnLWhgQzSlewuQvRbj-3oXpUq9liGBO9I/s1600/PHOTO-2026-08-13-17-53-02.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgWSROQuwa4Lruwtua97nJPSGX1h0Cg2N4eGVnIQ8q1DiYXBjaF-Z8F2jp7aSY-c_1rIZjCxzIGD6ZH5Vvmhnz1SIYBpMG_mV6wxq4gLTRkHNwjRBQWWaffnplJ87HhcJQCnvJKHO3G1hAcx5YVKG7VgD4m57GmxRW8plG2ghBnouZMz8Mgfjjpglk58hc/s1600/PHOTO-2026-08-13-17-53-02%202.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhA1ctqArVLddtdZavhYSV49IPcIichn8Ek6aL59wyBTLoZU4BZ8wb0cyWY3LAKiIvX2MVD1MYd9BUFp4OaTeccJe_I02H5-pCOO5xsRwqXsceILAOxPcLQPjBymdU7Hw8f8LbRrnMqN7SuCvTOaZfTgTCIfRuA7sLEKSbdmq6nR44pv2C4q2JlyHL-EXc/s1600/PHOTO-2026-08-13-17-53-03.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhA1ctqArVLddtdZavhYSV49IPcIichn8Ek6aL59wyBTLoZU4BZ8wb0cyWY3LAKiIvX2MVD1MYd9BUFp4OaTeccJe_I02H5-pCOO5xsRwqXsceILAOxPcLQPjBymdU7Hw8f8LbRrnMqN7SuCvTOaZfTgTCIfRuA7sLEKSbdmq6nR44pv2C4q2JlyHL-EXc/s1600/PHOTO-2026-08-13-17-53-03.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirHPjkL9bm-ph0g7w1FaaTyI-rm-ydmnu-MLt7e6-VPFl0smTl1QHDB6Le1XGd-86-qP6-rfjFYcgi2NnhYvhswqrwNWI7TvGlLi7Y0teAYQJA_0QZIVhwq_N841JpJ_V3FU5LgHShdxf3AJ1g5s0TuIwr7hpnLWhgQzSlewuQvRbj-3oXpUq9liGBO9I/s1600/PHOTO-2026-08-13-17-53-02.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEirHPjkL9bm-ph0g7w1FaaTyI-rm-ydmnu-MLt7e6-VPFl0smTl1QHDB6Le1XGd-86-qP6-rfjFYcgi2NnhYvhswqrwNWI7TvGlLi7Y0teAYQJA_0QZIVhwq_N841JpJ_V3FU5LgHShdxf3AJ1g5s0TuIwr7hpnLWhgQzSlewuQvRbj-3oXpUq9liGBO9I/s1600/PHOTO-2026-08-13-17-53-02.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgWSROQuwa4Lruwtua97nJPSGX1h0Cg2N4eGVnIQ8q1DiYXBjaF-Z8F2jp7aSY-c_1rIZjCxzIGD6ZH5Vvmhnz1SIYBpMG_mV6wxq4gLTRkHNwjRBQWWaffnplJ87HhcJQCnvJKHO3G1hAcx5YVKG7VgD4m57GmxRW8plG2ghBnouZMz8Mgfjjpglk58hc/s1600/PHOTO-2026-08-13-17-53-02%202.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgWSROQuwa4Lruwtua97nJPSGX1h0Cg2N4eGVnIQ8q1DiYXBjaF-Z8F2jp7aSY-c_1rIZjCxzIGD6ZH5Vvmhnz1SIYBpMG_mV6wxq4gLTRkHNwjRBQWWaffnplJ87HhcJQCnvJKHO3G1hAcx5YVKG7VgD4m57GmxRW8plG2ghBnouZMz8Mgfjjpglk58hc/s1600/PHOTO-2026-08-13-17-53-02%202.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-019",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "FORD",
+      "modelo": "KA SE",
+      "version": "",
+      "anio": 2018,
+      "km": 78000,
+      "precio": 17900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "MANUAL",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "ROJO",
+      "motor": "1.5L",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AD110SD",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXUbqtb0qhftwNKWn65N5fA9nCjIMo3cuBaFvPz4tB-XMGH4Hy5_6e3F-ifzgnsEdsLzawugDi9t4RQKTH7T9IoTIDMw6oskK8jq5vqZPg6DVzA7GyefvfVjcvxGqWGDcPNnAycddaMTuMQON3j2SxdDjWsKAYANQr3DNe_j6NHzJPYrsTuN3EkwE8W-g/s1600/PHOTO-2026-08-13-18-03-25%204.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhD0PZXkr7AIhLwSLOzC3PbypSFuRtOWRM0zqRjpUm7TGpYHb7eFoA6ULY-Zro_Y04TOBoqwt5cZyqOKxUtp914cEYzgaWY1cQ9c7UCzq94f1TbTfEu1ZWf-v6ct3SS_hg7pBmAgH7kNOq_IInhY955wy57UmjDuIyfAt9_1DghYLB_HuCPLT4KNRgh5rg/s1600/PHOTO-2026-08-13-18-03-25%202.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJEWGaL8NgfqrUaZ4KJT5tG9THQlmR5mStCUDpT7am97qdL-fHuhiMS7JpNgb5RV2yFR-vJgB-VuDHm-QhOYavqrRX3lx4qpT7VAmAiUw4WqEBG0ZHClOLgsR2pVvOxayXxYgGLMO-BL1NZ9WFFxYaVjrFOOoG3pdCk7y_5FJ_NLsePib5DrMnXvVYaRs/s1600/PHOTO-2026-08-13-18-03-25.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdS_r9I48MOfFBVieaWYAtPSXV3ECM0F4MoihhkCnjmTZLAykaoWt8fCbxt20caf_TDlgZRf_SX6BzXXs3fxmiOzLquSRB_imavQXjaRPGgiviITpTT2XofS_WP0Cyt2xXm7ttWuD8k3WGiea8oNeUjI7x_uVhah6B703vwzT7M5c6YOzt-y9vkqf2DsE/s1600/PHOTO-2026-08-13-18-03-25%203.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXUbqtb0qhftwNKWn65N5fA9nCjIMo3cuBaFvPz4tB-XMGH4Hy5_6e3F-ifzgnsEdsLzawugDi9t4RQKTH7T9IoTIDMw6oskK8jq5vqZPg6DVzA7GyefvfVjcvxGqWGDcPNnAycddaMTuMQON3j2SxdDjWsKAYANQr3DNe_j6NHzJPYrsTuN3EkwE8W-g/s1600/PHOTO-2026-08-13-18-03-25%204.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhXUbqtb0qhftwNKWn65N5fA9nCjIMo3cuBaFvPz4tB-XMGH4Hy5_6e3F-ifzgnsEdsLzawugDi9t4RQKTH7T9IoTIDMw6oskK8jq5vqZPg6DVzA7GyefvfVjcvxGqWGDcPNnAycddaMTuMQON3j2SxdDjWsKAYANQr3DNe_j6NHzJPYrsTuN3EkwE8W-g/s1600/PHOTO-2026-08-13-18-03-25%204.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhD0PZXkr7AIhLwSLOzC3PbypSFuRtOWRM0zqRjpUm7TGpYHb7eFoA6ULY-Zro_Y04TOBoqwt5cZyqOKxUtp914cEYzgaWY1cQ9c7UCzq94f1TbTfEu1ZWf-v6ct3SS_hg7pBmAgH7kNOq_IInhY955wy57UmjDuIyfAt9_1DghYLB_HuCPLT4KNRgh5rg/s1600/PHOTO-2026-08-13-18-03-25%202.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhD0PZXkr7AIhLwSLOzC3PbypSFuRtOWRM0zqRjpUm7TGpYHb7eFoA6ULY-Zro_Y04TOBoqwt5cZyqOKxUtp914cEYzgaWY1cQ9c7UCzq94f1TbTfEu1ZWf-v6ct3SS_hg7pBmAgH7kNOq_IInhY955wy57UmjDuIyfAt9_1DghYLB_HuCPLT4KNRgh5rg/s1600/PHOTO-2026-08-13-18-03-25%202.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJEWGaL8NgfqrUaZ4KJT5tG9THQlmR5mStCUDpT7am97qdL-fHuhiMS7JpNgb5RV2yFR-vJgB-VuDHm-QhOYavqrRX3lx4qpT7VAmAiUw4WqEBG0ZHClOLgsR2pVvOxayXxYgGLMO-BL1NZ9WFFxYaVjrFOOoG3pdCk7y_5FJ_NLsePib5DrMnXvVYaRs/s1600/PHOTO-2026-08-13-18-03-25.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgJEWGaL8NgfqrUaZ4KJT5tG9THQlmR5mStCUDpT7am97qdL-fHuhiMS7JpNgb5RV2yFR-vJgB-VuDHm-QhOYavqrRX3lx4qpT7VAmAiUw4WqEBG0ZHClOLgsR2pVvOxayXxYgGLMO-BL1NZ9WFFxYaVjrFOOoG3pdCk7y_5FJ_NLsePib5DrMnXvVYaRs/s1600/PHOTO-2026-08-13-18-03-25.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdS_r9I48MOfFBVieaWYAtPSXV3ECM0F4MoihhkCnjmTZLAykaoWt8fCbxt20caf_TDlgZRf_SX6BzXXs3fxmiOzLquSRB_imavQXjaRPGgiviITpTT2XofS_WP0Cyt2xXm7ttWuD8k3WGiea8oNeUjI7x_uVhah6B703vwzT7M5c6YOzt-y9vkqf2DsE/s1600/PHOTO-2026-08-13-18-03-25%203.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEgdS_r9I48MOfFBVieaWYAtPSXV3ECM0F4MoihhkCnjmTZLAykaoWt8fCbxt20caf_TDlgZRf_SX6BzXXs3fxmiOzLquSRB_imavQXjaRPGgiviITpTT2XofS_WP0Cyt2xXm7ttWuD8k3WGiea8oNeUjI7x_uVhah6B703vwzT7M5c6YOzt-y9vkqf2DsE/s1600/PHOTO-2026-08-13-18-03-25%203.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-020",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "CHEVROLET",
+      "modelo": "CELTA LT",
+      "version": "",
+      "anio": 2014,
+      "km": 89271,
+      "precio": 12900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "MANUAL",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "BLANCO",
+      "motor": "1.4N",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "NGH200",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhhJHFeeUQk2WQz30HmuLRCc9zetCjEZSyAMTRawOezheNTOXId3-4oUBiKfVjPZ5kJrJX2UNcNEQ3CEMGldVB9Jp3vpINlIHS1dOoF6ghrlDAzR0-zvrJCMVR06ByTC0SbQDFxxgcts-gWe3fDZVzghK3Q67U-Kak9N0luVZPHNGrc3DG1N30Kb77u-Q0/s1600/PHOTO-2026-08-13-18-09-49%203.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmeRA2B133fSH7wVgWtVnbNcHpe1YVpicCpggf5W8-6DMXvRQbbCZ1ZLcVdM-5qPRL8xOG2IOgTTL31q3h1dWF3SnbbnYt20izrV_H33o3nerbiN5iPl5vw2Cf66BZW6tmtL6QFDs9KjDkw8MT6Gj37KPMV6B7hsRe8jQ2jh8MNyjwvlKorHD05U8RLMU/s1600/PHOTO-2026-08-13-18-09-49.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIoloBbnpNOmyToJhqNuQUs8jsqBbuIyXXbmUFggvi97UiyyU9lsiCh7DYHpQvnaa-zTbO9W6xuO5Hj_sSVJ-wo2NVQkblz_djWqf1FgggPdPTSNJfiMlDWauuBR_H-297gRfsPmasOovqViIFwM3QptkhfgGv3__DNkXHBUv57UUVkEAIcwQqVnwFt9I/s1600/PHOTO-2026-08-13-18-09-48.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJ3CPHDVKakfecOkPKqXfPGjmDUPfh7DdoAyP8FFDQPFmGBL9lDOygk36kOjHWYOGT0ab6dfQKfLkwQTttY_A0Ibvkr1rUanjh1ebL-HOGnRJHODuTprWwKhmDLS9OyZaQnoTdvn_YbvRvnET7Y_Zccn7MWn0j78ZOhURVhVF95dXCxLfqbdtlmJgenSM/s1600/PHOTO-2026-08-13-18-09-49%202.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhhJHFeeUQk2WQz30HmuLRCc9zetCjEZSyAMTRawOezheNTOXId3-4oUBiKfVjPZ5kJrJX2UNcNEQ3CEMGldVB9Jp3vpINlIHS1dOoF6ghrlDAzR0-zvrJCMVR06ByTC0SbQDFxxgcts-gWe3fDZVzghK3Q67U-Kak9N0luVZPHNGrc3DG1N30Kb77u-Q0/s1600/PHOTO-2026-08-13-18-09-49%203.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhhJHFeeUQk2WQz30HmuLRCc9zetCjEZSyAMTRawOezheNTOXId3-4oUBiKfVjPZ5kJrJX2UNcNEQ3CEMGldVB9Jp3vpINlIHS1dOoF6ghrlDAzR0-zvrJCMVR06ByTC0SbQDFxxgcts-gWe3fDZVzghK3Q67U-Kak9N0luVZPHNGrc3DG1N30Kb77u-Q0/s1600/PHOTO-2026-08-13-18-09-49%203.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmeRA2B133fSH7wVgWtVnbNcHpe1YVpicCpggf5W8-6DMXvRQbbCZ1ZLcVdM-5qPRL8xOG2IOgTTL31q3h1dWF3SnbbnYt20izrV_H33o3nerbiN5iPl5vw2Cf66BZW6tmtL6QFDs9KjDkw8MT6Gj37KPMV6B7hsRe8jQ2jh8MNyjwvlKorHD05U8RLMU/s1600/PHOTO-2026-08-13-18-09-49.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhmeRA2B133fSH7wVgWtVnbNcHpe1YVpicCpggf5W8-6DMXvRQbbCZ1ZLcVdM-5qPRL8xOG2IOgTTL31q3h1dWF3SnbbnYt20izrV_H33o3nerbiN5iPl5vw2Cf66BZW6tmtL6QFDs9KjDkw8MT6Gj37KPMV6B7hsRe8jQ2jh8MNyjwvlKorHD05U8RLMU/s1600/PHOTO-2026-08-13-18-09-49.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIoloBbnpNOmyToJhqNuQUs8jsqBbuIyXXbmUFggvi97UiyyU9lsiCh7DYHpQvnaa-zTbO9W6xuO5Hj_sSVJ-wo2NVQkblz_djWqf1FgggPdPTSNJfiMlDWauuBR_H-297gRfsPmasOovqViIFwM3QptkhfgGv3__DNkXHBUv57UUVkEAIcwQqVnwFt9I/s1600/PHOTO-2026-08-13-18-09-48.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjIoloBbnpNOmyToJhqNuQUs8jsqBbuIyXXbmUFggvi97UiyyU9lsiCh7DYHpQvnaa-zTbO9W6xuO5Hj_sSVJ-wo2NVQkblz_djWqf1FgggPdPTSNJfiMlDWauuBR_H-297gRfsPmasOovqViIFwM3QptkhfgGv3__DNkXHBUv57UUVkEAIcwQqVnwFt9I/s1600/PHOTO-2026-08-13-18-09-48.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJ3CPHDVKakfecOkPKqXfPGjmDUPfh7DdoAyP8FFDQPFmGBL9lDOygk36kOjHWYOGT0ab6dfQKfLkwQTttY_A0Ibvkr1rUanjh1ebL-HOGnRJHODuTprWwKhmDLS9OyZaQnoTdvn_YbvRvnET7Y_Zccn7MWn0j78ZOhURVhVF95dXCxLfqbdtlmJgenSM/s1600/PHOTO-2026-08-13-18-09-49%202.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjJ3CPHDVKakfecOkPKqXfPGjmDUPfh7DdoAyP8FFDQPFmGBL9lDOygk36kOjHWYOGT0ab6dfQKfLkwQTttY_A0Ibvkr1rUanjh1ebL-HOGnRJHODuTprWwKhmDLS9OyZaQnoTdvn_YbvRvnET7Y_Zccn7MWn0j78ZOhURVhVF95dXCxLfqbdtlmJgenSM/s1600/PHOTO-2026-08-13-18-09-49%202.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-021",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "RENAULT",
+      "modelo": "CLIO MIO 5P CONFORT",
+      "version": "",
+      "anio": 2016,
+      "km": 102000,
+      "precio": 14900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "MANUAL",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "GRIS OSCURO",
+      "motor": "1.2",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "AA407JF",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjg7LJDOM2EkYCe_fZ6336UzSVtGECa_hDRGkA6qGhDp-K10mW4N_nv5yCgzHKcgnfARvDIxqVc26_TmmsKjYOxqrdDCfSma5_mCds-5VLj7s-rxrSKp7A5fWdluNgi9pbF1Vr4nhZBlPiArOgs3m2S8QjxYgISjh42rMzJ5MZuvUE3VLHU5ATbm7_yYVc/s1600/PHOTO-2026-08-13-18-20-07.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJ1JPSRJS-fQCWZaUYdH43k57_xL9Grq3kMEYcNeEKnmYn7VgKHgtNiQ9zM8SOdju9TapclE9ZZI2g0Dqal34l3bWMUkctzmwqgMUw3jge750AY0TGvr5Frf0Ut0rVlNu5eYkw8DmnUdnm9x-1l-bXUI1IuUhyphenhyphen24I3tT-eO-YoxEWrlum2hqoNn8up-sY/s1600/PHOTO-2026-08-13-18-20-06.jpg",
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggdmEeyrrOB8hZJcRPG8rkQYzRgw-4v9y4GiOk8WmE3EKoTL1I9t8LiIWi3jHiKPUO1gpiSMgHjXPvXe8lCFjF8PSLz3HlWq86e7Lm0b0PEGUCL6Ndg1VfCUKd1e-5zLJ-mbBd4em9VWT8BGjFUwJyHQ2PymqGEaP0xgdZx57e40Th0gFZRytrZJ4r4MM/s1600/PHOTO-2026-08-13-18-20-07%202.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjg7LJDOM2EkYCe_fZ6336UzSVtGECa_hDRGkA6qGhDp-K10mW4N_nv5yCgzHKcgnfARvDIxqVc26_TmmsKjYOxqrdDCfSma5_mCds-5VLj7s-rxrSKp7A5fWdluNgi9pbF1Vr4nhZBlPiArOgs3m2S8QjxYgISjh42rMzJ5MZuvUE3VLHU5ATbm7_yYVc/s1600/PHOTO-2026-08-13-18-20-07.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjg7LJDOM2EkYCe_fZ6336UzSVtGECa_hDRGkA6qGhDp-K10mW4N_nv5yCgzHKcgnfARvDIxqVc26_TmmsKjYOxqrdDCfSma5_mCds-5VLj7s-rxrSKp7A5fWdluNgi9pbF1Vr4nhZBlPiArOgs3m2S8QjxYgISjh42rMzJ5MZuvUE3VLHU5ATbm7_yYVc/s1600/PHOTO-2026-08-13-18-20-07.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJ1JPSRJS-fQCWZaUYdH43k57_xL9Grq3kMEYcNeEKnmYn7VgKHgtNiQ9zM8SOdju9TapclE9ZZI2g0Dqal34l3bWMUkctzmwqgMUw3jge750AY0TGvr5Frf0Ut0rVlNu5eYkw8DmnUdnm9x-1l-bXUI1IuUhyphenhyphen24I3tT-eO-YoxEWrlum2hqoNn8up-sY/s1600/PHOTO-2026-08-13-18-20-06.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEhJ1JPSRJS-fQCWZaUYdH43k57_xL9Grq3kMEYcNeEKnmYn7VgKHgtNiQ9zM8SOdju9TapclE9ZZI2g0Dqal34l3bWMUkctzmwqgMUw3jge750AY0TGvr5Frf0Ut0rVlNu5eYkw8DmnUdnm9x-1l-bXUI1IuUhyphenhyphen24I3tT-eO-YoxEWrlum2hqoNn8up-sY/s1600/PHOTO-2026-08-13-18-20-06.jpg"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggdmEeyrrOB8hZJcRPG8rkQYzRgw-4v9y4GiOk8WmE3EKoTL1I9t8LiIWi3jHiKPUO1gpiSMgHjXPvXe8lCFjF8PSLz3HlWq86e7Lm0b0PEGUCL6Ndg1VfCUKd1e-5zLJ-mbBd4em9VWT8BGjFUwJyHQ2PymqGEaP0xgdZx57e40Th0gFZRytrZJ4r4MM/s1600/PHOTO-2026-08-13-18-20-07%202.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEggdmEeyrrOB8hZJcRPG8rkQYzRgw-4v9y4GiOk8WmE3EKoTL1I9t8LiIWi3jHiKPUO1gpiSMgHjXPvXe8lCFjF8PSLz3HlWq86e7Lm0b0PEGUCL6Ndg1VfCUKd1e-5zLJ-mbBd4em9VWT8BGjFUwJyHQ2PymqGEaP0xgdZx57e40Th0gFZRytrZJ4r4MM/s1600/PHOTO-2026-08-13-18-20-07%202.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-022",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "RENAULT",
+      "modelo": "ZU-CLIO MIO 5P CONFORT PLUS ABS ABCP",
+      "version": "",
+      "anio": 2014,
+      "km": 123000,
+      "precio": 13500000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "NAFTA",
+      "transmision": "MANUAL",
+      "traccion": "DELANTERA",
+      "puertas": 5,
+      "color": "GRIS PLATA",
+      "motor": "1.2",
+      "potencia": "",
+      "carroceria": "",
+      "patente": "NGH165",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjeBisl9QBVwOAhfehCEdVypxvjBQxioqiFEW20TPKZdrP1g55bGBR4-K8mvkR2uEaJnA2k3wVfgANv4JOT629m8eHgW-vKiKh-hzV8Zw0YVrwyMn9EncCx07Mc9_nSeWnJd1Itdi4LtI6mAC1SiPEd5mUGdY82pThnd18knb5cmR708EAzeAWZj0LXcdw/s1600/PHOTO-2026-08-13-18-27-09.jpg"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjeBisl9QBVwOAhfehCEdVypxvjBQxioqiFEW20TPKZdrP1g55bGBR4-K8mvkR2uEaJnA2k3wVfgANv4JOT629m8eHgW-vKiKh-hzV8Zw0YVrwyMn9EncCx07Mc9_nSeWnJd1Itdi4LtI6mAC1SiPEd5mUGdY82pThnd18knb5cmR708EAzeAWZj0LXcdw/s1600/PHOTO-2026-08-13-18-27-09.jpg",
+          "thumbnail": "https://blogger.googleusercontent.com/img/b/R29vZ2xl/AVvXsEjeBisl9QBVwOAhfehCEdVypxvjBQxioqiFEW20TPKZdrP1g55bGBR4-K8mvkR2uEaJnA2k3wVfgANv4JOT629m8eHgW-vKiKh-hzV8Zw0YVrwyMn9EncCx07Mc9_nSeWnJd1Itdi4LtI6mAC1SiPEd5mUGdY82pThnd18knb5cmR708EAzeAWZj0LXcdw/s1600/PHOTO-2026-08-13-18-27-09.jpg"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    },
+    {
+      "id": "gyg-023",
+      "status": "disponible",
+      "categoria": "usado",
+      "marca": "TOYOTA",
+      "modelo": "HILUX",
+      "version": "SRX 4x4 A/T",
+      "anio": 2021,
+      "km": 148000,
+      "precio": 54900000,
+      "precio_oferta": null,
+      "moneda": "ARS",
+      "combustible": "DIESEL",
+      "transmision": "AUTOMÁTICO",
+      "traccion": "4X4",
+      "puertas": 4,
+      "color": "ROJO",
+      "motor": "2.8L",
+      "potencia": "",
+      "carroceria": "PICK-UP",
+      "patente": "AE886WE",
+      "destacado": false,
+      "mostrarPrecio": false,
+      "descripcion": "",
+      "equipamiento": [],
+      "fotos": [
+        "https://blogger.googleusercontent.com/img/a/AVvXsEgwAFjnpc-iLGkrYO5vNPza2Uy1XMkc_fRh5g_eHpUQaEUrchXg6UvaFfV_7jqjUAWe-7Ufmn5HhMZzQBQVXXNvQdJiNviV_lXQdW-UbYu4VBMKFGqjnGrjTARBuW1wxsf_zwHsF56wGKZJZKYXgFSvk54981F_CoP1aUilLil-6_x1zgi-_qamNq_HRQU=s1600",
+        "https://blogger.googleusercontent.com/img/a/AVvXsEieR2ciEGCB0nFC5BQORQsFrdUzOm_zoQW0KfmnADvTTwThx81Q-EkSN2N0fsVTzARQFbaLlCbf02_OP5FQuM1p0hnp9Qy_ZT_pZWT5mj7VtJ1_wUNfmHU1ulyb4SqFvBQIKq-hwQDsrjNFZWuaWk3ZDRvhtou5zczBkzhxgnhAUNSRd-vgOy8hOPvOnXw=s1600",
+        "https://blogger.googleusercontent.com/img/a/AVvXsEjC5U7ZA8ZiyzIAH73gVXQvYc9gQzxieFEazaYmqKDYy_F17Trtte-8enopQ5OApGxu_T0bwqTJ0kTVeTn8QqH0v_qFuWzbSsazjO19VVHqnnBZ4vT2rpvC4w167GCb_VY54C6sbD0-NLUvVrj2EDwXEIMiaWcxZGNmg38thVLWggUxaa3KAQleq5S57eA=s1600",
+        "https://blogger.googleusercontent.com/img/a/AVvXsEiOn3wl0WU2oNvS-uXn7S0Nox1E0COsM96Mu5J7cdWoCMJodhhzHuwV6FhzoXIEGDyrOGCJeKJnCCiV0tbvoU4nV8MwVVRAYdjheowCyBE6P3Vw0Q9af3JHrYNL-IKaYgDf9Ya9iZQhbAjcDW2q2rInfr4GayPO5vFVSZ9wKfY2CLYOoix6WVf0ZiVZE08=s1600"
+      ],
+      "videos": [],
+      "media": [
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/a/AVvXsEgwAFjnpc-iLGkrYO5vNPza2Uy1XMkc_fRh5g_eHpUQaEUrchXg6UvaFfV_7jqjUAWe-7Ufmn5HhMZzQBQVXXNvQdJiNviV_lXQdW-UbYu4VBMKFGqjnGrjTARBuW1wxsf_zwHsF56wGKZJZKYXgFSvk54981F_CoP1aUilLil-6_x1zgi-_qamNq_HRQU=s1600",
+          "thumbnail": "https://blogger.googleusercontent.com/img/a/AVvXsEgwAFjnpc-iLGkrYO5vNPza2Uy1XMkc_fRh5g_eHpUQaEUrchXg6UvaFfV_7jqjUAWe-7Ufmn5HhMZzQBQVXXNvQdJiNviV_lXQdW-UbYu4VBMKFGqjnGrjTARBuW1wxsf_zwHsF56wGKZJZKYXgFSvk54981F_CoP1aUilLil-6_x1zgi-_qamNq_HRQU=s1600"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/a/AVvXsEieR2ciEGCB0nFC5BQORQsFrdUzOm_zoQW0KfmnADvTTwThx81Q-EkSN2N0fsVTzARQFbaLlCbf02_OP5FQuM1p0hnp9Qy_ZT_pZWT5mj7VtJ1_wUNfmHU1ulyb4SqFvBQIKq-hwQDsrjNFZWuaWk3ZDRvhtou5zczBkzhxgnhAUNSRd-vgOy8hOPvOnXw=s1600",
+          "thumbnail": "https://blogger.googleusercontent.com/img/a/AVvXsEieR2ciEGCB0nFC5BQORQsFrdUzOm_zoQW0KfmnADvTTwThx81Q-EkSN2N0fsVTzARQFbaLlCbf02_OP5FQuM1p0hnp9Qy_ZT_pZWT5mj7VtJ1_wUNfmHU1ulyb4SqFvBQIKq-hwQDsrjNFZWuaWk3ZDRvhtou5zczBkzhxgnhAUNSRd-vgOy8hOPvOnXw=s1600"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/a/AVvXsEjC5U7ZA8ZiyzIAH73gVXQvYc9gQzxieFEazaYmqKDYy_F17Trtte-8enopQ5OApGxu_T0bwqTJ0kTVeTn8QqH0v_qFuWzbSsazjO19VVHqnnBZ4vT2rpvC4w167GCb_VY54C6sbD0-NLUvVrj2EDwXEIMiaWcxZGNmg38thVLWggUxaa3KAQleq5S57eA=s1600",
+          "thumbnail": "https://blogger.googleusercontent.com/img/a/AVvXsEjC5U7ZA8ZiyzIAH73gVXQvYc9gQzxieFEazaYmqKDYy_F17Trtte-8enopQ5OApGxu_T0bwqTJ0kTVeTn8QqH0v_qFuWzbSsazjO19VVHqnnBZ4vT2rpvC4w167GCb_VY54C6sbD0-NLUvVrj2EDwXEIMiaWcxZGNmg38thVLWggUxaa3KAQleq5S57eA=s1600"
+        },
+        {
+          "tipo": "foto",
+          "url": "https://blogger.googleusercontent.com/img/a/AVvXsEiOn3wl0WU2oNvS-uXn7S0Nox1E0COsM96Mu5J7cdWoCMJodhhzHuwV6FhzoXIEGDyrOGCJeKJnCCiV0tbvoU4nV8MwVVRAYdjheowCyBE6P3Vw0Q9af3JHrYNL-IKaYgDf9Ya9iZQhbAjcDW2q2rInfr4GayPO5vFVSZ9wKfY2CLYOoix6WVf0ZiVZE08=s1600",
+          "thumbnail": "https://blogger.googleusercontent.com/img/a/AVvXsEiOn3wl0WU2oNvS-uXn7S0Nox1E0COsM96Mu5J7cdWoCMJodhhzHuwV6FhzoXIEGDyrOGCJeKJnCCiV0tbvoU4nV8MwVVRAYdjheowCyBE6P3Vw0Q9af3JHrYNL-IKaYgDf9Ya9iZQhbAjcDW2q2rInfr4GayPO5vFVSZ9wKfY2CLYOoix6WVf0ZiVZE08=s1600"
+        }
+      ],
+      "ingreso": "2026-08-29",
+      "updatedAt": "2026-08-29T19:11:33.000Z"
+    }
+  ]
+}
